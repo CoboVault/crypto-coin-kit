@@ -1,0 +1,28 @@
+{
+  "name": "coin-kit",
+  "version": "1.0.0",
+  "description": "cobo coin kit for coin library and sign providers",
+  "main": "index.js",
+  "scripts": {
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "test": "jest",
+    "build": "tsc -p ./tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "jest": "^24.8.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {},
+  "files": [
+    "lib/**/*"
+  ]
+}
