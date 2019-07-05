@@ -5,6 +5,9 @@
         "tslint-config-prettier"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "interface-name": [true, "never-prefix"],
+        "object-literal-sort-keys": [false]
+    },
     "rulesDirectory": []
 }

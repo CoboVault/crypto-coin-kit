@@ -2,7 +2,7 @@
   "name": "coin-kit",
   "version": "1.0.0",
   "description": "cobo coin kit for coin library and sign providers",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
@@ -21,7 +21,11 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ripple-address-codec": "^2.0.1",
+    "ripple-binary-codec": "^0.2.1",
+    "ripple-keypairs": "^0.11.0"
+  },
   "files": [
     "lib/**/*"
   ]

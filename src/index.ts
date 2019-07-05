@@ -1,3 +1,5 @@
-export default (a: string, b: string): string => {
-  return a + b;
+import XRP from "./XRP";
+
+export default {
+  XRP
 };
