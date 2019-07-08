@@ -3,7 +3,7 @@ import binary from "ripple-binary-codec";
 
 type TransactionType = "Payment";
 
-interface TxbProps {
+export interface TxbProps {
   transactionType: TransactionType;
   account: string;
   destination: string;
@@ -43,19 +43,23 @@ export class TransactionBuilder {
   }
 
   public toBinary(): string {
-    return binary.encodeForSigning(this.toJSON()).toString();
+    const txJson = this.toJSON();
+    console.log(txJson);
+    return binary.encodeForSigning(txJson);
   }
 
-  private toJSON(): string {
-    return JSON.stringify({
+  private toJSON(): any {
+    const partialTx = {
       Account: this.account,
       Amount: this.amount,
       Destination: this.destination,
-      DestinationTag: this.destinationTag,
       Fee: this.fee,
       Flags: this.flags,
       Sequence: this.sequence,
       TransactionType: this.transactionType
-    });
+    };
+    // DestinationTag: undefined or null will produce an unexpected 2E00000000 hex fragment in unsigned TX;
+    return this.destinationTag ?
+        {...partialTx, DestinationTag: this.destinationTag} : partialTx;
   }
 }
