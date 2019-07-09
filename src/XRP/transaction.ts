@@ -59,7 +59,8 @@ export class TransactionBuilder {
       TransactionType: this.transactionType
     };
     // DestinationTag: undefined or null will produce an unexpected 2E00000000 hex fragment in unsigned TX;
-    return this.destinationTag ?
-        {...partialTx, DestinationTag: this.destinationTag} : partialTx;
+    return this.destinationTag
+      ? { ...partialTx, DestinationTag: this.destinationTag }
+      : partialTx;
   }
 }

@@ -3,9 +3,7 @@ import { isValidAddress } from "ripple-address-codec";
 // @ts-ignore
 import { deriveAddress } from "ripple-keypairs";
 import Common, { SignProvider } from "../Common";
-import { signWithProvider } from "./signWithProvider";
 import { TransactionBuilder, TxbProps } from "./transaction";
-
 
 interface SignResult {
   signedTransaction: string;

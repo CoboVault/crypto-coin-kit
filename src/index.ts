@@ -1,5 +1,9 @@
-import XRP from "./XRP";
+import { KeyProvider } from "./keyProvider";
+import { XRP } from "./XRP";
 
 export default {
-  XRP
+  coins: {
+    XRP
+  },
+  KeyProvider
 };
