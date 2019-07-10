@@ -1,3 +1,9 @@
-export default (a: string, b: string): string => {
-  return a + b;
+import { KeyProvider } from "./keyProvider";
+import { XRP } from "./XRP";
+
+export default {
+  coins: {
+    XRP
+  },
+  KeyProvider
 };
