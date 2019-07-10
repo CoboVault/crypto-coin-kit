@@ -2,7 +2,7 @@
   "name": "coin-kit",
   "version": "1.0.0",
   "description": "cobo coin kit for coin library and sign providers",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
