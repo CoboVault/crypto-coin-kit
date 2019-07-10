@@ -44,7 +44,6 @@ export class TransactionBuilder {
 
   public toBinary(): string {
     const txJson = this.toJSON();
-    console.log(txJson);
     return binary.encodeForSigning(txJson);
   }
 
