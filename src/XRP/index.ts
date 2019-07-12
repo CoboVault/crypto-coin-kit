@@ -21,7 +21,7 @@ export class XRP {
 
   public generateUnsignedTransaction = (args: TxbProps) => {
     const transactionBuilder = new TransactionBuilder(args);
-    return transactionBuilder.toBinary();
+    return transactionBuilder.toHash();
   };
 
   public sign = (rawTx: string, signProvider: SignProvider) => {

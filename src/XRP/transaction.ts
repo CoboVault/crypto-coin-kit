@@ -1,5 +1,9 @@
 // @ts-ignore
+import BN from "bn.js";
+import hashjs from "hash.js";
+// @ts-ignore
 import binary from "ripple-binary-codec";
+import { bytesToHex } from "../utils";
 
 type TransactionType = "Payment";
 
@@ -42,7 +46,23 @@ export class TransactionBuilder {
     this.sequence = sequence;
   }
 
-  public toBinary(): string {
+  public toHash(): string {
+    const txBytes = this.toBytes();
+    return bytesToHex(
+      hashjs
+        .sha512()
+        .update(txBytes)
+        .digest()
+        .slice(0, 32)
+    );
+  }
+
+  private toBytes(): ArrayBuffer {
+    const txHex = this.toHex();
+    return new BN(txHex, 16).toArray(null, txHex.length / 2);
+  }
+
+  private toHex(): string {
     const txJson = this.toJSON();
     return binary.encodeForSigning(txJson);
   }
