@@ -15,7 +15,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
+var bn_js_1 = __importDefault(require("bn.js"));
+var hash_js_1 = __importDefault(require("hash.js"));
+// @ts-ignore
 var ripple_binary_codec_1 = __importDefault(require("ripple-binary-codec"));
+var utils_1 = require("../utils");
 var TransactionBuilder = /** @class */ (function () {
     function TransactionBuilder(args) {
         this.flags = 2147483648;
@@ -28,7 +32,19 @@ var TransactionBuilder = /** @class */ (function () {
         this.fee = fee;
         this.sequence = sequence;
     }
-    TransactionBuilder.prototype.toBinary = function () {
+    TransactionBuilder.prototype.toHash = function () {
+        var txBytes = this.toBytes();
+        return utils_1.bytesToHex(hash_js_1.default
+            .sha512()
+            .update(txBytes)
+            .digest()
+            .slice(0, 32));
+    };
+    TransactionBuilder.prototype.toBytes = function () {
+        var txHex = this.toHex();
+        return new bn_js_1.default(txHex, 16).toArray(null, txHex.length / 2);
+    };
+    TransactionBuilder.prototype.toHex = function () {
         var txJson = this.toJSON();
         return ripple_binary_codec_1.default.encodeForSigning(txJson);
     };

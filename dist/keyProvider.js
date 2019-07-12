@@ -56,9 +56,7 @@ var KeyProvider = /** @class */ (function () {
             var privateKeyData = buffer_1.Buffer.from(_this.privateKey, "hex");
             var keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
             // @ts-ignore
-            return keyPair.publicKey.reduce(function (acc, cur) {
-                return acc + ('00' + cur.toString(16)).slice(-2);
-            }, '');
+            return bytesToHex(keyPair.publicKey);
         };
         var privateKey = args.privateKey, publicKey = args.publicKey, keyType = args.keyType;
         if (!this.checkKeyType(keyType)) {

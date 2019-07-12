@@ -19,7 +19,7 @@ var XRP = /** @class */ (function () {
         };
         this.generateUnsignedTransaction = function (args) {
             var transactionBuilder = new transaction_1.TransactionBuilder(args);
-            return transactionBuilder.toBinary();
+            return transactionBuilder.toHash();
         };
         this.sign = function (rawTx, signProvider) {
             return Common_1.default.sign(rawTx, signProvider);
