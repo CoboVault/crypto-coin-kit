@@ -1106,9 +1106,10 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
-"ed25519@git+ssh://git@github.com:cobowallet/ed25519.git":
+ed25519@0.0.4:
   version "0.0.4"
-  resolved "git+ssh://git@github.com:cobowallet/ed25519.git#df57bc1db3dcb5a9425de3c0e34bb41fa50f8c44"
+  resolved "https://registry.npm.taobao.org/ed25519/download/ed25519-0.0.4.tgz#e56218ace2fc903d259593aef0b2a9639f475beb"
+  integrity sha1-5WIYrOL8kD0llZOu8LKpY59HW+s=
   dependencies:
     bindings "^1.2.1"
     nan "^2.0.9"
@@ -3742,6 +3743,11 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.npm.taobao.org/tweetnacl/download/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
+
+tweetnacl@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npm.taobao.org/tweetnacl/download/tweetnacl-1.0.1.tgz#2594d42da73cd036bd0d2a54683dd35a6b55ca17"
+  integrity sha1-JZTULac80Da9DSpUaD3TWmtVyhc=
 
 type-check@~0.3.2:
   version "0.3.2"

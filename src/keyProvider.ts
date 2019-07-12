@@ -1,9 +1,9 @@
 import { Buffer } from "buffer";
-import ed25519 from "ed25519";
 // @ts-ignore
 import secp256k1 from "secp256k1";
 // @ts-ignore
 import secp256r1 from "secp256r1";
+import nacl from 'tweetnacl';
 
 export type KeyType = "secp256k1" | "secp256r1" | "ed25519";
 
@@ -81,7 +81,10 @@ export class KeyProvider {
       throw new Error("No private key provided");
     }
     const privateKeyData = Buffer.from(this.privateKey, "hex");
-    const keyPair = ed25519.MakeKeypair(privateKeyData);
-    return keyPair.publicKey.toString("hex");
+    const keyPair = nacl.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
+    // @ts-ignore
+    return keyPair.publicKey.reduce((acc,cur) => {
+      return acc + ('00' + cur.toString(16)).slice(-2);
+    }, '');
   };
 }
