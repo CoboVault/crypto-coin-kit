@@ -9,6 +9,7 @@ var secp256k1_1 = __importDefault(require("secp256k1"));
 // @ts-ignore
 var secp256r1_1 = __importDefault(require("secp256r1"));
 var tweetnacl_1 = __importDefault(require("tweetnacl"));
+var utils_1 = require("./utils");
 var KeyProvider = /** @class */ (function () {
     function KeyProvider(args) {
         var _this = this;
@@ -55,8 +56,8 @@ var KeyProvider = /** @class */ (function () {
             }
             var privateKeyData = buffer_1.Buffer.from(_this.privateKey, "hex");
             var keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
-            // @ts-ignore
-            return bytesToHex(keyPair.publicKey);
+            var publicKeyData = Array.from(keyPair.publicKey);
+            return utils_1.bytesToHex(publicKeyData);
         };
         var privateKey = args.privateKey, publicKey = args.publicKey, keyType = args.keyType;
         if (!this.checkKeyType(keyType)) {

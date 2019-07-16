@@ -19,11 +19,13 @@ var bn_js_1 = __importDefault(require("bn.js"));
 var hash_js_1 = __importDefault(require("hash.js"));
 // @ts-ignore
 var ripple_binary_codec_1 = __importDefault(require("ripple-binary-codec"));
+// @ts-ignore
+var ripple_hashes_1 = require("ripple-hashes");
 var utils_1 = require("../utils");
 var TransactionBuilder = /** @class */ (function () {
     function TransactionBuilder(args) {
         this.flags = 2147483648;
-        var transactionType = args.transactionType, account = args.account, amount = args.amount, destination = args.destination, destinationTag = args.destinationTag, fee = args.fee, sequence = args.sequence;
+        var transactionType = args.transactionType, account = args.account, amount = args.amount, destination = args.destination, destinationTag = args.destinationTag, fee = args.fee, sequence = args.sequence, signingPubKey = args.signingPubKey;
         this.transactionType = transactionType;
         this.account = account;
         this.amount = amount;
@@ -31,6 +33,7 @@ var TransactionBuilder = /** @class */ (function () {
         this.destinationTag = destinationTag;
         this.fee = fee;
         this.sequence = sequence;
+        this.signingPubKey = signingPubKey;
     }
     TransactionBuilder.prototype.getUnsignedTx = function () {
         var txBytes = this.toBytes();
@@ -40,14 +43,29 @@ var TransactionBuilder = /** @class */ (function () {
             .digest()
             .slice(0, 32));
     };
+    TransactionBuilder.prototype.addSignature = function (signature) {
+        this.txnSignature = utils_1.toDER(signature);
+    };
+    TransactionBuilder.prototype.getSignedTx = function () {
+        var txBlob = ripple_binary_codec_1.default.encode(this.toJSON());
+        var id = ripple_hashes_1.computeBinaryTransactionHash(txBlob);
+        return {
+            id: id,
+            txBlob: txBlob
+        };
+    };
     TransactionBuilder.prototype.toBytes = function () {
         var txHex = this.toHex();
         return new bn_js_1.default(txHex, 16).toArray(null, txHex.length / 2);
     };
     TransactionBuilder.prototype.toHex = function () {
         var txJson = this.toJSON();
+        if (txJson.hasOwnProperty("TxnSignature")) {
+            throw new Error("can not encode a signed tx");
+        }
         return ripple_binary_codec_1.default.encodeForSigning(txJson);
     };
+    // parse current instance to JSON
     TransactionBuilder.prototype.toJSON = function () {
         var partialTx = {
             Account: this.account,
@@ -56,11 +74,15 @@ var TransactionBuilder = /** @class */ (function () {
             Fee: this.fee,
             Flags: this.flags,
             Sequence: this.sequence,
-            TransactionType: this.transactionType
+            TransactionType: this.transactionType,
+            SigningPubKey: this.signingPubKey
         };
         // DestinationTag: undefined or null will produce an unexpected 2E00000000 hex fragment in unsigned TX;
-        return this.destinationTag
+        var txWithDetinationTag = this.destinationTag
             ? __assign({}, partialTx, { DestinationTag: this.destinationTag }) : partialTx;
+        // if this is a signed tx
+        return this.txnSignature
+            ? __assign({}, txWithDetinationTag, { TxnSignature: this.txnSignature }) : txWithDetinationTag;
     };
     return TransactionBuilder;
 }());
