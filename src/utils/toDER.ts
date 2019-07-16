@@ -1,5 +1,5 @@
 export default (input: string): string => {
-  if (input.length < 64) {
+  if (input.length < 128) {
     throw new Error("not a valid signature");
   }
   const INPUT = input.toUpperCase();
