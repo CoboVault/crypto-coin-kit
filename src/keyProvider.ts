@@ -4,6 +4,7 @@ import secp256k1 from "secp256k1";
 // @ts-ignore
 import secp256r1 from "secp256r1";
 import nacl from "tweetnacl";
+import { bytesToHex } from "./utils";
 
 export type KeyType = "secp256k1" | "secp256r1" | "ed25519";
 
@@ -82,7 +83,7 @@ export class KeyProvider {
     }
     const privateKeyData = Buffer.from(this.privateKey, "hex");
     const keyPair = nacl.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
-    // @ts-ignore
-    return bytesToHex(keyPair.publicKey);
+    const publicKeyData = Array.from(keyPair.publicKey);
+    return bytesToHex(publicKeyData);
   };
 }

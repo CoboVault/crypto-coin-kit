@@ -19,9 +19,8 @@ export class XRP {
     return isValidAddress(address);
   };
 
-  public generateUnsignedTransaction = (args: TxbProps) => {
-    const transactionBuilder = new TransactionBuilder(args);
-    return transactionBuilder.toHash();
+  public generateTxBuilder = (args: TxbProps) => {
+    return new TransactionBuilder(args);
   };
 
   public sign = (rawTx: string, signProvider: SignProvider) => {

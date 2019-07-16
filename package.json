@@ -27,7 +27,9 @@
     "hash.js": "^1.1.7",
     "ripple-address-codec": "^2.0.1",
     "ripple-binary-codec": "^0.2.1",
+    "ripple-hashes": "^0.3.2",
     "ripple-keypairs": "^0.11.0",
+    "ripple-lib": "^1.2.4",
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1"

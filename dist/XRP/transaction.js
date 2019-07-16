@@ -32,7 +32,7 @@ var TransactionBuilder = /** @class */ (function () {
         this.fee = fee;
         this.sequence = sequence;
     }
-    TransactionBuilder.prototype.toHash = function () {
+    TransactionBuilder.prototype.getUnsignedTx = function () {
         var txBytes = this.toBytes();
         return utils_1.bytesToHex(hash_js_1.default
             .sha512()
