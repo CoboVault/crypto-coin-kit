@@ -1,5 +1,4 @@
 import { KeyProvider } from "../keyProvider";
-import { bytesToHex } from "../utils";
 
 const data = {
   secp256k1: {
@@ -37,7 +36,7 @@ describe("Key Provider", () => {
       privateKey: Buffer.from(data.secp256k1.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(bytesToHex(keyProvider.getPublicKey())).toEqual(
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
         data.secp256k1.publicKey
       );
     });
@@ -48,7 +47,7 @@ describe("Key Provider", () => {
       privateKey: Buffer.from(data.secp256r1.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(bytesToHex(keyProvider.getPublicKey())).toEqual(
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
         data.secp256r1.publicKey
       );
     });
@@ -59,7 +58,7 @@ describe("Key Provider", () => {
       privateKey: Buffer.from(data.ed25519.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(bytesToHex(keyProvider.getPublicKey())).toEqual(
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
         data.ed25519.publicKey
       );
     });

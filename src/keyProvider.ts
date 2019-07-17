@@ -4,7 +4,6 @@ import secp256k1 from "secp256k1";
 // @ts-ignore
 import secp256r1 from "secp256r1";
 import nacl from "tweetnacl";
-import { bytesToHex } from "./utils";
 
 export type KeyType = "secp256k1" | "secp256r1" | "ed25519";
 

@@ -5,7 +5,7 @@ import hashjs from "hash.js";
 import binary from "ripple-binary-codec";
 // @ts-ignore
 import { computeBinaryTransactionHash } from "ripple-hashes";
-import { bytesToHex, toDER } from "../utils";
+import { toDER } from "../utils";
 
 type TransactionType = "Payment" | "AccountSet";
 
@@ -55,15 +55,13 @@ export class TransactionBuilder {
 
   public getUnsignedTx(): string {
     const txBytes = this.toBytes();
-    return bytesToHex(
-      Buffer.from(
-        hashjs
-          .sha512()
-          .update(txBytes)
-          .digest()
-          .slice(0, 32)
-      )
-    );
+    return Buffer.from(
+      hashjs
+        .sha512()
+        .update(txBytes)
+        .digest()
+        .slice(0, 32)
+    ).toString("hex");
   }
 
   public addSignature(signature: string): void {
