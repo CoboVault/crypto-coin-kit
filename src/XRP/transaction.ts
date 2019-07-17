@@ -1,7 +1,13 @@
 // @ts-ignore
+import BN from "bn.js";
+import hashjs from "hash.js";
+// @ts-ignore
 import binary from "ripple-binary-codec";
+// @ts-ignore
+import { computeBinaryTransactionHash } from "ripple-hashes";
+import { toDER } from "../utils";
 
-type TransactionType = "Payment";
+type TransactionType = "Payment" | "AccountSet";
 
 export interface TxbProps {
   transactionType: TransactionType;
@@ -11,6 +17,7 @@ export interface TxbProps {
   amount: string;
   fee: string;
   sequence: number;
+  signingPubKey: string;
 }
 
 export class TransactionBuilder {
@@ -22,6 +29,8 @@ export class TransactionBuilder {
   private readonly amount: string;
   private readonly fee: string;
   private readonly sequence: number;
+  private readonly signingPubKey: string;
+  private txnSignature?: string;
 
   constructor(args: TxbProps) {
     const {
@@ -31,7 +40,8 @@ export class TransactionBuilder {
       destination,
       destinationTag,
       fee,
-      sequence
+      sequence,
+      signingPubKey
     } = args;
     this.transactionType = transactionType;
     this.account = account;
@@ -40,13 +50,47 @@ export class TransactionBuilder {
     this.destinationTag = destinationTag;
     this.fee = fee;
     this.sequence = sequence;
+    this.signingPubKey = signingPubKey;
   }
 
-  public toBinary(): string {
+  public getUnsignedTx(): string {
+    const txBytes = this.toBytes();
+    return Buffer.from(
+      hashjs
+        .sha512()
+        .update(txBytes)
+        .digest()
+        .slice(0, 32)
+    ).toString("hex");
+  }
+
+  public addSignature(signature: string): void {
+    this.txnSignature = toDER(signature);
+  }
+
+  public getSignedTx(): { id: string; txBlob: string } {
+    const txBlob = binary.encode(this.toJSON());
+    const id = computeBinaryTransactionHash(txBlob);
+    return {
+      id,
+      txBlob
+    };
+  }
+
+  private toBytes(): ArrayBuffer {
+    const txHex = this.toHex();
+    return new BN(txHex, 16).toArray(null, txHex.length / 2);
+  }
+
+  private toHex(): string {
     const txJson = this.toJSON();
+    if (txJson.hasOwnProperty("TxnSignature")) {
+      throw new Error("can not encode a signed tx");
+    }
     return binary.encodeForSigning(txJson);
   }
 
+  // parse current instance to JSON
   private toJSON(): any {
     const partialTx = {
       Account: this.account,
@@ -55,11 +99,17 @@ export class TransactionBuilder {
       Fee: this.fee,
       Flags: this.flags,
       Sequence: this.sequence,
-      TransactionType: this.transactionType
+      TransactionType: this.transactionType,
+      SigningPubKey: this.signingPubKey
     };
     // DestinationTag: undefined or null will produce an unexpected 2E00000000 hex fragment in unsigned TX;
-    return this.destinationTag
+    const txWithDetinationTag = this.destinationTag
       ? { ...partialTx, DestinationTag: this.destinationTag }
       : partialTx;
+
+    // if this is a signed tx
+    return this.txnSignature
+      ? { ...txWithDetinationTag, TxnSignature: this.txnSignature }
+      : txWithDetinationTag;
   }
 }

@@ -1,4 +1,5 @@
 // @ts-ignore
+import binary from "ripple-binary-codec";
 import { XRP } from "../../XRP";
 
 describe("coin.XRP", () => {
@@ -6,9 +7,9 @@ describe("coin.XRP", () => {
   describe("address", () => {
     it("should derive correct XRP address", () => {
       const publicKey =
-        "038AAE247B2344B1837FBED8F57389C8C11774510A3F7D784F2A09F0CB6843236C";
+        "03294E766FD584C9538911828EE981C4A73DE0EAAD5AF08C377869C38477D2618F";
       expect(xrp.generateAddress(publicKey)).toBe(
-        "r4Vtj2jrfmTVZGfSP3gH9hQPMqFPQFin8f"
+        "rndm7RphBZG6CpZvKcG9AjoFbSvcKhwLCx"
       );
     });
     it("should check address validation", () => {
@@ -21,19 +22,40 @@ describe("coin.XRP", () => {
     });
   });
   describe("transaction", () => {
+    const txb = xrp.generateTxBuilder({
+      transactionType: "Payment",
+      sequence: 1,
+      fee: "20",
+      account: "rndm7RphBZG6CpZvKcG9AjoFbSvcKhwLCx",
+      destination: "rGNXLMNHkUEtoo7qkCSHEm2sfMo8F969oZ",
+      destinationTag: 1700373364,
+      amount: "1000000",
+      signingPubKey:
+        "03294E766FD584C9538911828EE981C4A73DE0EAAD5AF08C377869C38477D2618F"
+    });
+
     it("should generate transaction", () => {
-      expect(
-        xrp.generateUnsignedTransaction({
-          transactionType: "Payment",
-          sequence: 2,
-          fee: "12",
-          account: "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
-          destination: "ra5nK24KXen9AHvsdFTKHSANinZseWnPcX",
-          amount: "1"
-        })
-      ).toBe(
-        "535458001200002280000000240000000261400000000000000168400000000000000C81144B4E9C06F24296074F7BC48F92A97916C6DC5EA983143E9D4A2B8AA0780F682D136F7A56D6724EF53754"
+      expect(txb.getUnsignedTx()).toBe(
+        "e64bfa14325fe8ca00c73a250c98b24482fc6a7a3b996fa245da339301071cd5"
       );
+    });
+    it("should add signature and generate signed tx", () => {
+      txb.addSignature(
+        "67a52903979c0fc874f2a557d3d095f49e7d02167c13149afadaa9249635deaf7756e43a4c0723a5b556876987b8a4810e7a5cfd0478d8089d9678696e409a0b00"
+      );
+      expect(txb.getSignedTx()).toStrictEqual({
+        id: "8EDF6F2EB7A8627DB5D100E81C65B73C6EA213736B890C76498AB4FB6B3057E6",
+        txBlob:
+          "120000228000000024000000012E6559A3746140000000000F4240684000000000000014732103294E766FD584C9538911828EE981C4A73DE0EAAD5AF08C377869C38477D2618F74463044022067A52903979C0FC874F2A557D3D095F49E7D02167C13149AFADAA9249635DEAF02207756E43A4C0723A5B556876987B8A4810E7A5CFD0478D8089D9678696E409A0B811432D49A06A7BD5ED01DD0989E783D441D15E798888314A7189D8FAF853122B26CF360DD701CD9E66D6B83"
+      });
+    });
+    it("should throw error when call getUnsignedTx after signed", () => {
+      txb.addSignature(
+        "67a52903979c0fc874f2a557d3d095f49e7d02167c13149afadaa9249635deaf7756e43a4c0723a5b556876987b8a4810e7a5cfd0478d8089d9678696e409a0b00"
+      );
+      expect(() => {
+        txb.getUnsignedTx();
+      }).toThrow("can not encode a signed tx");
     });
   });
 });

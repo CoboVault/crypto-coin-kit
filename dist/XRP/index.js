@@ -17,9 +17,8 @@ var XRP = /** @class */ (function () {
         this.isAddressValid = function (address) {
             return ripple_address_codec_1.isValidAddress(address);
         };
-        this.generateUnsignedTransaction = function (args) {
-            var transactionBuilder = new transaction_1.TransactionBuilder(args);
-            return transactionBuilder.toBinary();
+        this.generateTxBuilder = function (args) {
+            return new transaction_1.TransactionBuilder(args);
         };
         this.sign = function (rawTx, signProvider) {
             return Common_1.default.sign(rawTx, signProvider);

@@ -26,35 +26,41 @@ describe("Key Provider", () => {
     expect(() => {
       const keyProvider = new KeyProvider({
         keyType: "secp256k1",
-        privateKey: "111111"
+        privateKey: Buffer.from("111111", "hex")
       });
-    }).toThrow("invalid privateKey: 111111, should be 32 byte hex");
+    }).toThrow("invalid privateKey, should be 32 bytes");
   });
   describe("secp256k1", () => {
     const keyProvider = new KeyProvider({
       keyType: "secp256k1",
-      privateKey: data.secp256k1.privateKey
+      privateKey: Buffer.from(data.secp256k1.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(keyProvider.getPublicKey()).toEqual(data.secp256k1.publicKey);
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
+        data.secp256k1.publicKey
+      );
     });
   });
   describe("secp256r1", () => {
     const keyProvider = new KeyProvider({
       keyType: "secp256r1",
-      privateKey: data.secp256r1.privateKey
+      privateKey: Buffer.from(data.secp256r1.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(keyProvider.getPublicKey()).toEqual(data.secp256r1.publicKey);
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
+        data.secp256r1.publicKey
+      );
     });
   });
   describe("ed25519", () => {
     const keyProvider = new KeyProvider({
       keyType: "ed25519",
-      privateKey: data.ed25519.privateKey
+      privateKey: Buffer.from(data.ed25519.privateKey, "hex")
     });
     it("should generate correct public key", () => {
-      expect(keyProvider.getPublicKey()).toEqual(data.ed25519.publicKey);
+      expect(keyProvider.getPublicKey().toString("hex")).toEqual(
+        data.ed25519.publicKey
+      );
     });
   });
 });
