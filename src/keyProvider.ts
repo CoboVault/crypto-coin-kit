@@ -9,14 +9,14 @@ import { bytesToHex } from "./utils";
 export type KeyType = "secp256k1" | "secp256r1" | "ed25519";
 
 export interface KeyProviderProps {
-  privateKey?: string;
-  publicKey?: string;
+  privateKey?: Buffer;
+  publicKey?: Buffer;
   keyType: KeyType;
 }
 
 export class KeyProvider {
-  private readonly privateKey?: string;
-  private readonly publicKey?: string;
+  private readonly privateKey?: Buffer;
+  private readonly publicKey?: Buffer;
   private readonly keyType: KeyType;
   constructor(args: KeyProviderProps) {
     const { privateKey, publicKey, keyType } = args;
@@ -24,9 +24,7 @@ export class KeyProvider {
       throw new Error(`invalid key type: ${keyType}`);
     }
     if (privateKey && !this.checkPrivateKey(privateKey)) {
-      throw new Error(
-        `invalid privateKey: ${privateKey}, should be 32 byte hex`
-      );
+      throw new Error(`invalid privateKey, should be 32 bytes`);
     }
     this.privateKey = privateKey;
     this.publicKey = publicKey;
@@ -47,7 +45,7 @@ export class KeyProvider {
     }
   };
 
-  private checkPrivateKey = (privateKey: string) => {
+  private checkPrivateKey = (privateKey: Buffer) => {
     return privateKey.length >= 32;
   };
 
@@ -63,27 +61,21 @@ export class KeyProvider {
     if (!this.privateKey) {
       throw new Error("No private key provided");
     }
-    const privateKeyData = Buffer.from(this.privateKey, "hex");
-    const publicKeyData = secp256k1.publicKeyCreate(privateKeyData);
-    return publicKeyData.toString("hex");
+    return secp256k1.publicKeyCreate(this.privateKey);
   };
 
   private secp256r1GetPublicKey = () => {
     if (!this.privateKey) {
       throw new Error("No private key provided");
     }
-    const privateKeyData = Buffer.from(this.privateKey, "hex");
-    const publicKeyData = secp256r1.publicKeyCreate(privateKeyData);
-    return publicKeyData.toString("hex");
+    return secp256r1.publicKeyCreate(this.privateKey);
   };
 
   private ed25519GetPublicKey = () => {
     if (!this.privateKey) {
       throw new Error("No private key provided");
     }
-    const privateKeyData = Buffer.from(this.privateKey, "hex");
-    const keyPair = nacl.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
-    const publicKeyData = Array.from(keyPair.publicKey);
-    return bytesToHex(publicKeyData);
+    const keyPair = nacl.sign.keyPair.fromSeed(new Uint8Array(this.privateKey));
+    return Buffer.from(keyPair.publicKey);
   };
 }

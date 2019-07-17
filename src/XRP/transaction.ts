@@ -56,11 +56,13 @@ export class TransactionBuilder {
   public getUnsignedTx(): string {
     const txBytes = this.toBytes();
     return bytesToHex(
-      hashjs
-        .sha512()
-        .update(txBytes)
-        .digest()
-        .slice(0, 32)
+      Buffer.from(
+        hashjs
+          .sha512()
+          .update(txBytes)
+          .digest()
+          .slice(0, 32)
+      )
     );
   }
 
