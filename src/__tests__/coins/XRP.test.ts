@@ -1,5 +1,4 @@
 // @ts-ignore
-import binary from "ripple-binary-codec";
 import { XRP } from "../../XRP";
 
 describe("coin.XRP", () => {

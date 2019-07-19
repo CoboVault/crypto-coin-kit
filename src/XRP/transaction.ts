@@ -1,5 +1,4 @@
 // @ts-ignore
-import BN from "bn.js";
 import hashjs from "hash.js";
 // @ts-ignore
 import binary from "ripple-binary-codec";
@@ -79,7 +78,7 @@ export class TransactionBuilder {
 
   private toBytes(): ArrayBuffer {
     const txHex = this.toHex();
-    return new BN(txHex, 16).toArray(null, txHex.length / 2);
+    return Buffer.from(txHex, 'hex');
   }
 
   private toHex(): string {
