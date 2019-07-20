@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
-var bn_js_1 = __importDefault(require("bn.js"));
 var hash_js_1 = __importDefault(require("hash.js"));
 // @ts-ignore
 var ripple_binary_codec_1 = __importDefault(require("ripple-binary-codec"));
@@ -37,11 +36,11 @@ var TransactionBuilder = /** @class */ (function () {
     }
     TransactionBuilder.prototype.getUnsignedTx = function () {
         var txBytes = this.toBytes();
-        return utils_1.bytesToHex(hash_js_1.default
+        return Buffer.from(hash_js_1.default
             .sha512()
             .update(txBytes)
             .digest()
-            .slice(0, 32));
+            .slice(0, 32)).toString("hex");
     };
     TransactionBuilder.prototype.addSignature = function (signature) {
         this.txnSignature = utils_1.toDER(signature);
@@ -56,7 +55,7 @@ var TransactionBuilder = /** @class */ (function () {
     };
     TransactionBuilder.prototype.toBytes = function () {
         var txHex = this.toHex();
-        return new bn_js_1.default(txHex, 16).toArray(null, txHex.length / 2);
+        return Buffer.from(txHex, 'hex');
     };
     TransactionBuilder.prototype.toHex = function () {
         var txJson = this.toJSON();
