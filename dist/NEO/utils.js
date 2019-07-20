@@ -12,3 +12,28 @@ exports.SignProviderWithPrivateKey = function (privateKey) {
         }
     };
 };
+exports.buildNeoBalance = function (externalNeoBalance) {
+    var address = externalNeoBalance['address'];
+    var net = externalNeoBalance['net'];
+    var assetSymbols = [];
+    var assets = {};
+    externalNeoBalance.balance.forEach(function (each) {
+        if (each['asset_symbol']) {
+            assetSymbols.push(each['asset_symbol']);
+            assets[each['asset_symbol']] = {
+                balance: each['amount'],
+                unspent: each.unspent.map(function (eachUnspent) { return ({
+                    value: eachUnspent['value'],
+                    txid: eachUnspent['txid'],
+                    index: eachUnspent['n']
+                }); })
+            };
+        }
+    });
+    return new neon_core_1.wallet.Balance({
+        address: address,
+        net: net,
+        assetSymbols: assetSymbols,
+        assets: assets
+    });
+};
