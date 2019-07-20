@@ -1,10 +1,6 @@
 import { wallet, tx } from '@cityofzion/neon-core'
-import Common, { SignProvider } from "../Common";
+import Coin from "../Common/coin";
 
-interface SignResult {
-    hex: string;
-    id: string;
-}
 export interface txData{
     tokenName: string;
     to: string;
@@ -13,7 +9,7 @@ export interface txData{
     balance: wallet.Balance
 
 }
-export default class NEO {
+export default class NEO extends Coin{
     public generateAddress(publicKey: string) {
         const account = new wallet.Account(publicKey)
         return account.address
@@ -30,9 +26,4 @@ export default class NEO {
         coinTx.calculate(txData['balance'])
         return coinTx.serialize(false)
     }
-
-
-    public sign (rawTx: string, signProvider: SignProvider){
-        return Common.sign<SignResult>(rawTx, signProvider);
-      };
 }

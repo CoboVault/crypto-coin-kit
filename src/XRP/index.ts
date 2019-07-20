@@ -2,15 +2,10 @@
 import { isValidAddress } from "ripple-address-codec";
 // @ts-ignore
 import { deriveAddress } from "ripple-keypairs";
-import Common, { SignProvider } from "../Common";
+import Coin from "../Common/coin"
 import { TransactionBuilder, TxbProps } from "./transaction";
 
-interface SignResult {
-  signedTransaction: string;
-  id: string;
-}
-
-export class XRP {
+export class XRP extends Coin {
   public generateAddress = (publicKey: string) => {
     return deriveAddress(publicKey);
   };
@@ -21,9 +16,5 @@ export class XRP {
 
   public generateTxBuilder = (args: TxbProps) => {
     return new TransactionBuilder(args);
-  };
-
-  public sign = (rawTx: string, signProvider: SignProvider) => {
-    return Common.sign<SignResult>(rawTx, signProvider);
   };
 }
