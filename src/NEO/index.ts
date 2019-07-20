@@ -6,6 +6,7 @@ interface SignResult {
     id: string;
 }
 export interface txData{
+    tokenName: string;
     to: string;
     amount: number;
     memo?: string;
@@ -18,9 +19,9 @@ export default class NEO {
         return account.address
     }
 
-    public generateUnsignedTransaction(txData: txData) {
+    public generateUnsignedContractTx(txData: txData) {
         const coinTx = new tx.ContractTransaction()
-        .addIntent('NEO', txData['amount'], txData['to'])
+        .addIntent(txData['tokenName'], txData['amount'], txData['to'])
         
         if(txData['memo']) {
             coinTx.addRemark(txData['memo'])
