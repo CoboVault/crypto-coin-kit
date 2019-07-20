@@ -1,6 +1,6 @@
 import NEO from '../../NEO'
-import { SignProviderWithPrivateKey } from '../../NEO/utils'
-import { wallet } from '@cityofzion/neon-core'
+import neoData from '../fixtures/neo';
+import { SignProviderWithPrivateKey, buildNeoBalance } from '../../NEO/utils'
 
 describe('coin.NEO', () => {
     it('should get right address when generate the address', () => {
@@ -10,33 +10,7 @@ describe('coin.NEO', () => {
     })
 
     it('should generate unsigned tx', async () => {
-        const neoBalance = new wallet.Balance({
-            address: 'AVr6BhSsy64hZqz4dFehX62o2UxsotXf2z',
-            net: 'TestNet',
-            assetSymbols: ['NEO', "GAS"],
-            assets: {
-                GAS: {
-                    balance: 1000,
-                    unspent: [
-                        {
-                            value: 1000,
-                            txid: "8568ea9a61315c36f0b04864cedb546a02fd4fb31a93d1308eb92dddd8239982",
-                            index: 0,
-                        }
-                    ]
-                },
-                NEO: {
-                    balance: 1000,
-                    unspent: [
-                        {
-                            value: 1000,
-                            txid: "2faaeb2d1ef3d60f583d013574fcaef49651c507078663b0c1efef5a802bbc19",
-                            index: 0,
-                        }
-                    ]
-                }
-            }
-        })
+        const neoBalance = buildNeoBalance({...neoData, net: 'TestNet'})
 
         const neo = new NEO()
 
