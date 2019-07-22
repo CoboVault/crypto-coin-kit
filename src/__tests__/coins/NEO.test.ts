@@ -10,7 +10,7 @@ describe('coin.NEO', () => {
     })
 
     it('should generate unsigned tx', async () => {
-        const neoBalance = buildNeoBalance({...neoData, net: 'TestNet'})
+        const neoBalance = buildNeoBalance({ ...neoData, net: 'TestNet' })
 
         const neo = new NEO()
 
@@ -35,10 +35,20 @@ describe('coin.NEO', () => {
                 address: 'Ax12384',
                 balance: []
             }
-            const emptyBalance = buildNeoBalance({...testNoneBalance, net: 'TestNet'})
+            const emptyBalance = buildNeoBalance({ ...testNoneBalance, net: 'TestNet' })
             expect(emptyBalance.address).toEqual('Ax12384')
             expect(emptyBalance.assets).toEqual({})
             expect(emptyBalance.assetSymbols.length).toEqual(0)
+        })
+
+        it('should return the NEP 5 token balance if have', () => {
+            const testTokenBalance =
+                { "balance": [{ "unspent": [], "asset_symbol": "GAS", "asset_hash": "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7", "asset": "GAS", "amount": 0.0 }, { "unspent": [], "asset_symbol": "TKY", "asset_hash": "132947096727c84c7f9e076c90f08fec3bc17f18", "asset": "THEKEY Token", "amount": 206500.0 }], "address": "ANdRzFq5BCWL1kgVSmTEuEQEUyxrY8nbKH" }
+
+            const tokeBalance = buildNeoBalance({ ...testTokenBalance, net: 'TestNet' })
+            expect(tokeBalance.assetSymbols).toEqual(['GAS'])
+            expect(tokeBalance.tokenSymbols).toEqual(['TKY'])
+            expect(tokeBalance.tokens['TKY'].toFixed()).toEqual('206500')
         })
     })
 })

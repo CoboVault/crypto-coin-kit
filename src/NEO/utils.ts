@@ -7,16 +7,18 @@ interface externalNeoBalance {
     balance: Array<balanceLike>;
 }
 
+type unspentItem = {
+        value: number;
+        txid: string;
+        n: number;
+}
+
 interface balanceLike {
     asset_symbol: string;
     asset_hash: string;
     asset: string;
     amount: number;
-    unspent: Array<{
-        value: number;
-        txid: string;
-        n: number;
-    }>
+    unspent: Array<unspentItem>
 
 }
 
@@ -42,9 +44,22 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
         [sym: string]: Partial<wallet.AssetBalanceLike>;
     } = {};
 
+    let tokenSymbols: string[] = [];
+    let tokens: {
+        [sym: string]: number
+    } = {};
+
+    const isAsset = (amount: number, unspent: Array<unspentItem>) => {
+        if(amount === 0 && unspent.length ===0) return true;
+        if(amount !== 0 && unspent.length === 0) return false;
+        if(amount !== 0 && unspent.length !== 0) return true;
+        return true;
+    }
+
+
     externalNeoBalance.balance.forEach(each => {
-        if (each['asset_symbol']) {
-            assetSymbols.push(each['asset_symbol'])
+        if (isAsset(each['amount'], each['unspent'])) {
+            tokenSymbols.push(each['asset_symbol'])
             assets[each['asset_symbol']] = {
                 balance: each['amount'],
                 unspent: each.unspent.map(eachUnspent => ({
@@ -53,6 +68,9 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
                     index: eachUnspent['n']
                 }))
             }
+        } else {
+            tokenSymbols.push(each['asset_symbol'])
+            tokens[each['asset_symbol']] = each['amount']
         }
     })
 
@@ -61,6 +79,8 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
         address,
         net,
         assetSymbols,
-        assets
+        assets,
+        tokens,
+        tokenSymbols,
     })
 }
