@@ -8,5 +8,8 @@ exports.default = (function (input) {
     var r = INPUT.slice(0, 64);
     var s = INPUT.slice(64, 128);
     // DER https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki
-    return "30440220" + r + "0220" + s;
+    var signatureType = "30"; // compound
+    var signatureLength = "44"; // 68 bytes = 0220(2) + r (32) + 0220(2) + s (32)
+    var rsPrefix = "0220"; // 02 + 20 (R/S - length = 32 bytes)
+    return "" + signatureType + signatureLength + rsPrefix + r + rsPrefix + s;
 });

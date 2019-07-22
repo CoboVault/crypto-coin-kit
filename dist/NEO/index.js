@@ -16,27 +16,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
-var ripple_address_codec_1 = require("ripple-address-codec");
-// @ts-ignore
-var ripple_keypairs_1 = require("ripple-keypairs");
+var neon_core_1 = require("@cityofzion/neon-core");
 var coin_1 = __importDefault(require("../Common/coin"));
-var transaction_1 = require("./transaction");
-var XRP = /** @class */ (function (_super) {
-    __extends(XRP, _super);
-    function XRP() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.generateAddress = function (publicKey) {
-            return ripple_keypairs_1.deriveAddress(publicKey);
-        };
-        _this.isAddressValid = function (address) {
-            return ripple_address_codec_1.isValidAddress(address);
-        };
-        _this.generateTxBuilder = function (args) {
-            return new transaction_1.TransactionBuilder(args);
-        };
-        return _this;
+var NEO = /** @class */ (function (_super) {
+    __extends(NEO, _super);
+    function NEO() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    return XRP;
+    NEO.prototype.generateAddress = function (publicKey) {
+        var account = new neon_core_1.wallet.Account(publicKey);
+        return account.address;
+    };
+    NEO.prototype.generateUnsignedContractTx = function (txData) {
+        var coinTx = new neon_core_1.tx.ContractTransaction()
+            .addIntent(txData['tokenName'], txData['amount'], txData['to']);
+        if (txData['memo']) {
+            coinTx.addRemark(txData['memo']);
+        }
+        coinTx.calculate(txData['balance']);
+        return coinTx.serialize(false);
+    };
+    return NEO;
 }(coin_1.default));
-exports.XRP = XRP;
+exports.default = NEO;

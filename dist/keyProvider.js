@@ -9,7 +9,6 @@ var secp256k1_1 = __importDefault(require("secp256k1"));
 // @ts-ignore
 var secp256r1_1 = __importDefault(require("secp256r1"));
 var tweetnacl_1 = __importDefault(require("tweetnacl"));
-var utils_1 = require("./utils");
 var KeyProvider = /** @class */ (function () {
     function KeyProvider(args) {
         var _this = this;
@@ -38,33 +37,27 @@ var KeyProvider = /** @class */ (function () {
             if (!_this.privateKey) {
                 throw new Error("No private key provided");
             }
-            var privateKeyData = buffer_1.Buffer.from(_this.privateKey, "hex");
-            var publicKeyData = secp256k1_1.default.publicKeyCreate(privateKeyData);
-            return publicKeyData.toString("hex");
+            return secp256k1_1.default.publicKeyCreate(_this.privateKey);
         };
         this.secp256r1GetPublicKey = function () {
             if (!_this.privateKey) {
                 throw new Error("No private key provided");
             }
-            var privateKeyData = buffer_1.Buffer.from(_this.privateKey, "hex");
-            var publicKeyData = secp256r1_1.default.publicKeyCreate(privateKeyData);
-            return publicKeyData.toString("hex");
+            return secp256r1_1.default.publicKeyCreate(_this.privateKey);
         };
         this.ed25519GetPublicKey = function () {
             if (!_this.privateKey) {
                 throw new Error("No private key provided");
             }
-            var privateKeyData = buffer_1.Buffer.from(_this.privateKey, "hex");
-            var keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(new Uint8Array(privateKeyData));
-            var publicKeyData = Array.from(keyPair.publicKey);
-            return utils_1.bytesToHex(publicKeyData);
+            var keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(new Uint8Array(_this.privateKey));
+            return buffer_1.Buffer.from(keyPair.publicKey);
         };
         var privateKey = args.privateKey, publicKey = args.publicKey, keyType = args.keyType;
         if (!this.checkKeyType(keyType)) {
             throw new Error("invalid key type: " + keyType);
         }
         if (privateKey && !this.checkPrivateKey(privateKey)) {
-            throw new Error("invalid privateKey: " + privateKey + ", should be 32 byte hex");
+            throw new Error("invalid privateKey, should be 32 bytes");
         }
         this.privateKey = privateKey;
         this.publicKey = publicKey;
