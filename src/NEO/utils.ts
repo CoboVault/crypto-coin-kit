@@ -8,9 +8,9 @@ interface externalNeoBalance {
 }
 
 type unspentItem = {
-        value: number;
-        txid: string;
-        n: number;
+    value: number;
+    txid: string;
+    n: number;
 }
 
 interface balanceLike {
@@ -19,7 +19,17 @@ interface balanceLike {
     asset: string;
     amount: number;
     unspent: Array<unspentItem>
+}
 
+interface claimLike {
+    value: number;
+    unclaimed: number;
+    txid: string;
+    sys_fee: number;
+    start_height?: number,
+    n: number;
+    generated: number;
+    end_height?: number;
 }
 
 export const SignProviderWithPrivateKey = (privateKey: string): SignProvider => {
@@ -50,9 +60,9 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
     } = {};
 
     const isAsset = (amount: number, unspent: Array<unspentItem>) => {
-        if(amount === 0 && unspent.length ===0) return true;
-        if(amount !== 0 && unspent.length === 0) return false;
-        if(amount !== 0 && unspent.length !== 0) return true;
+        if (amount === 0 && unspent.length === 0) return true;
+        if (amount !== 0 && unspent.length === 0) return false;
+        if (amount !== 0 && unspent.length !== 0) return true;
         return true;
     }
 
@@ -82,5 +92,22 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
         assets,
         tokens,
         tokenSymbols,
+    })
+}
+
+
+export const buildNeoClaims = (address: string, net: string, externalClaims: claimLike[]) => {
+    const claims: wallet.ClaimItemLike[] = externalClaims.map(each => ({
+        claim: each['unclaimed'],
+        txid: each['txid'],
+        index: each['n'],
+        value: each['value'],
+        start: each['start_height'],
+        end: each['end_height']
+    }))
+    return new wallet.Claims({
+        address,
+        net,
+        claims
     })
 }
