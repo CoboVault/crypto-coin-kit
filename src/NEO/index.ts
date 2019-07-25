@@ -9,6 +9,7 @@ export interface txData{
     balance: wallet.Balance
 
 }
+
 export default class NEO extends Coin{
     public generateAddress(publicKey: string) {
         const account = new wallet.Account(publicKey)
@@ -25,5 +26,10 @@ export default class NEO extends Coin{
 
         coinTx.calculate(txData['balance'])
         return coinTx.serialize(false)
+    }
+
+    public generateUnsignedClaimTx(claims: wallet.Claims) {
+        const claimTx = tx.ClaimTransaction.fromClaims(claims)
+        return claimTx.serialize(false)
     }
 }

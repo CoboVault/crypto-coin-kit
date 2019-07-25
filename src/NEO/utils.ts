@@ -7,17 +7,29 @@ interface externalNeoBalance {
     balance: Array<balanceLike>;
 }
 
+type unspentItem = {
+    value: number;
+    txid: string;
+    n: number;
+}
+
 interface balanceLike {
     asset_symbol: string;
     asset_hash: string;
     asset: string;
     amount: number;
-    unspent: Array<{
-        value: number;
-        txid: string;
-        n: number;
-    }>
+    unspent: Array<unspentItem>
+}
 
+interface claimLike {
+    value: number;
+    unclaimed: number;
+    txid: string;
+    sys_fee: number;
+    start_height?: number,
+    n: number;
+    generated: number;
+    end_height?: number;
 }
 
 export const SignProviderWithPrivateKey = (privateKey: string): SignProvider => {
@@ -42,9 +54,22 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
         [sym: string]: Partial<wallet.AssetBalanceLike>;
     } = {};
 
+    let tokenSymbols: string[] = [];
+    let tokens: {
+        [sym: string]: number
+    } = {};
+
+    const isAsset = (amount: number, unspent: Array<unspentItem>) => {
+        if (amount === 0 && unspent.length === 0) return true;
+        if (amount !== 0 && unspent.length === 0) return false;
+        if (amount !== 0 && unspent.length !== 0) return true;
+        return true;
+    }
+
+
     externalNeoBalance.balance.forEach(each => {
-        if (each['asset_symbol']) {
-            assetSymbols.push(each['asset_symbol'])
+        if (isAsset(each['amount'], each['unspent'])) {
+            tokenSymbols.push(each['asset_symbol'])
             assets[each['asset_symbol']] = {
                 balance: each['amount'],
                 unspent: each.unspent.map(eachUnspent => ({
@@ -53,6 +78,9 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
                     index: eachUnspent['n']
                 }))
             }
+        } else {
+            tokenSymbols.push(each['asset_symbol'])
+            tokens[each['asset_symbol']] = each['amount']
         }
     })
 
@@ -61,6 +89,25 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
         address,
         net,
         assetSymbols,
-        assets
+        assets,
+        tokens,
+        tokenSymbols,
+    })
+}
+
+
+export const buildNeoClaims = (address: string, net: string, externalClaims: claimLike[]) => {
+    const claims: wallet.ClaimItemLike[] = externalClaims.map(each => ({
+        claim: each['unclaimed'],
+        txid: each['txid'],
+        index: each['n'],
+        value: each['value'],
+        start: each['start_height'],
+        end: each['end_height']
+    }))
+    return new wallet.Claims({
+        address,
+        net,
+        claims
     })
 }
