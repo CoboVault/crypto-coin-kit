@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var keyProvider_1 = require("./keyProvider");
 var NEO_1 = __importDefault(require("./NEO"));
 var XRP_1 = require("./XRP");
+var NEO_1 = __importDefault(require("./NEO"));
 exports.default = {
     coins: {
         XRP: XRP_1.XRP,
