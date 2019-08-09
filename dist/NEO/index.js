@@ -36,6 +36,10 @@ var NEO = /** @class */ (function (_super) {
         coinTx.calculate(txData['balance']);
         return coinTx.serialize(false);
     };
+    NEO.prototype.generateUnsignedClaimTx = function (claims) {
+        var claimTx = neon_core_1.tx.ClaimTransaction.fromClaims(claims);
+        return claimTx.serialize(false);
+    };
     return NEO;
 }(coin_1.default));
 exports.default = NEO;
