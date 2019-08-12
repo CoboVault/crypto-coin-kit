@@ -1,4 +1,4 @@
-import { KeyProvider } from "../keyProvider";
+import KeyProvider from "../keyProvider";
 
 const data = {
   secp256k1: {

@@ -13,7 +13,7 @@ export interface KeyProviderProps {
   keyType: KeyType;
 }
 
-export class KeyProvider {
+export default class KeyProvider {
   private readonly privateKey?: Buffer;
   private readonly publicKey?: Buffer;
   private readonly keyType: KeyType;
