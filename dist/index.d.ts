@@ -1,4 +1,4 @@
-import { KeyProvider } from "./keyProvider";
+import KeyProvider from "./keyProvider";
 import NEO from "./NEO";
 import { XRP } from "./XRP";
 declare const _default: {
