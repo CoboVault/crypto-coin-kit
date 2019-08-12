@@ -10,4 +10,5 @@ export interface txData {
 export default class NEO extends Coin {
     generateAddress(publicKey: string): string;
     generateUnsignedContractTx(txData: txData): string;
+    generateUnsignedClaimTx(claims: wallet.Claims): string;
 }

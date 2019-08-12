@@ -5,7 +5,7 @@ export interface KeyProviderProps {
     publicKey?: Buffer;
     keyType: KeyType;
 }
-export declare class KeyProvider {
+export default class KeyProvider {
     private readonly privateKey?;
     private readonly publicKey?;
     private readonly keyType;

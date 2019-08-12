@@ -65,4 +65,4 @@ var KeyProvider = /** @class */ (function () {
     }
     return KeyProvider;
 }());
-exports.KeyProvider = KeyProvider;
+exports.default = KeyProvider;
