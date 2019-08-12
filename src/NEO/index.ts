@@ -1,5 +1,6 @@
 import { wallet, tx } from '@cityofzion/neon-core'
 import Coin from "../Common/coin";
+import { SignProviderWithPrivateKey, buildNeoBalance, buildNeoClaims } from './utils'
 
 export interface txData{
     tokenName: string;
@@ -9,8 +10,13 @@ export interface txData{
     balance: wallet.Balance
 
 }
-
 export default class NEO extends Coin{
+    public static utils = {
+        SignProviderWithPrivateKey,
+        buildNeoBalance,
+        buildNeoClaims
+    }
+
     public generateAddress(publicKey: string) {
         const account = new wallet.Account(publicKey)
         return account.address

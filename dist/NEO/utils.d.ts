@@ -1,6 +1,6 @@
 import { wallet } from '@cityofzion/neon-core';
 import { SignProvider } from '../Common';
-interface externalNeoBalance {
+export interface externalNeoBalance {
     address: string;
     net: string;
     balance: Array<balanceLike>;
@@ -17,7 +17,7 @@ interface balanceLike {
     amount: number;
     unspent: Array<unspentItem>;
 }
-interface claimLike {
+export interface claimLike {
     value: number;
     unclaimed: number;
     txid: string;

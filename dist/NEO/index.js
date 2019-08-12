@@ -18,6 +18,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var neon_core_1 = require("@cityofzion/neon-core");
 var coin_1 = __importDefault(require("../Common/coin"));
+var utils_1 = require("./utils");
 var NEO = /** @class */ (function (_super) {
     __extends(NEO, _super);
     function NEO() {
@@ -39,6 +40,11 @@ var NEO = /** @class */ (function (_super) {
     NEO.prototype.generateUnsignedClaimTx = function (claims) {
         var claimTx = neon_core_1.tx.ClaimTransaction.fromClaims(claims);
         return claimTx.serialize(false);
+    };
+    NEO.utils = {
+        SignProviderWithPrivateKey: utils_1.SignProviderWithPrivateKey,
+        buildNeoBalance: utils_1.buildNeoBalance,
+        buildNeoClaims: utils_1.buildNeoClaims
     };
     return NEO;
 }(coin_1.default));
