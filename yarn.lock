@@ -131,18 +131,16 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@cityofzion/neon-api@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@cityofzion/neon-api/-/neon-api-4.6.0.tgz#23ca1417d3d531c143a965ebafaff9ae5576dd74"
-  integrity sha512-lzlLoGFarYqPZsEMSxSPXRFOmFvSvjylo4ti9Atn7xQhpSxJydlhKs/Ysf7TZk4NzohGOH3t8gkUxmISpThsCA==
+"@cityofzion/neon-api@https://github.com/cobowallet/cobo-neo-api.git#5e0693adbe733b5e6ec2b0b7cd4c7439a33cab7b":
+  version "4.7.0"
+  resolved "https://github.com/cobowallet/cobo-neo-api.git#5e0693adbe733b5e6ec2b0b7cd4c7439a33cab7b"
   dependencies:
-    "@cityofzion/neon-core" "^4.6.0"
+    "@cityofzion/neon-core" "https://github.com/cobowallet/cobo-neon-core.git#1d733c33da703e4905485b914124d1f2b43f8809"
     axios "0.19.0"
 
-"@cityofzion/neon-core@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@cityofzion/neon-core/-/neon-core-4.6.0.tgz#51203c1d8e0dd4552ee431371dcf5b2307998736"
-  integrity sha512-EkqN6pUxymIvLpzo2A0UmdiD9oYcwy5IoZZF6/acTfEBsoef1QNa/fEnPIYH6W+uI1IK3AY5WKOIzJTTOFMRdA==
+"@cityofzion/neon-core@https://github.com/cobowallet/cobo-neon-core.git#1d733c33da703e4905485b914124d1f2b43f8809":
+  version "4.7.1"
+  resolved "https://github.com/cobowallet/cobo-neon-core.git#1d733c33da703e4905485b914124d1f2b43f8809"
   dependencies:
     "@types/bn.js" "4.11.5"
     "@types/bs58" "4.0.0"
@@ -157,27 +155,23 @@
     bs58check "2.1.2"
     crypto-js "3.1.9-1"
     elliptic "6.4.1"
-    loglevel "1.6.1"
-    loglevel-plugin-prefix "0.8.4"
     scrypt-js "2.0.4"
     secure-random "1.1.1"
     wif "2.0.6"
 
-"@cityofzion/neon-js@^4.6.1":
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/@cityofzion/neon-js/-/neon-js-4.6.1.tgz#24b43112ec14bb8fbff024ee38eea82097c0a6b5"
-  integrity sha512-JF9ZgZH7SSpsftHTL4xHMlmk39Cje9JWN7CC4xQs5qY44BiQLhnDmWv3j1Mqs41NRCHrfLmit8ilED8Q3xNt3w==
+"@cityofzion/neon-js@https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a":
+  version "4.7.0"
+  resolved "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a"
   dependencies:
-    "@cityofzion/neon-api" "^4.6.0"
-    "@cityofzion/neon-core" "^4.6.0"
-    "@cityofzion/neon-nep5" "^4.6.1"
+    "@cityofzion/neon-api" "https://github.com/cobowallet/cobo-neo-api.git#5e0693adbe733b5e6ec2b0b7cd4c7439a33cab7b"
+    "@cityofzion/neon-core" "https://github.com/cobowallet/cobo-neon-core.git#1d733c33da703e4905485b914124d1f2b43f8809"
+    "@cityofzion/neon-nep5" "https://github.com/cobowallet/cobo-neo-nep5.git#f91531dae43af05886a4e66f514d9c59fcf8b7b0"
 
-"@cityofzion/neon-nep5@^4.6.1":
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/@cityofzion/neon-nep5/-/neon-nep5-4.6.1.tgz#62c947eee2e6b4f938bdc4fa3070e7b59a126c34"
-  integrity sha512-Bd0k7Ok3CNcYYWoR7doiXxJJxnT31SukpE0216beig6MKKwbwX1oxoPK2F9xo4RCC6VXzJRX9FwWdtJjPlIsZw==
+"@cityofzion/neon-nep5@https://github.com/cobowallet/cobo-neo-nep5.git#f91531dae43af05886a4e66f514d9c59fcf8b7b0":
+  version "4.7.0"
+  resolved "https://github.com/cobowallet/cobo-neo-nep5.git#f91531dae43af05886a4e66f514d9c59fcf8b7b0"
   dependencies:
-    "@cityofzion/neon-core" "^4.6.0"
+    "@cityofzion/neon-core" "https://github.com/cobowallet/cobo-neon-core.git#1d733c33da703e4905485b914124d1f2b43f8809"
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.3"
@@ -2599,16 +2593,6 @@ lodash@^4.12.0, lodash@^4.17.11, lodash@^4.17.4:
   version "4.17.14"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
   integrity sha512-mmKYbW3GLuJeX+iGP+Y7Gp1AiGHGbXHCOh/jZmrawMmsE7MS4znI3RL2FsjbqOyMayHInjOeykW7PEajUk1/xw==
-
-loglevel-plugin-prefix@0.8.4:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/loglevel-plugin-prefix/-/loglevel-plugin-prefix-0.8.4.tgz#2fe0e05f1a820317d98d8c123e634c1bd84ff644"
-  integrity sha512-WpG9CcFAOjz/FtNht+QJeGpvVl/cdR6P0z6OcXSkr8wFJOsV2GRj2j10JLfjuA4aYkcKCNIEqRGCyTife9R8/g==
-
-loglevel@1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
-  integrity sha1-4PyVEztu8nbNyIh82vJKpvFW+Po=
 
 loose-envify@^1.0.0:
   version "1.4.0"

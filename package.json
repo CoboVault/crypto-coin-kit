@@ -22,7 +22,7 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@cityofzion/neon-js": "^4.6.1",
+    "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
     "buffer": "^5.2.1",
     "hash.js": "^1.1.7",
     "ripple-address-codec": "^2.0.1",
