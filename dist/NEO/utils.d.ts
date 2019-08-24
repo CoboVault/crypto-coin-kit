@@ -3,19 +3,19 @@ import { SignProvider } from '../Common';
 export interface externalNeoBalance {
     address: string;
     net: string;
-    balance: Array<balanceLike>;
+    balance: balanceLike[];
 }
-declare type unspentItem = {
+interface unspentItem {
     value: number;
     txid: string;
     n: number;
-};
+}
 interface balanceLike {
     asset_symbol: string;
     asset_hash: string;
     asset: string;
     amount: number;
-    unspent: Array<unspentItem>;
+    unspent: unspentItem[];
 }
 export interface claimLike {
     value: number;
