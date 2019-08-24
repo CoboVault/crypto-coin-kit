@@ -1,5 +1,6 @@
 export interface SignProvider {
   sign: (rawTx: string) => any;
+  signMessage: (hex: string) => string;
 }
 
 export const sign = async <Result>(
