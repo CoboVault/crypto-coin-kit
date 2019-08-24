@@ -1,6 +1,7 @@
-import { wallet, tx } from '@cityofzion/neon-core'
+import { tx, wallet } from '@cityofzion/neon-core'
 import Coin from "../Common/coin";
-import { SignProviderWithPrivateKey, buildNeoBalance, buildNeoClaims } from './utils'
+import { buildNeoBalance, buildNeoClaims, SignProviderWithPrivateKey } from './utils'
+import { SignProvider } from '../Common';
 
 export interface txData{
     tokenName: string;
@@ -24,14 +25,22 @@ export default class NEO extends Coin{
 
     public generateUnsignedContractTx(txData: txData) {
         const coinTx = new tx.ContractTransaction()
-        .addIntent(txData['tokenName'], txData['amount'], txData['to'])
+        .addIntent(txData.tokenName, txData.amount, txData.to)
         
-        if(txData['memo']) {
-            coinTx.addRemark(txData['memo'])
+        if(txData.memo) {
+            coinTx.addRemark(txData.memo)
         }
 
-        coinTx.calculate(txData['balance'])
+        coinTx.calculate(txData.balance)
         return coinTx.serialize(false)
+    }
+
+    public async signMessage(hex:string, signer: SignProvider) {
+        return signer.signMessage(hex)
+    }
+
+    public verifyMessage(sig: string, hex: string, pubkey:string) {
+        return wallet.verify(hex, sig, pubkey)
     }
 
     public generateUnsignedClaimTx(claims: wallet.Claims) {
