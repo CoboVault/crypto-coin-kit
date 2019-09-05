@@ -1,9 +1,8 @@
 import { SignProvider } from "../Common";
-interface result {
-    hex: string;
-    id: string;
+export interface Result {
+    r: string;
+    s: string;
 }
 export default class Coin {
-    sign(rawTx: string, signProvider: SignProvider): Promise<result>;
+    sign(rawTx: string, signProvider: SignProvider): Promise<any>;
 }
-export {};

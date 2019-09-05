@@ -55,7 +55,7 @@ var TransactionBuilder = /** @class */ (function () {
     };
     TransactionBuilder.prototype.toBytes = function () {
         var txHex = this.toHex();
-        return Buffer.from(txHex, 'hex');
+        return Buffer.from(txHex, "hex");
     };
     TransactionBuilder.prototype.toHex = function () {
         var txJson = this.toJSON();
@@ -78,10 +78,10 @@ var TransactionBuilder = /** @class */ (function () {
         };
         // DestinationTag: undefined or null will produce an unexpected 2E00000000 hex fragment in unsigned TX;
         var txWithDetinationTag = this.destinationTag
-            ? __assign({}, partialTx, { DestinationTag: this.destinationTag }) : partialTx;
+            ? __assign(__assign({}, partialTx), { DestinationTag: this.destinationTag }) : partialTx;
         // if this is a signed tx
         return this.txnSignature
-            ? __assign({}, txWithDetinationTag, { TxnSignature: this.txnSignature }) : txWithDetinationTag;
+            ? __assign(__assign({}, txWithDetinationTag), { TxnSignature: this.txnSignature }) : txWithDetinationTag;
     };
     return TransactionBuilder;
 }());

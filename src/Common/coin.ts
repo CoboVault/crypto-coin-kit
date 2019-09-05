@@ -1,12 +1,12 @@
 import Common, { SignProvider } from "../Common";
 
-interface result{
-    hex: string,
-    id: string
+export interface Result {
+  r: string;
+  s: string;
 }
 
 export default class Coin {
-    public sign (rawTx: string, signProvider: SignProvider){
-        return Common.sign<result>(rawTx, signProvider);
-    };
+  public sign(rawTx: string, signProvider: SignProvider) {
+    return Common.sign(rawTx, signProvider);
+  }
 }

@@ -1,4 +1,5 @@
 "use strict";
+// example sign provider for XZC
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,82 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var neon_core_1 = require("@cityofzion/neon-core");
-exports.SignProviderWithPrivateKey = function (privateKey) {
+// @ts-ignore
+var secp256k1_1 = __importDefault(require("secp256k1"));
+exports.default = (function (privateKey) {
     return {
         sign: function (hex) { return __awaiter(void 0, void 0, void 0, function () {
-            var signedTx;
+            var input, privKey, sigObj, r, s;
             return __generator(this, function (_a) {
-                signedTx = neon_core_1.tx.Transaction.deserialize(hex).sign(privateKey);
-                return [2 /*return*/, {
-                        hex: signedTx.serialize(),
-                        id: signedTx.hash
-                    }];
+                try {
+                    input = Buffer.from(hex, "hex");
+                    privKey = Buffer.from(privateKey, "hex");
+                    sigObj = secp256k1_1.default.sign(input, privKey);
+                    r = sigObj.signature.slice(0, 32).toString("hex");
+                    s = sigObj.signature.slice(32, 64).toString("hex");
+                    return [2 /*return*/, {
+                            r: r,
+                            s: s
+                        }];
+                }
+                catch (e) {
+                    console.log(e);
+                    throw e;
+                }
+                return [2 /*return*/];
             });
-        }); },
-        signMessage: function (hex) {
-            return neon_core_1.wallet.sign(hex, privateKey);
-        }
+        }); }
     };
-};
-exports.buildNeoBalance = function (externalNeoBalance) {
-    var address = externalNeoBalance.address;
-    var net = externalNeoBalance.net;
-    var assetSymbols = [];
-    var assets = {};
-    var tokenSymbols = [];
-    var tokens = {};
-    var isAsset = function (amount, unspent) {
-        if (amount === 0 && unspent.length === 0) {
-            return true;
-        }
-        if (amount !== 0 && unspent.length === 0) {
-            return false;
-        }
-        if (amount !== 0 && unspent.length !== 0) {
-            return true;
-        }
-        return true;
-    };
-    externalNeoBalance.balance.forEach(function (each) {
-        if (isAsset(each.amount, each.unspent)) {
-            tokenSymbols.push(each.asset_symbol);
-            assets[each.asset_symbol] = {
-                balance: each.amount,
-                unspent: each.unspent.map(function (eachUnspent) { return ({
-                    value: eachUnspent.value,
-                    txid: eachUnspent.txid,
-                    index: eachUnspent.n
-                }); })
-            };
-        }
-        else {
-            tokenSymbols.push(each.asset_symbol);
-            tokens[each.asset_symbol] = each.amount;
-        }
-    });
-    return new neon_core_1.wallet.Balance({
-        address: address,
-        net: net,
-        assetSymbols: assetSymbols,
-        assets: assets,
-        tokens: tokens,
-        tokenSymbols: tokenSymbols
-    });
-};
-exports.buildNeoClaims = function (address, net, externalClaims) {
-    var claims = externalClaims.map(function (each) { return ({
-        claim: each.unclaimed,
-        txid: each.txid,
-        index: each.n,
-        value: each.value,
-        start: each.start_height,
-        end: each.end_height
-    }); });
-    return new neon_core_1.wallet.Claims({
-        address: address,
-        net: net,
-        claims: claims
-    });
-};
+});

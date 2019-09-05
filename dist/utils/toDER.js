@@ -1,5 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+// ts-ignore
+// @ts-ignore
+var secp256k1_1 = __importDefault(require("secp256k1"));
 exports.default = (function (input) {
     if (input.length < 128) {
         throw new Error("not a valid signature");
@@ -13,3 +19,9 @@ exports.default = (function (input) {
     var rsPrefix = "0220"; // 02 + 20 (R/S - length = 32 bytes)
     return "" + signatureType + signatureLength + rsPrefix + r + rsPrefix + s;
 });
+exports.fromSignResultToDER = function (result) {
+    var r = Buffer.from(result.r, "hex");
+    var s = Buffer.from(result.s, "hex");
+    var signature = Buffer.concat([r, s]);
+    return secp256k1_1.default.signatureExport(signature).toString("hex");
+};

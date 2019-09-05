@@ -10,7 +10,6 @@ var Coin = /** @class */ (function () {
     Coin.prototype.sign = function (rawTx, signProvider) {
         return Common_1.default.sign(rawTx, signProvider);
     };
-    ;
     return Coin;
 }());
 exports.default = Coin;

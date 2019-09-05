@@ -52,45 +52,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var neon_core_1 = require("@cityofzion/neon-core");
+// @ts-ignore
+var zcore_lib_1 = require("zcore-lib");
 var coin_1 = __importDefault(require("../Common/coin"));
-var utils_1 = require("./utils");
-var NEO = /** @class */ (function (_super) {
-    __extends(NEO, _super);
-    function NEO() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    NEO.prototype.generateAddress = function (publicKey) {
-        var account = new neon_core_1.wallet.Account(publicKey);
-        return account.address;
-    };
-    NEO.prototype.generateUnsignedContractTx = function (txData) {
-        var coinTx = new neon_core_1.tx.ContractTransaction().addIntent(txData.tokenName, txData.amount, txData.to);
-        if (txData.memo) {
-            coinTx.addRemark(txData.memo);
-        }
-        coinTx.calculate(txData.balance);
-        return coinTx.serialize(false);
-    };
-    NEO.prototype.signMessage = function (hex, signer) {
-        return __awaiter(this, void 0, void 0, function () {
+var utils_1 = require("../utils");
+var toDER_1 = require("../utils/toDER");
+var formatInput_1 = __importDefault(require("./formatInput"));
+var processTransaction_1 = __importDefault(require("./processTransaction"));
+var XZC = /** @class */ (function (_super) {
+    __extends(XZC, _super);
+    function XZC() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.generateAddress = function (publicKey, network) {
+            if (network === void 0) { network = "livenet"; }
+            var pubkey = new zcore_lib_1.PublicKey(publicKey);
+            // only support P2PKH now
+            return zcore_lib_1.Address.fromPublicKey(pubkey, network).toString();
+        };
+        _this.isAddressValid = function (address) {
+            return zcore_lib_1.Address.isValid(address);
+        };
+        _this.generateTransaction = function (txData, signProvider, options) { return __awaiter(_this, void 0, void 0, function () {
+            var inputs, changeAddress, to, fee, amount, transaction, sign;
+            var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, signer.signMessage && signer.signMessage(hex)];
+                inputs = txData.inputs, changeAddress = txData.changeAddress, to = txData.to, fee = txData.fee, amount = txData.amount;
+                transaction = new zcore_lib_1.Transaction()
+                    .from(formatInput_1.default(inputs))
+                    .to(to, amount)
+                    .fee(fee)
+                    .change(changeAddress);
+                sign = function (hex) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    return [2 /*return*/, this.sign(hex, signProvider)];
+                }); }); };
+                return [2 /*return*/, processTransaction_1.default(transaction, sign, options.publicKey)];
             });
-        });
-    };
-    NEO.prototype.verifyMessage = function (sig, hex, pubkey) {
-        return neon_core_1.wallet.verify(hex, sig, pubkey);
-    };
-    NEO.prototype.generateUnsignedClaimTx = function (claims) {
-        var claimTx = neon_core_1.tx.ClaimTransaction.fromClaims(claims);
-        return claimTx.serialize(false);
-    };
-    NEO.utils = {
-        SignProviderWithPrivateKey: utils_1.SignProviderWithPrivateKey,
-        buildNeoBalance: utils_1.buildNeoBalance,
-        buildNeoClaims: utils_1.buildNeoClaims
-    };
-    return NEO;
+        }); };
+        _this.signMessage = function (message, signProvider) { return __awaiter(_this, void 0, void 0, function () {
+            var MAGIC_BYTES, messageBuffer, messageLength, buffer, hashHex, sign, signResult;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        MAGIC_BYTES = Buffer.from("\u0018Bitcoin Signed Message:\n", "utf-8");
+                        messageBuffer = Buffer.from(message, "utf-8");
+                        messageLength = Buffer.from(utils_1.numberToHex(messageBuffer.length), "hex");
+                        buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
+                        hashHex = utils_1.hash256(buffer).toString("hex");
+                        sign = function (hex) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                            return [2 /*return*/, this.sign(hex, signProvider)];
+                        }); }); };
+                        return [4 /*yield*/, sign(hashHex)];
+                    case 1:
+                        signResult = _a.sent();
+                        return [2 /*return*/, toDER_1.fromSignResultToDER(signResult)];
+                }
+            });
+        }); };
+        return _this;
+    }
+    return XZC;
 }(coin_1.default));
-exports.default = NEO;
+exports.XZC = XZC;

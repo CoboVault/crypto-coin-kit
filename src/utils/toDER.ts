@@ -1,3 +1,9 @@
+// ts-ignore
+// @ts-ignore
+import seck256k1 from "secp256k1";
+
+import { Result } from "../Common/coin";
+
 export default (input: string): string => {
   if (input.length < 128) {
     throw new Error("not a valid signature");
@@ -13,4 +19,11 @@ export default (input: string): string => {
   const rsPrefix = "0220"; // 02 + 20 (R/S - length = 32 bytes)
 
   return `${signatureType}${signatureLength}${rsPrefix}${r}${rsPrefix}${s}`;
+};
+
+export const fromSignResultToDER = (result: Result): string => {
+  const r = Buffer.from(result.r, "hex");
+  const s = Buffer.from(result.s, "hex");
+  const signature = Buffer.concat([r, s]);
+  return seck256k1.signatureExport(signature).toString("hex");
 };
