@@ -78,7 +78,7 @@ export class TransactionBuilder {
 
   private toBytes(): ArrayBuffer {
     const txHex = this.toHex();
-    return Buffer.from(txHex, 'hex');
+    return Buffer.from(txHex, "hex");
   }
 
   private toHex(): string {

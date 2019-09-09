@@ -2,3 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var toDER_1 = require("./toDER");
 exports.toDER = toDER_1.default;
+exports.fromSignResultToDER = toDER_1.fromSignResultToDER;
+var numberToHex_1 = require("./numberToHex");
+exports.numberToHex = numberToHex_1.default;
+var hash256_1 = require("./hash256");
+exports.hash256 = hash256_1.default;
+var reverseBuffer_1 = require("./reverseBuffer");
+exports.reverseBuffer = reverseBuffer_1.default;

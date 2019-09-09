@@ -1,5 +1,5 @@
 export interface SignProvider {
-    sign: (rawTx: string) => any;
-    signMessage: (hex: string) => string;
+    sign: (rawData: string) => Promise<any>;
+    signMessage?: (hex: any) => any;
 }
-export declare const sign: <Result>(rawTx: string, signProvider: SignProvider) => Promise<Result>;
+export declare const sign: (rawTx: string, signProvider: SignProvider) => Promise<any>;

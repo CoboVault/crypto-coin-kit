@@ -1,5 +1,5 @@
-import { wallet } from '@cityofzion/neon-core';
-import { SignProvider } from '../Common';
+import { wallet } from "@cityofzion/neon-core";
+import { SignProvider } from "../Common";
 export interface externalNeoBalance {
     address: string;
     net: string;

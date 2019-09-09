@@ -1,6 +1,6 @@
-import { wallet } from '@cityofzion/neon-core';
+import { wallet } from "@cityofzion/neon-core";
 import Coin from "../Common/coin";
-import { SignProvider } from '../Common';
+import { SignProvider } from "../Common";
 export interface txData {
     tokenName: string;
     to: string;
@@ -16,7 +16,7 @@ export default class NEO extends Coin {
     };
     generateAddress(publicKey: string): string;
     generateUnsignedContractTx(txData: txData): string;
-    signMessage(hex: string, signer: SignProvider): Promise<string>;
+    signMessage(hex: string, signer: SignProvider): Promise<any>;
     verifyMessage(sig: string, hex: string, pubkey: string): boolean;
     generateUnsignedClaimTx(claims: wallet.Claims): string;
 }
