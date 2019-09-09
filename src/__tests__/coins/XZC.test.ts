@@ -1,5 +1,6 @@
 import { XZC } from "../../XZC";
 import signWithPrivateKey from "../../XZC/signProvider";
+import { TXZC } from "../../XZC/TXZC";
 
 // @ts-ignore
 import { magicHash } from "bitcoinjs-message";
@@ -19,6 +20,7 @@ const simpleUtxoWith1BTC = {
 
 describe("coin.XZC", () => {
   const xzc = new XZC();
+  const txzc = new TXZC();
   it("should throw error if supply invalid pubkey", () => {
     const pubkey = "034bddcf";
     expect(() => {
@@ -42,12 +44,12 @@ describe("coin.XZC", () => {
   it("should generate testnet address", () => {
     const pubkey =
       "034bddcf8300468d2c3b7a4b7bc08d6338f4d584794cbc4ecec9bf2f46499d4fb9";
-    expect(xzc.generateAddress(pubkey, "testnet")).toBe(
+    expect(txzc.generateAddress(pubkey)).toBe(
       "TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ"
     );
     const pubkey2 =
       "039f1ca2b5b17ef01d1e86111a79af62ba09f1d72a77cb4382e6ae0e76cf5aae96";
-    expect(xzc.generateAddress(pubkey2, "testnet")).toBe(
+    expect(txzc.generateAddress(pubkey2)).toBe(
       "TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ"
     );
   });
@@ -58,7 +60,7 @@ describe("coin.XZC", () => {
   });
 
   it("should generate transaction raw hex that can be broadcast directly", async () => {
-    const txHex = await xzc.generateTransaction(
+    const txHex = await txzc.generateTransaction(
       {
         inputs: [simpleUtxoWith1BTC],
         changeAddress: "TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ",

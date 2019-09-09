@@ -21,7 +21,9 @@ interface TxData {
     fee: number;
 }
 export declare class XZC extends Coin {
-    generateAddress: (publicKey: string, network?: string) => any;
+    protected network: string;
+    constructor();
+    generateAddress: (publicKey: string) => any;
     isAddressValid: (address: string) => any;
     generateTransaction: (txData: TxData, signProvider: SignProvider, options: {
         publicKey: string;

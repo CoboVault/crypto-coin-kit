@@ -62,12 +62,11 @@ var processTransaction_1 = __importDefault(require("./processTransaction"));
 var XZC = /** @class */ (function (_super) {
     __extends(XZC, _super);
     function XZC() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.generateAddress = function (publicKey, network) {
-            if (network === void 0) { network = "livenet"; }
+        var _this = _super.call(this) || this;
+        _this.generateAddress = function (publicKey) {
             var pubkey = new zcore_lib_1.PublicKey(publicKey);
             // only support P2PKH now
-            return zcore_lib_1.Address.fromPublicKey(pubkey, network).toString();
+            return zcore_lib_1.Address.fromPublicKey(pubkey, _this.network).toString();
         };
         _this.isAddressValid = function (address) {
             return zcore_lib_1.Address.isValid(address);
@@ -109,6 +108,7 @@ var XZC = /** @class */ (function (_super) {
                 }
             });
         }); };
+        _this.network = "livenet";
         return _this;
     }
     return XZC;

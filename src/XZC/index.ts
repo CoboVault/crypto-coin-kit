@@ -31,10 +31,15 @@ interface TxData {
 }
 
 export class XZC extends Coin {
-  public generateAddress = (publicKey: string, network = "livenet") => {
+  protected network: string;
+  constructor() {
+    super();
+    this.network = "livenet";
+  }
+  public generateAddress = (publicKey: string) => {
     const pubkey = new PublicKey(publicKey);
     // only support P2PKH now
-    return Address.fromPublicKey(pubkey, network).toString();
+    return Address.fromPublicKey(pubkey, this.network).toString();
   };
 
   public isAddressValid = (address: string) => {
