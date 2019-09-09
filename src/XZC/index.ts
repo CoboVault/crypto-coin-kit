@@ -67,7 +67,7 @@ export class XZC extends Coin {
   };
 
   public signMessage = async (message: string, signProvider: SignProvider) => {
-    const MAGIC_BYTES = Buffer.from("\u0018Bitcoin Signed Message:\n", "utf-8");
+    const MAGIC_BYTES = Buffer.from("\x16Zcoin Signed Message:\n", "utf-8");
     const messageBuffer = Buffer.from(message, "utf-8");
     const messageLength = Buffer.from(numberToHex(messageBuffer.length), "hex");
     const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
