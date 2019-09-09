@@ -2,10 +2,6 @@ import { XZC } from "../../XZC";
 import signWithPrivateKey from "../../XZC/signProvider";
 import { TXZC } from "../../XZC/TXZC";
 
-// @ts-ignore
-import { magicHash } from "bitcoinjs-message";
-import { hash256, reverseBuffer } from "../../utils";
-
 const privateKey =
   "5a6661e8354d612c5a045075c0fe758d87b6aa39e5e1d578f439c7300730e9bf";
 const publicKey =
