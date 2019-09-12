@@ -31,6 +31,6 @@ export declare class XZC extends Coin {
         txId: string;
         txHex: string;
     }>;
-    signMessage: (message: string, signProvider: SignProvider) => Promise<string>;
+    signMessage: (message: string, signProvider: SignProvider) => Promise<any>;
 }
 export {};

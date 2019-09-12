@@ -73,7 +73,6 @@ export class XZC extends Coin {
     const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
     const hashHex = hash256(buffer).toString("hex");
     const sign = async (hex: string) => this.sign(hex, signProvider);
-    const signResult = await sign(hashHex);
-    return fromSignResultToDER(signResult);
+    return await sign(hashHex);
   };
 }

@@ -56,7 +56,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var zcore_lib_1 = require("zcore-lib");
 var coin_1 = __importDefault(require("../Common/coin"));
 var utils_1 = require("../utils");
-var toDER_1 = require("../utils/toDER");
 var formatInput_1 = __importDefault(require("./formatInput"));
 var processTransaction_1 = __importDefault(require("./processTransaction"));
 var XZC = /** @class */ (function (_super) {
@@ -88,7 +87,7 @@ var XZC = /** @class */ (function (_super) {
             });
         }); };
         _this.signMessage = function (message, signProvider) { return __awaiter(_this, void 0, void 0, function () {
-            var MAGIC_BYTES, messageBuffer, messageLength, buffer, hashHex, sign, signResult;
+            var MAGIC_BYTES, messageBuffer, messageLength, buffer, hashHex, sign;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -102,9 +101,7 @@ var XZC = /** @class */ (function (_super) {
                             return [2 /*return*/, this.sign(hex, signProvider)];
                         }); }); };
                         return [4 /*yield*/, sign(hashHex)];
-                    case 1:
-                        signResult = _a.sent();
-                        return [2 /*return*/, toDER_1.fromSignResultToDER(signResult)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         }); };
