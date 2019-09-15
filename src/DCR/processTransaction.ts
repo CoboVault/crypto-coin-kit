@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Transaction } from "zcore-lib";
+import { Transaction } from "dcr-core";
 import { Result } from "../Common/coin";
 import { fromSignResultToDER, reverseBuffer } from "../utils";
 

@@ -34,7 +34,8 @@
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
-    "dcr-core": "https://github.com/cobowallet/dcr-core.git#68a34aa8d9a8c8303869b456c207b18cc9f417eb"
+    "dcr-core": "https://github.com/cobowallet/dcr-core.git#d0c4c31dc1ebc385903d7bda477109015b50fb62",
+    "crypto-browserify": "https://github.com/cobowallet/crypto-browserify.git#master-legacy"
   },
   "files": [
     "lib/**/*"
