@@ -77,7 +77,7 @@ describe("coin.XZC", () => {
       signWithPrivateKey(privateKey)
     );
     expect(result).toBe(
-      "3045022100ff483094eb5f1422ff37c12825738cf403febf8ac1d99a6ce27e5270ba833c9e02205c2acf1e53ec622783d417d077003cc5d68cebb3bc29c57bcd142d6e44ee69b0"
+      "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });
 });

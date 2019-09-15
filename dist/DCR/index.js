@@ -92,7 +92,7 @@ var DCR = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        MAGIC_BYTES = Buffer.from("\x16Zcoin Signed Message:\n", "utf-8");
+                        MAGIC_BYTES = Buffer.from("\x16Decred Signed Message:\n", "utf-8");
                         messageBuffer = Buffer.from(message, "utf-8");
                         messageLength = Buffer.from(utils_1.numberToHex(messageBuffer.length), "hex");
                         buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
