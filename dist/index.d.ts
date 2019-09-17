@@ -1,3 +1,4 @@
+import { DCR } from "./DCR";
 import KeyProvider from "./keyProvider";
 import NEO from "./NEO";
 import { XRP } from "./XRP";
@@ -7,6 +8,7 @@ declare const _default: {
         XRP: typeof XRP;
         NEO: typeof NEO;
         XZC: typeof XZC;
+        DCR: typeof DCR;
     };
     KeyProvider: typeof KeyProvider;
 };
