@@ -91,7 +91,7 @@ exports.default = (function (transaction, sign, publicKey) { return __awaiter(vo
                     })];
             case 1:
                 _a.sent();
-                txHex = transaction.serialize();
+                txHex = transaction.serialize({ disableLargeFees: true });
                 txObj = transaction.toObject();
                 return [2 /*return*/, {
                         txHex: txHex,
