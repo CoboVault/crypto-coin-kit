@@ -75,7 +75,7 @@ export default async (
     });
   });
 
-  const txHex = transaction.serialize();
+  const txHex = transaction.serialize({disableLargeFees: true});
   const txObj = transaction.toObject();
   return {
     txHex,
