@@ -8,13 +8,16 @@
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "test": "jest",
-    "build": "rm -rf dist && tsc -p ./tsconfig.json"
+    "build": "rm -rf dist && tsc -p ./tsconfig.json",
+    "add-dist": "git add ./dist"
   },
+  "precommit": ["build", "add-dist", "test"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
+    "pre-commit": "^1.2.2",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
@@ -34,7 +37,7 @@
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
-    "dcr-core": "https://github.com/cobowallet/dcr-core.git#1518b65888f85fc9b1ab8b655afeb6ecfd1546b2",
+    "dcr-core": "https://github.com/cobowallet/dcr-core.git#4f0504472be3de5924ec403b3ae647d213dc06bd",
     "crypto-browserify": "https://github.com/cobowallet/crypto-browserify.git#master-legacy"
   },
   "files": [
