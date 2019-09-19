@@ -1,5 +1,5 @@
-import { SignProvider } from "../Common";
-import Coin from "../Common/coin";
+import { SignProviderDeprecated } from "../Common";
+import CoinDeprecated from "../Common/coin";
 export interface Input {
     address: string;
     txId: string;
@@ -20,17 +20,17 @@ interface TxData {
     to: string;
     fee: number;
 }
-export declare class XZC extends Coin {
+export declare class XZC extends CoinDeprecated {
     protected network: string;
     constructor();
     generateAddress: (publicKey: string) => any;
     isAddressValid: (address: string) => any;
-    generateTransaction: (txData: TxData, signProvider: SignProvider, options: {
+    generateTransaction: (txData: TxData, signProvider: SignProviderDeprecated, options: {
         publicKey: string;
     }) => Promise<{
         txId: string;
         txHex: string;
     }>;
-    signMessage: (message: string, signProvider: SignProvider) => Promise<any>;
+    signMessage: (message: string, signProvider: SignProviderDeprecated) => Promise<any>;
 }
 export {};

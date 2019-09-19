@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Address, PublicKey, Transaction } from "zcore-lib";
-import { SignProvider } from "../Common";
-import Coin from "../Common/coin";
+import { SignProviderDeprecated } from "../Common";
+import CoinDeprecated from "../Common/coin";
 import { hash256, numberToHex } from "../utils";
 import { fromSignResultToDER } from "../utils/toDER";
 import formatInput from "./formatInput";
@@ -30,7 +30,7 @@ interface TxData {
   fee: number; // sat
 }
 
-export class XZC extends Coin {
+export class XZC extends CoinDeprecated {
   protected network: string;
   constructor() {
     super();
@@ -48,7 +48,7 @@ export class XZC extends Coin {
 
   public generateTransaction = async (
     txData: TxData,
-    signProvider: SignProvider,
+    signProvider: SignProviderDeprecated,
     options: {
       publicKey: string;
     }
@@ -66,7 +66,7 @@ export class XZC extends Coin {
     return processTransaction(transaction, sign, options.publicKey);
   };
 
-  public signMessage = async (message: string, signProvider: SignProvider) => {
+  public signMessage = async (message: string, signProvider: SignProviderDeprecated) => {
     const MAGIC_BYTES = Buffer.from("\x16Zcoin Signed Message:\n", "utf-8");
     const messageBuffer = Buffer.from(message, "utf-8");
     const messageLength = Buffer.from(numberToHex(messageBuffer.length), "hex");

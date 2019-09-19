@@ -1,5 +1,5 @@
 import { wallet } from "@cityofzion/neon-core";
-import { SignProvider } from "../Common";
+import { SignProviderDeprecated } from "../Common";
 export interface externalNeoBalance {
     address: string;
     net: string;
@@ -27,7 +27,7 @@ export interface claimLike {
     generated: number;
     end_height?: number;
 }
-export declare const SignProviderWithPrivateKey: (privateKey: string) => SignProvider;
+export declare const SignProviderWithPrivateKey: (privateKey: string) => SignProviderDeprecated;
 export declare const buildNeoBalance: (externalNeoBalance: externalNeoBalance) => wallet.Balance;
 export declare const buildNeoClaims: (address: string, net: string, externalClaims: claimLike[]) => wallet.Claims;
 export {};

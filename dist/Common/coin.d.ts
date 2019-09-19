@@ -1,8 +1,31 @@
-import { SignProvider } from "../Common";
+import { SignProviderDeprecated } from "../Common";
+import { SignProvider, SignProviderSync } from "./sign";
 export interface Result {
     r: string;
     s: string;
 }
-export default class Coin {
-    sign(rawTx: string, signProvider: SignProvider): Promise<any>;
+export default class CoinDeprecated {
+    sign(rawTx: string, signProvider: SignProviderDeprecated): Promise<any>;
+}
+export interface BaseTxData {
+    to: string;
+    amount: number;
+    changeAddress: string;
+    fee: number;
+}
+export interface BaseSignMessageResult {
+    r: string;
+    s: string;
+}
+export interface GenerateTransactionResult {
+    txId: string;
+    txHex: string;
+}
+export interface Coin {
+    generateAddress: (publicKey: string) => string;
+    isAddressValid: (address: string) => boolean;
+    generateTransaction: (txData: any, signProvider: SignProvider, options?: any) => Promise<GenerateTransactionResult>;
+    generateTransactionSync: (txData: any, signProvider: SignProviderSync, options?: any) => GenerateTransactionResult;
+    signMessage: (message: string, signProvider: SignProvider) => Promise<BaseSignMessageResult>;
+    signMessageSync: (message: string, signProvider: SignProviderSync) => BaseSignMessageResult;
 }

@@ -1,5 +1,5 @@
-export { SignProvider } from "./sign";
+export { SignProviderDeprecated } from "./sign";
 declare const _default: {
-    sign: (rawTx: string, signProvider: import("./sign").SignProvider) => Promise<any>;
+    sign: (rawTx: string, signProvider: import("./sign").SignProviderDeprecated) => Promise<any>;
 };
 export default _default;
