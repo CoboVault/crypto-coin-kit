@@ -4,16 +4,13 @@ node_js:
 
 jobs:
   include:
-   - stage: prepare
-     script: yarn install
    - stage: test
+     before_script: yarn
      script: yarn test
-   - stage: build
-     if: branch = master
-     script: yarn build
    - stage: deploy
      if: branch = master
-     script: skip
+     before_script: yarn
+     script: yarn build
      deploy:
        provider: releases
        api_key:
