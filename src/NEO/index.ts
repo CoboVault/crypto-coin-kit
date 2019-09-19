@@ -1,11 +1,11 @@
 import { tx, wallet } from "@cityofzion/neon-core";
-import Coin from "../Common/coin";
+import CoinDeprecated from "../Common/coin";
 import {
   buildNeoBalance,
   buildNeoClaims,
   SignProviderWithPrivateKey
 } from "./utils";
-import { SignProvider } from "../Common";
+import { SignProviderDeprecated } from "../Common";
 
 export interface txData {
   tokenName: string;
@@ -14,7 +14,7 @@ export interface txData {
   memo?: string;
   balance: wallet.Balance;
 }
-export default class NEO extends Coin {
+export default class NEO extends CoinDeprecated {
   public static utils = {
     SignProviderWithPrivateKey,
     buildNeoBalance,
@@ -41,7 +41,7 @@ export default class NEO extends Coin {
     return coinTx.serialize(false);
   }
 
-  public async signMessage(hex: string, signer: SignProvider) {
+  public async signMessage(hex: string, signer: SignProviderDeprecated) {
     return signer.signMessage && signer.signMessage(hex);
   }
 

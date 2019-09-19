@@ -1,5 +1,5 @@
 import { sign } from "./sign";
-export { SignProvider } from "./sign";
+export { SignProviderDeprecated } from "./sign";
 
 export default {
   sign

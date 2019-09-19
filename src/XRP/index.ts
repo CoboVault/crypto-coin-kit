@@ -2,10 +2,10 @@
 import { isValidAddress } from "ripple-address-codec";
 // @ts-ignore
 import { deriveAddress } from "ripple-keypairs";
-import Coin from "../Common/coin";
+import CoinDeprecated from "../Common/coin";
 import { TransactionBuilder, TxbProps } from "./transaction";
 
-export class XRP extends Coin {
+export class XRP extends CoinDeprecated {
   public generateAddress = (publicKey: string) => {
     return deriveAddress(publicKey);
   };

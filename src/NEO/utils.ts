@@ -1,5 +1,5 @@
 import { tx, wallet } from "@cityofzion/neon-core";
-import { SignProvider } from "../Common";
+import { SignProviderDeprecated } from "../Common";
 
 export interface externalNeoBalance {
   address: string;
@@ -34,7 +34,7 @@ export interface claimLike {
 
 export const SignProviderWithPrivateKey = (
   privateKey: string
-): SignProvider => {
+): SignProviderDeprecated => {
   return {
     sign: async (hex: string): Promise<any> => {
       const signedTx = tx.Transaction.deserialize(hex).sign(privateKey);
