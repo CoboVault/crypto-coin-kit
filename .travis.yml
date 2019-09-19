@@ -9,6 +9,7 @@ jobs:
    - stage: test
      script: yarn test
    - stage: build
+     if: branch = master
      script: yarn build
    - stage: deploy
      script: skip
