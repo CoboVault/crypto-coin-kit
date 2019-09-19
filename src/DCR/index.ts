@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Address, PublicKey, Transaction } from "dcr-core";
-import { SignProvider } from "../Common";
+import { SignProviderDeprecated } from "../Common";
 import Coin from "../Common/coin";
 import { fromSignResultToDER, hash256, numberToHex } from "../utils";
 import formatInput from "./formatInput";
@@ -47,7 +47,7 @@ export class DCR extends Coin {
 
   public generateTransaction = async (
     txData: TxData,
-    signProvider: SignProvider,
+    signProvider: SignProviderDeprecated,
     options: {
       publicKey: string;
       disableLargeFees: boolean;
@@ -66,7 +66,7 @@ export class DCR extends Coin {
     return processTransaction(transaction, sign, options.publicKey, options);
   };
 
-  public signMessage = async (message: string, signProvider: SignProvider) => {
+  public signMessage = async (message: string, signProvider: SignProviderDeprecated) => {
     const MAGIC_BYTES = Buffer.from("\x16Decred Signed Message:\n", "utf-8");
     const messageBuffer = Buffer.from(message, "utf-8");
     const messageLength = Buffer.from(numberToHex(messageBuffer.length), "hex");
