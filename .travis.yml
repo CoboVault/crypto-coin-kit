@@ -15,6 +15,9 @@ jobs:
        provider: releases
        api_key:
          secure: V/F6Cv7QyILcIhtovUhaM4LPTIw/J4kvwmAIfCPqma4nuERWx2lY1+b1WKbdkD2FkAS8tIT2/EauOHza3NOFkH+HFRO8jJ9BN5+KOUEqfcdg/HP1JhFuCwhtUcBUV7DcaV1tfl/1kmflj1B4tjEo38JKIPXS/RijJxI6nJwxyhhj2Q7kochmbQr7u6BB8GszwQ0G6Mc0iduIu+j96Bp9z95BzC9EZwnI7mFmkRYpcF3sDv9nTlj6WqyQRVw/CMjnP90iVXWzzifir5n/uAeOWX8ZkmLWj+U8yRc3SrHnj5HOfb+IknK9F+kOOssvHzLGUJpGJ8ZwD3avm5muBnAOOjZLrcrnXfFV7E1nebSCfm8xHl6ds2tXOeedDJPw3Hfg9LbSNzNMqhdTWM0LN/K+c/7YnJhRwDLqhnFOVozFfC7pIho9tZRn882I5EbWMRuJcAHqvrzxumb5okMdwYfxa6XIppTFXtj1XNpbFcVY331D6+9QedzYNBzxaRqYjfHZ4BiEmVyLQ+KHuksNEBfvcU2HMMe8V5q/utaLPmOEssTOSsA1WGoNbq2FEfmrya60dLwqUxcmPZ0zhPMop1XjO8TGdwsibj9lsAcCZPTOF9m1BSE8INbtP+hZqbx7DeVbFtHUYefCiKisCA2OphU3eMcTrVjo39aJV5M2OwMOQFE=
+       file_glob: true
        file: dist/*
+       skip_cleanup: true
        on:
+        tags: true
         repo: cobowallet/crypto-coin-kit
