@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Transaction } from "zcore-lib";
+import { Transaction } from "dcr-core";
 import { Result } from "../Common/coin";
 import { fromSignResultToDER, reverseBuffer } from "../utils";
 
@@ -52,7 +52,10 @@ const getSignatureForInput = async (
 export default async (
   transaction: any,
   sign: (rawTx: string) => Promise<Result>,
-  publicKey: string
+  publicKey: string,
+  txConfig: {
+    disableLargeFees: boolean
+  }
 ): Promise<{
   txId: string;
   txHex: string;
@@ -75,7 +78,7 @@ export default async (
     });
   });
 
-  const txHex = transaction.serialize();
+  const txHex = transaction.serialize(txConfig);
   const txObj = transaction.toObject();
   return {
     txHex,

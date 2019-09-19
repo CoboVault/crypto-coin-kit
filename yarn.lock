@@ -792,6 +792,16 @@ bn.js@4.11.8, bn.js@=4.11.8, bn.js@^4.11.3, bn.js@^4.11.8, bn.js@^4.4.0:
   resolved "https://registry.npm.taobao.org/bn.js/download/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha1-LN4J617jQfSEdGuwMJsyU7GxRC8=
 
+bn.js@=2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npm.taobao.org/bn.js/download/bn.js-2.0.4.tgz#220a7cd677f7f1bfa93627ff4193776fe7819480"
+  integrity sha1-Igp81nf38b+pNif/QZN3b+eBlIA=
+
+bn.js@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.npm.taobao.org/bn.js/download/bn.js-2.2.0.tgz#12162bc2ae71fc40a5626c33438f3a875cd37625"
+  integrity sha1-EhYrwq5x/EClYmwzQ486h1zTdiU=
+
 bn.js@^3.1.1:
   version "3.3.0"
   resolved "https://registry.npm.taobao.org/bn.js/download/bn.js-3.3.0.tgz#1138e577889fdc97bbdab51844f2190dfc0ae3d7"
@@ -864,6 +874,11 @@ bs58@4.0.1, bs58@=4.0.1, bs58@^4.0.0:
   dependencies:
     base-x "^3.0.2"
 
+bs58@=2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/bs58/download/bs58-2.0.0.tgz#72b713bed223a0ac518bbda0e3ce3f4817f39eb5"
+  integrity sha1-crcTvtIjoKxRi72g484/SBfznrU=
+
 bs58check@2.1.2, bs58check@<3.0.0:
   version "2.1.2"
   resolved "https://registry.npm.taobao.org/bs58check/download/bs58check-2.1.2.tgz#53b018291228d82a5aa08e7d796fdafda54aebfc"
@@ -879,6 +894,11 @@ bser@^2.0.0:
   integrity sha1-Zfx4S/f4fACblzwS22VGkC+px7U=
   dependencies:
     node-int64 "^0.4.0"
+
+buffer-compare@=1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npm.taobao.org/buffer-compare/download/buffer-compare-1.0.0.tgz#acaa7a966e98eee9fae14b31c39a5f158fb3c4a2"
+  integrity sha1-rKp6lm6Y7un64Usxw5pfFY+zxKI=
 
 buffer-compare@=1.1.1:
   version "1.1.1"
@@ -1114,6 +1134,10 @@ cross-spawn@^6.0.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
+"crypto-browserify@https://github.com/cobowallet/crypto-browserify.git#master-legacy":
+  version "1.0.9"
+  resolved "https://github.com/cobowallet/crypto-browserify.git#00ec3c47e54d4d99e5b637a748eb6d34bb9b5f11"
+
 crypto-js@3.1.9-1:
   version "3.1.9-1"
   resolved "https://registry.npm.taobao.org/crypto-js/download/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
@@ -1146,6 +1170,17 @@ data-urls@^1.0.0:
     abab "^2.0.0"
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
+
+"dcr-core@https://github.com/cobowallet/dcr-core.git#4f0504472be3de5924ec403b3ae647d213dc06bd":
+  version "0.13.16"
+  resolved "https://github.com/cobowallet/dcr-core.git#4f0504472be3de5924ec403b3ae647d213dc06bd"
+  dependencies:
+    bn.js "=2.0.4"
+    bs58 "=2.0.0"
+    buffer-compare "=1.0.0"
+    elliptic "=3.0.3"
+    inherits "=2.0.1"
+    lodash "=3.10.1"
 
 debug@=3.1.0:
   version "3.1.0"
@@ -1295,6 +1330,16 @@ elliptic@6.4.1:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
+
+elliptic@=3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npm.taobao.org/elliptic/download/elliptic-3.0.3.tgz#865c9b420bfbe55006b9f969f97a0d2c44966595"
+  integrity sha1-hlybQgv75VAGuflp+XoNLESWZZU=
+  dependencies:
+    bn.js "^2.0.0"
+    brorand "^1.0.1"
+    hash.js "^1.0.0"
+    inherits "^2.0.1"
 
 elliptic@=6.4.0:
   version "6.4.0"
@@ -2632,6 +2677,11 @@ lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.npm.taobao.org/lodash.sortby/download/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
   integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
+
+lodash@=3.10.1:
+  version "3.10.1"
+  resolved "https://registry.npm.taobao.org/lodash/download/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
+  integrity sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=
 
 lodash@=4.17.4:
   version "4.17.4"

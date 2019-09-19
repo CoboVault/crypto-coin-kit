@@ -37,14 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
-var zcore_lib_1 = require("zcore-lib");
+var dcr_core_1 = require("dcr-core");
 var utils_1 = require("../utils");
 var signScript = function (transaction, sigType, index, script, sign) { return __awaiter(void 0, void 0, void 0, function () {
     var sighash, hex, signResult;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                sighash = zcore_lib_1.Transaction.Sighash.sighash(transaction, sigType, index, script);
+                sighash = dcr_core_1.Transaction.Sighash.sighash(transaction, sigType, index, script);
                 hex = utils_1.reverseBuffer(sighash).toString("hex");
                 return [4 /*yield*/, sign(hex)];
             case 1:
@@ -58,7 +58,7 @@ var getSignatureForInput = function (input, index, transaction, sigType, publicK
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
-                _b = (_a = zcore_lib_1.Transaction.Signature).bind;
+                _b = (_a = dcr_core_1.Transaction.Signature).bind;
                 _c = {
                     publicKey: publicKey,
                     prevTxId: input.prevTxId,
@@ -91,7 +91,7 @@ exports.default = (function (transaction, sign, publicKey) { return __awaiter(vo
                     })];
             case 1:
                 _a.sent();
-                txHex = transaction.serialize();
+                txHex = transaction.serialize({ disableLargeFees: true });
                 txObj = transaction.toObject();
                 return [2 /*return*/, {
                         txHex: txHex,
