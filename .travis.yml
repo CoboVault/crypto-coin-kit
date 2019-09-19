@@ -12,6 +12,7 @@ jobs:
      if: branch = master
      script: yarn build
    - stage: deploy
+     if: branch = master
      script: skip
      deploy:
        provider: releases
