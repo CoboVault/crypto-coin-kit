@@ -60,7 +60,8 @@ describe("coin.XZC", () => {
       },
       signWithPrivateKey(privateKey),
       {
-        publicKey
+        publicKey,
+        disableLargeFees: true
       }
     );
     expect(txHex).toStrictEqual({

@@ -50,6 +50,7 @@ export class DCR extends Coin {
     signProvider: SignProvider,
     options: {
       publicKey: string;
+      disableLargeFees: boolean;
     }
   ): Promise<{
     txId: string;
@@ -62,7 +63,7 @@ export class DCR extends Coin {
       .fee(fee)
       .change(changeAddress);
     const sign = async (hex: string) => this.sign(hex, signProvider);
-    return processTransaction(transaction, sign, options.publicKey);
+    return processTransaction(transaction, sign, options.publicKey, options);
   };
 
   public signMessage = async (message: string, signProvider: SignProvider) => {
