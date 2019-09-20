@@ -19,11 +19,6 @@ export interface BaseTxData {
   fee: number;
 }
 
-export interface BaseSignMessageResult {
-  r: string;
-  s: string;
-}
-
 export interface GenerateTransactionResult {
   txId: string;
   txHex: string;
@@ -45,9 +40,9 @@ export interface Coin {
   signMessage: (
     message: string,
     signProvider: SignProvider
-  ) => Promise<BaseSignMessageResult>;
+  ) => Promise<string>;
   signMessageSync: (
     message: string,
     signProvider: SignProviderSync
-  ) => BaseSignMessageResult;
+  ) => string;
 }
