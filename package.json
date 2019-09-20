@@ -39,7 +39,9 @@
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
-    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
+    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
+    "ethereumjs-tx": "^2.1.1",
+    "ethereumjs-util": "^6.1.0"
   },
   "files": [
     "lib/**/*"
