@@ -40,7 +40,6 @@ export default class NEO implements Coin {
     const unsignedTxHex = coinTx.serialize(false)
     const {r, s} = await signProvider.sign(unsignedTxHex)
     const signature = `${r}${s}`
-    console.log('----', signature)
     const {txHex, txId} = this.composeSignedObject(signature, options.signerPubkey, coinTx)
     return {
       txHex,
