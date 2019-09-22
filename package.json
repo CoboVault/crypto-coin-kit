@@ -35,6 +35,7 @@
     "ripple-hashes": "^0.3.2",
     "ripple-keypairs": "^0.11.0",
     "ripple-lib": "^1.2.4",
+    "safe-buffer": "5.1.2",
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",

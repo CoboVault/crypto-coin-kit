@@ -1,4 +1,5 @@
 import { tx, wallet } from "@cityofzion/neon-core";
+import { Buffer } from 'safe-buffer';
 import { SignProvider, SignProviderSync } from "../Common";
 import { Coin } from '../Common/coin'
 import {
@@ -59,15 +60,22 @@ export default class NEO implements Coin {
     }
   }
 
-
-  public signMessage = async (hex: string, signer: SignProvider)  => {
-    const result = await signer.sign(hex)
-    return result
+  /**
+   * @returns the return value is the promise of (r,s) of the signature
+   */
+  public signMessage = async (message: string, signer: SignProvider) => {
+    const messageHex = Buffer.from(message).toString('hex')
+    const result = await signer.sign(messageHex)
+    return `${result.r}${result.s}`
   }
 
-  public signMessageSync = (hex: string , signer: SignProviderSync) => {
-    const result = signer.sign(hex)
-    return result
+  /**
+   * @returns the return value is the (r,s) of the signature
+   */
+  public signMessageSync = (message: string , signer: SignProviderSync) => {
+    const messageHex = Buffer.from(message).toString('hex')
+    const result = signer.sign(messageHex)
+    return `${result.r}${result.s}`
   }
 
   private composeUnsignedTx = (txData: TxData) => {
