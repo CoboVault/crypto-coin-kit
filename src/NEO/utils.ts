@@ -1,27 +1,32 @@
 import { tx, wallet } from "@cityofzion/neon-core";
-import { SignProviderDeprecated } from "../Common";
+import sha256 from 'crypto-js/sha256';
+import { ec as EC } from "elliptic";
+import { SignProvider } from "../Common";
+import { Result } from "../Common/sign";
 
-export interface externalNeoBalance {
+const curve = new EC("p256");
+
+export interface ExternalNeoBalance {
   address: string;
   net: string;
-  balance: balanceLike[];
+  balance: BalanceLike[];
 }
 
-interface unspentItem {
+interface UnspentItem {
   value: number;
   txid: string;
   n: number;
 }
 
-interface balanceLike {
+interface BalanceLike {
   asset_symbol: string;
   asset_hash: string;
   asset: string;
   amount: number;
-  unspent: unspentItem[];
+  unspent: UnspentItem[];
 }
 
-export interface claimLike {
+export interface ClaimLike {
   value: number;
   unclaimed: number;
   txid: string;
@@ -32,25 +37,35 @@ export interface claimLike {
   end_height?: number;
 }
 
+function signHex(hex: string, privateKey: string): {r:string, s: string} {
+  const msgHash = sha256(hex).toString();
+  const msgHashHex = Buffer.from(msgHash, "hex");
+  const privateKeyBuffer = Buffer.from(privateKey, "hex");
+
+  const sig = curve.sign(msgHashHex, privateKeyBuffer);
+  return {
+    r: sig.r.toString("hex", 32),
+    s: sig.s.toString("hex", 32),
+  }
+}
+
+
 export const SignProviderWithPrivateKey = (
   privateKey: string
-): SignProviderDeprecated => {
+): SignProvider => {
   return {
-    sign: async (hex: string): Promise<any> => {
-      const signedTx = tx.Transaction.deserialize(hex).sign(privateKey);
-
+    sign: async (hex: string): Promise<Result> => {
+      const {r, s} = signHex(hex, privateKey)
       return {
-        hex: signedTx.serialize(),
-        id: signedTx.hash
+        r,
+        s,
+        recId: 0
       };
     },
-    signMessage: (hex: string) => {
-      return wallet.sign(hex, privateKey);
-    }
   };
 };
 
-export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
+export const buildNeoBalance = (externalNeoBalance: ExternalNeoBalance) => {
   const address = externalNeoBalance.address;
   const net = externalNeoBalance.net;
 
@@ -64,7 +79,7 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
     [sym: string]: number;
   } = {};
 
-  const isAsset = (amount: number, unspent: unspentItem[]) => {
+  const isAsset = (amount: number, unspent: UnspentItem[]) => {
     if (amount === 0 && unspent.length === 0) {
       return true;
     }
@@ -107,7 +122,7 @@ export const buildNeoBalance = (externalNeoBalance: externalNeoBalance) => {
 export const buildNeoClaims = (
   address: string,
   net: string,
-  externalClaims: claimLike[]
+  externalClaims: ClaimLike[]
 ) => {
   const claims: wallet.ClaimItemLike[] = externalClaims.map(each => ({
     claim: each.unclaimed,
