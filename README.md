@@ -13,6 +13,13 @@ yarn install
 
 ```
 
+### lint
+
+```
+yarn lint
+
+```
+
 ## Running the tests
 
 ```
