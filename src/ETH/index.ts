@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer';
 import { Transaction } from 'ethereumjs-tx';
 import {
     addHexPrefix,
@@ -8,9 +7,11 @@ import {
     toBuffer,
     toChecksumAddress,
 } from 'ethereumjs-util';
+import { Buffer } from 'safe-buffer';
 
 import { Coin, GenerateTransactionResult } from "../Common/coin";
 import { Result, SignProvider, SignProviderSync } from '../Common/sign';
+import numberToHex from "../utils/numberToHex";
 
 export interface TxData {
     nonce: string,
@@ -25,7 +26,7 @@ export interface TxData {
 export class ETH implements Coin {
 
     public chainId: number;
-    constructor(chainId: number) {
+    constructor(chainId?: number) {
         this.chainId = chainId || 1;
     }
 
@@ -33,14 +34,16 @@ export class ETH implements Coin {
         const tx = new Transaction(data);
         const hash = tx.hash(false);
         const sig = signer.sign(hash.toString('hex'));
-        return this.buildSignedTx(data, sig);
+        const signedTx  = this.buildSignedTx(tx, sig);
+        return this.extractSignedResult(signedTx);
     };
 
     public generateTransaction = async (data: TxData, signer: SignProvider) => {
         const tx = new Transaction(data);
         const hash = tx.hash(false);
         const sig = await signer.sign(hash.toString('hex'));
-        return this.buildSignedTx(data, sig);
+        const signedTx  = this.buildSignedTx(tx, sig);
+        return this.extractSignedResult(signedTx);
     };
 
     public signMessageSync = (message: string, signer: SignProviderSync) => {
@@ -67,26 +70,31 @@ export class ETH implements Coin {
         return isValidAddress(address);
     };
 
-    private buildSignedTx = (data: TxData, sigResult: Result): GenerateTransactionResult => {
+    private buildSignedTx = (tx: Transaction, sigResult: Result): Transaction => {
         const r = Buffer.from(sigResult.r, 'hex');
         const s = Buffer.from(sigResult.s, 'hex');
         let v = 27 + sigResult.recId;
         if (this.chainId > 0) {
             v += this.chainId * 2 + 8
         }
-        const sig = {r, s, v};
-        const signedTx = new Transaction(data);
-        Object.assign(signedTx, sig);
+
+        const sig = {r, s, v : Buffer.alloc(1,v)};
+
+        return Object.assign(tx, sig);
+
+    };
+
+    private extractSignedResult = (tx: Transaction): GenerateTransactionResult => {
         return {
-            txId: addHexPrefix(signedTx.hash().toString('hex')),
-            txHex: addHexPrefix(signedTx.serialize().toString('hex')),
+            txId: addHexPrefix(tx.hash().toString('hex')),
+            txHex: addHexPrefix(tx.serialize().toString('hex')),
         };
     };
 
     private buildSignedMessage = (sigResult: Result): string => {
         const r = sigResult.r;
         const s = sigResult.s;
-        const recIdStr = Buffer.of(sigResult.recId).toString('hex');
+        const recIdStr = numberToHex(sigResult.recId);
         return addHexPrefix(r.concat(s).concat(recIdStr));
     }
 
