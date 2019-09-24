@@ -51,8 +51,14 @@ describe("coin.XZC", () => {
   });
 
   it("should valid a address", () => {
-    const address = "aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj8";
-    expect(xzc.isAddressValid(address)).toBeTruthy();
+    [
+      'aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj8',
+      'a9rCXxadJSWS4gY5anVvz3GC3n5oZeUrPY',
+      'TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ',
+      'TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ',
+    ].forEach(item => expect(xzc.isAddressValid(item)).toBeTruthy());
+
+    expect(xzc.isAddressValid('aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj7')).toBeFalsy();
   });
 
   it("should generate transaction raw hex that can be broadcast directly async", async () => {
