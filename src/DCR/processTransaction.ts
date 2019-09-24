@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Transaction } from "dcr-core";
-import { Result } from "../Common/coin";
+import { Result } from "../Common/sign";
 import { fromSignResultToDER, reverseBuffer } from "../utils";
 
 const signScript = async (
