@@ -1,6 +1,6 @@
 import { DCR } from "../../DCR";
-import { TDCR } from "../../DCR/TDCR";
 import { signWithPrivateKey, signWithPrivateKeySync } from "../../DCR/signProvider";
+import { TDCR } from "../../DCR/TDCR";
 
 const privateKey =
   "5a6661e8354d612c5a045075c0fe758d87b6aa39e5e1d578f439c7300730e9bf";
@@ -31,7 +31,7 @@ describe("coin.DCR", () => {
     );
   });
 
-  it("should generate testnet address", () => {
+  it("should generate correct testnet address", () => {
     const pubkey =
       "034bddcf8300468d2c3b7a4b7bc08d6338f4d584794cbc4ecec9bf2f46499d4fb9";
     expect(tdcr.generateAddress(pubkey)).toBe(
@@ -45,8 +45,14 @@ describe("coin.DCR", () => {
   });
 
   it("should valid a address", () => {
-    const address = "Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15K";
-    expect(dcr.isAddressValid(address)).toBeTruthy();
+    [
+      'Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15K',
+      'DshK38yvv5jhYpFBojcsngXhp9kBsjQ83mi',
+      'TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7',
+      'TshNG87SJsnofAvYd8F2wFYyQFi7SPCVQKG',
+    ].forEach(item => expect(dcr.isAddressValid(item)).toBeTruthy());
+
+    expect(dcr.isAddressValid('Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15M')).toBeFalsy();
   });
 
   it("should generate transaction raw hex that can be broadcast directly async", async () => {
@@ -93,6 +99,26 @@ describe("coin.DCR", () => {
     });
   });
 
+  it("should not generate transaction raw hex while disableLargeFees=false and fee>150000", () => {
+
+    expect(() => {
+      const txHex = tdcr.generateTransactionSync(
+        {
+          inputs: [simpleUtxoWith1BTC],
+          changeAddress: "TshNG87SJsnofAvYd8F2wFYyQFi7SPCVQKG",
+          amount: 100000,
+          to: "TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7",
+          fee: 150001
+        },
+        signWithPrivateKeySync(privateKey),
+        {
+          signerPubkey,
+          disableLargeFees: false
+        }
+      );
+    }).toThrow(Error);
+  });
+
   it("should sign message async", async () => {
     const message = "mmmmmmmmmmmm";
     const result = await dcr.signMessage(
@@ -100,7 +126,7 @@ describe("coin.DCR", () => {
       signWithPrivateKey(privateKey)
     );
     expect(result).toBe(
-      "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
+      "c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c3283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });
 
@@ -111,7 +137,7 @@ describe("coin.DCR", () => {
       signWithPrivateKeySync(privateKey)
     );
     expect(result).toBe(
-      "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
+      "c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c3283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });
 });
