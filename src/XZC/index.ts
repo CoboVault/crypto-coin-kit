@@ -32,7 +32,7 @@ interface TxData {
 }
 
 export class XZC implements Coin {
-  private network: string;
+  protected network: string;
   constructor(network?: string) {
     this.network = network || "livenet";
   }
