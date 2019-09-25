@@ -30,6 +30,11 @@ interface TxData {
   fee: number; // sat
 }
 
+interface Options {
+  signerPubkey: string;
+  disableLargeFees?: boolean;
+}
+
 export class DCR implements Coin {
   protected network: string;
   constructor(network?: string) {
@@ -49,12 +54,9 @@ export class DCR implements Coin {
     txData: TxData,
     signer: SignProvider,
     {
-      signerPubkey = '',
       disableLargeFees = true,
-    } : {
-      signerPubkey: string,
-      disableLargeFees?: boolean,
-    }
+      ...options
+    } : Options
   ): Promise<{
     txId: string;
     txHex: string;
@@ -65,19 +67,16 @@ export class DCR implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransaction(transaction, signer.sign, signerPubkey, { disableLargeFees });
+    return processTransaction(transaction, signer.sign, options.signerPubkey, { disableLargeFees });
   };
 
   public generateTransactionSync = (
     txData: TxData,
     signer: SignProviderSync,
     {
-      signerPubkey = '',
       disableLargeFees = true,
-    } : {
-      signerPubkey: string,
-      disableLargeFees?: boolean,
-    }
+      ...options
+    } : Options
   ): {
     txId: string;
     txHex: string;
@@ -88,7 +87,7 @@ export class DCR implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransactionSync(transaction, signer.sign, signerPubkey, { disableLargeFees });
+    return processTransactionSync(transaction, signer.sign, options.signerPubkey, { disableLargeFees });
   };
 
   /**
