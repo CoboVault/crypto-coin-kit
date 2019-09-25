@@ -2,6 +2,7 @@ import { DCR } from "./DCR";
 import { ETH } from "./ETH";
 import KeyProvider from "./keyProvider";
 import NEO from "./NEO";
+import * as utils from "./utils";
 import { XRP } from "./XRP";
 import { XZC } from "./XZC";
 
@@ -13,5 +14,6 @@ export default {
     DCR,
     ETH
   },
-  KeyProvider
+  KeyProvider,
+  utils,
 };

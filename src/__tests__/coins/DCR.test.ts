@@ -1,6 +1,7 @@
 import { DCR } from "../../DCR";
 import { signWithPrivateKey, signWithPrivateKeySync } from "../../DCR/signProvider";
 import { TDCR } from "../../DCR/TDCR";
+import { fromSignResultToDER } from "../../utils";
 
 const privateKey =
   "5a6661e8354d612c5a045075c0fe758d87b6aa39e5e1d578f439c7300730e9bf";
@@ -138,6 +139,20 @@ describe("coin.DCR", () => {
     );
     expect(result).toBe(
       "c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c3283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
+    );
+  });
+
+  it("should get DER for sign message", () => {
+    const message = "mmmmmmmmmmmm";
+    const result = dcr.signMessageSync(
+      message,
+      signWithPrivateKeySync(privateKey)
+    );
+    expect(fromSignResultToDER({
+      r: result.slice(0, 64),
+      s: result.slice(64, 128),
+    })).toBe(
+      "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });
 });
