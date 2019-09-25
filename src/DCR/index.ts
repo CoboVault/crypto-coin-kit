@@ -1,5 +1,7 @@
 // @ts-ignore
 import { Address, PublicKey, Transaction } from "dcr-core";
+// @ts-ignore
+import seck256k1 from "secp256k1";
 import { SignProvider, SignProviderSync } from "../Common";
 import { Coin } from "../Common/coin";
 import { hash256, numberToHex } from "../utils";
@@ -106,6 +108,16 @@ export class DCR implements Coin {
     const hashHex = this.getSignMessageHex(message);
     const result = signer.sign(hashHex);
     return `${result.r}${result.s}`;
+  };
+
+  public getDERFromSignResult = (signResult: string): string => {
+    const r = signResult.slice(0, 64);
+    const s = signResult.slice(64, 128);
+    const bufferR = Buffer.from(r, "hex");
+    const bufferS = Buffer.from(s, "hex");
+    const signature = Buffer.concat([bufferR, bufferS]);
+
+    return seck256k1.signatureExport(signature).toString("hex");
   };
 
   private getSignMessageHex = (message: string) => {

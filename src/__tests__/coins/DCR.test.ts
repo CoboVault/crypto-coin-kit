@@ -140,4 +140,17 @@ describe("coin.DCR", () => {
       "c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c3283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });
+
+  it("should get DER for sign message", () => {
+    const message = "mmmmmmmmmmmm";
+    const result = dcr.signMessageSync(
+      message,
+      signWithPrivateKeySync(privateKey)
+    );
+    expect(dcr.getDERFromSignResult(result)).toBe(
+      "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
+    );
+  });
+
+
 });
