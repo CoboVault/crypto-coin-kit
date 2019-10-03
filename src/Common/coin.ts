@@ -25,7 +25,7 @@ export interface GenerateTransactionResult {
 }
 
 export interface Coin {
-  generateAddress: (publicKey: string) => string;
+  generateAddress: (publicKey: string, options?: any) => string;
   isAddressValid: (address: string) => boolean;
   generateTransaction: (
     txData: any,
