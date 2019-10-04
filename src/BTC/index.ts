@@ -2,20 +2,23 @@ import * as bitcoin from 'bitcoinjs-lib'
 // @ts-ignore
 import bs58check from 'bs58check'
 import { Buffer as SafeBuffer } from 'safe-buffer'
-import { SignProvider, SignProviderSync } from "../Common";
+import { UtxoCoin } from '../Common/coin'
+import { KeyProvider, KeyProviderSync } from '../Common/sign'
+import { hash256, numberToHex } from '../utils'
+import PsbtBuilder from './txBuilder'
 
 
 type AddressType = 'P2PKH' | 'P2SH' | 'P2WPKH'
 
 type netWorkType = 'mainNet' | 'testNet'
 
-interface TxOutputItem {
+export interface TxOutputItem {
     address: 'string',
     value: number
 }
 
 
-interface TxInputItem {
+export interface TxInputItem {
     hash: string
     index: number
     nonWitnessUtxo?: string
@@ -27,10 +30,7 @@ interface TxInputItem {
     value: number
 }
 
-
-
-
-interface TxData {
+export interface TxData {
     inputs: TxInputItem[]
     outputs?: TxOutputItem[]
     to?: string
@@ -39,14 +39,7 @@ interface TxData {
     changeAddres?: string
 }
 
-interface KeyProvider extends SignProvider {
-    publicKey: string
-}
-
-
-const MAX_FEE = 1000000
-
-export default class BTC {
+export default class BTC implements UtxoCoin {
 
     private network: bitcoin.Network
     constructor(networkType?: netWorkType) {
@@ -99,49 +92,8 @@ export default class BTC {
 
 
     public generateTransaction = async (txData: TxData, signers: KeyProvider[]) => {
-        const psbt = new bitcoin.Psbt({ network: this.network })
-        if (this.verifyInput(txData)) {
-            txData.inputs.forEach(eachInput => {
-                if (eachInput.witnessUtxo) {
-                    return psbt.addInput({
-                        hash: eachInput.hash,
-                        index: eachInput.index,
-                        witnessUtxo: {
-                            script: Buffer.from(eachInput.witnessUtxo.script, 'hex'),
-                            value: eachInput.witnessUtxo.value
-                        },
-                        redeemScript: bitcoin.payments.p2wpkh({
-                            pubkey: Buffer.from(eachInput.witnessUtxo.publicKey, 'hex'),
-                            network: this.network
-                        }).output
-                    })
-                }
-                if (eachInput.nonWitnessUtxo) {
-                    return psbt.addInput({
-                        hash: eachInput.hash,
-                        index: eachInput.index,
-                        nonWitnessUtxo: Buffer.from(eachInput.nonWitnessUtxo, 'hex')
-                    })
-                }
-                throw new Error('choose right utxo type')
-            });
-        }
-
-        if (txData.outputs) {
-            psbt.addOutputs(txData.outputs)
-        } else if (txData.amount && txData.to && txData.changeAddres && txData.fee) {
-            psbt.addOutput({
-                address: txData.to,
-                value: txData.amount
-            })
-            const totalInputs = txData.inputs.reduce((acc: number, cur: TxInputItem) => acc + cur.value, 0)
-            const changeAmount = totalInputs - txData.amount - txData.fee
-            psbt.addOutput({
-                address: txData.changeAddres,
-                value: changeAmount
-            })
-        }
-
+        const psbtBuilder = new PsbtBuilder(this.network)
+        const psbt = psbtBuilder.addInputsForPsbt(txData).addOutputForPsbt(txData).getPsbt()
         for (const signer of signers) {
             const keyPair = {
                 publicKey: Buffer.from(signer.publicKey, 'hex'),
@@ -153,6 +105,48 @@ export default class BTC {
             }
             await psbt.signAllInputsAsync(keyPair)
         }
+        return this.extractTx(psbt)
+    }
+
+    public generateTransactionSync = (txData: TxData, signers: KeyProviderSync[]) => {
+        const psbtBuilder = new PsbtBuilder(this.network)
+        const psbt = psbtBuilder.addInputsForPsbt(txData).addOutputForPsbt(txData).getPsbt()
+        for (const signer of signers) {
+            const keyPair = {
+                publicKey: Buffer.from(signer.publicKey, 'hex'),
+                sign: (hashBuffer: Buffer) => {
+                    const hexString = hashBuffer.toString('hex')
+                    const { r, s } = signer.sign(hexString)
+                    return Buffer.concat([Buffer.from(r, 'hex'), Buffer.from(s, 'hex')])
+                }
+            }
+            psbt.signAllInputs(keyPair)
+        }
+        return this.extractTx(psbt)
+    }
+
+    public signMessage = async (message:string, signer: KeyProvider) => {
+        const hashHex = this.constructMessageHash(message)
+        const {r,s} = await signer.sign(hashHex)
+        return `${r}${s}`
+    }
+
+    public signMessageSync = (message: string, singerSync: KeyProviderSync) => {
+        const hashHex = this.constructMessageHash(message)
+        const {r,s} = singerSync.sign(hashHex)
+        return `${r}${s}`
+    }
+
+    private constructMessageHash = (message: string) => {
+        const MAGIC_BYTES = Buffer.from(this.network.messagePrefix, "utf-8");
+        const messageBuffer = Buffer.from(message, "utf-8");
+        const messageLength = Buffer.from(numberToHex(messageBuffer.length), "hex");
+        const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
+        const hashHex = hash256(buffer).toString("hex");
+        return hashHex
+    }
+
+    private extractTx = (psbt: bitcoin.Psbt) => {
         psbt.finalizeAllInputs();
         const txHex = psbt.extractTransaction().toHex()
         const txId = psbt.extractTransaction().getId()
@@ -160,24 +154,6 @@ export default class BTC {
             txId,
             txHex
         }
-    }
-
-    private verifyInput = (txData: TxData, disableLargeFee: boolean = true) => {
-        const totalInputs = txData.inputs.reduce((acc: number, cur: TxInputItem) => acc + cur.value, 0)
-        if (txData.outputs) {
-            const totalOuputs = txData.outputs.reduce((acc: number, cur: TxOutputItem) => acc + cur.value, 0)
-            const fee = totalInputs - totalOuputs
-            if (fee >= 0 && (disableLargeFee ? fee < MAX_FEE : true)) {
-                return true
-            }
-        } else if (txData.fee && txData.amount) {
-            console.log(totalInputs)
-            if (totalInputs >= txData.fee + txData.amount) {
-                return true
-            }
-        }
-        return false
-
     }
 }
 

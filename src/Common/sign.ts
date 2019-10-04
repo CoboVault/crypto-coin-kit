@@ -3,7 +3,7 @@
 export interface Result {
   r: string;
   s: string;
-  recId?: number;
+  recId: number;
 }
 export interface SignProviderDeprecated {
   sign: (rawData: string) => Promise<any>; // should return Promise<Result> net version
@@ -23,4 +23,12 @@ export interface SignProvider {
 
 export interface SignProviderSync {
   sign: (hex: string) => Result;
+}
+
+export interface KeyProvider extends SignProvider {
+  publicKey: string
+}
+
+export interface KeyProviderSync extends SignProviderSync {
+  publicKey: string
 }
