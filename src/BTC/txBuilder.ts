@@ -39,7 +39,7 @@ export default class PsbtBuilder {
             });
             return this
         }
-        throw new Error('input value are invaild ')         
+        throw new Error('input value are invaild')         
     }
 
     

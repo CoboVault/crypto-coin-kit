@@ -6,6 +6,7 @@ import { UtxoCoin } from '../Common/coin'
 import { KeyProvider, KeyProviderSync } from '../Common/sign'
 import { hash256, numberToHex } from '../utils'
 import PsbtBuilder from './txBuilder'
+import { Output } from 'bitcoinjs-lib/types/transaction'
 
 
 type AddressType = 'P2PKH' | 'P2SH' | 'P2WPKH'
@@ -125,16 +126,46 @@ export default class BTC implements UtxoCoin {
         return this.extractTx(psbt)
     }
 
-    public signMessage = async (message:string, signer: KeyProvider) => {
+    public signMessage = async (message: string, signer: KeyProvider) => {
         const hashHex = this.constructMessageHash(message)
-        const {r,s} = await signer.sign(hashHex)
+        const { r, s } = await signer.sign(hashHex)
         return `${r}${s}`
     }
 
     public signMessageSync = (message: string, singerSync: KeyProviderSync) => {
         const hashHex = this.constructMessageHash(message)
-        const {r,s} = singerSync.sign(hashHex)
+        const { r, s } = singerSync.sign(hashHex)
         return `${r}${s}`
+    }
+
+    public generatePsbt = (txData: TxData): string => {
+        const psbtBuilder = new PsbtBuilder(this.network)
+        const psbt = psbtBuilder.addInputsForPsbt(txData).addOutputForPsbt(txData).getPsbt()
+        return psbt.toBase64()
+    }
+
+    public parsePsbt = (psbtString: string) => {
+        const psbt = bitcoin.Psbt.fromBase64(psbtString)
+        const txBuffer = psbt.data.getTransaction()
+        const tx = bitcoin.Transaction.fromBuffer(txBuffer)
+        const inputs = tx.ins.map(each => ({
+            txId: each.hash.reverse().toString('hex'),
+            index: each.index
+        }))
+        const outputs = tx.outs.map(each => {
+            const address = bitcoin.address.fromOutputScript(each.script, this.network)
+            const eachOutput = each as Output
+            const value = eachOutput.value
+            return {
+                address,
+                value
+            }
+        })
+
+        return {
+            inputs,
+            outputs
+        }
     }
 
     private constructMessageHash = (message: string) => {
@@ -147,13 +178,16 @@ export default class BTC implements UtxoCoin {
     }
 
     private extractTx = (psbt: bitcoin.Psbt) => {
-        psbt.finalizeAllInputs();
-        const txHex = psbt.extractTransaction().toHex()
-        const txId = psbt.extractTransaction().getId()
-        return {
-            txId,
-            txHex
+        if (psbt.validateSignaturesOfAllInputs()) {
+            psbt.finalizeAllInputs()
+            const txHex = psbt.extractTransaction().toHex()
+            const txId = psbt.extractTransaction().getId()
+            return {
+                txId,
+                txHex
+            }
         }
+        throw new Error('signature verification failed')
     }
 }
 
