@@ -6,7 +6,6 @@ import { UtxoCoin } from '../Common/coin'
 import { KeyProvider, KeyProviderSync } from '../Common/sign'
 import { hash256, numberToHex } from '../utils'
 import PsbtBuilder from './txBuilder'
-import { Output } from 'bitcoinjs-lib/types/transaction'
 
 
 type AddressType = 'P2PKH' | 'P2SH' | 'P2WPKH'
@@ -154,7 +153,7 @@ export default class BTC implements UtxoCoin {
         }))
         const outputs = tx.outs.map(each => {
             const address = bitcoin.address.fromOutputScript(each.script, this.network)
-            const eachOutput = each as Output
+            const eachOutput = each as bitcoin.TxOutput
             const value = eachOutput.value
             return {
                 address,
