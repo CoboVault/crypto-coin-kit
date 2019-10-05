@@ -16,7 +16,8 @@ export default (privateKey: string, publicKey:string) => {
         const s = sigObj.signature.slice(32, 64).toString("hex");
         return {
           r,
-          s
+          s,
+          recId: 0
         };
       } catch (e) {
         console.log(e);
