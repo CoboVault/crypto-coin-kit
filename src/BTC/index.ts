@@ -161,11 +161,42 @@ export default class BTC implements UtxoCoin {
                 value
             }
         })
-
         return {
             inputs,
             outputs
         }
+    }
+
+    public signPsbt = async (psbtString: string, signers: KeyProvider[]) => {
+        const psbt = bitcoin.Psbt.fromBase64(psbtString)
+        for (const signer of signers) {
+            const keyPair = {
+                publicKey: Buffer.from(signer.publicKey, 'hex'),
+                sign: async (hashBuffer: Buffer) => {
+                    const hexString = hashBuffer.toString('hex')
+                    const { r, s } = await signer.sign(hexString)
+                    return Buffer.concat([Buffer.from(r, 'hex'), Buffer.from(s, 'hex')])
+                }
+            }
+            await psbt.signAllInputsAsync(keyPair)
+        }
+        return this.extractTx(psbt)
+    }
+
+    public signPsbtSync = (psbtString: string, signers: KeyProviderSync[]) => {
+        const psbt = bitcoin.Psbt.fromBase64(psbtString)
+        for (const signer of signers) {
+            const keyPair = {
+                publicKey: Buffer.from(signer.publicKey, 'hex'),
+                sign: (hashBuffer: Buffer) => {
+                    const hexString = hashBuffer.toString('hex')
+                    const { r, s } = signer.sign(hexString)
+                    return Buffer.concat([Buffer.from(r, 'hex'), Buffer.from(s, 'hex')])
+                }
+            }
+            psbt.signAllInputs(keyPair)
+        }
+        return this.extractTx(psbt)
     }
 
     private constructMessageHash = (message: string) => {
