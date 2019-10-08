@@ -8,12 +8,31 @@ import { hash256, numberToHex } from '../utils'
 import PsbtBuilder from './txBuilder'
 
 
-type AddressType = 'P2PKH' | 'P2SH' | 'P2WPKH'
+enum AddressType {
+    P2PKH = "P2PKH",
+    P2SH = "P2SH",
+    P2WPKH = "P2WPKH"
+}
 
-type netWorkType = 'mainNet' | 'testNet'
+
+export enum NetWorkType {
+    mainNet = "mainNet",
+    testNet = "testNet"
+}
 
 export interface TxOutputItem {
     address: 'string',
+    value: number
+}
+
+export interface WitnessUtxo {
+    publicKey: string
+    script: string
+    value: number
+}
+
+export interface  NonWitnessUtxo {
+    nonWitnessUtxo: string
     value: number
 }
 
@@ -21,56 +40,53 @@ export interface TxOutputItem {
 export interface TxInputItem {
     hash: string
     index: number
-    nonWitnessUtxo?: string
-    witnessUtxo?: {
-        publicKey: string
-        script: string
-        value: number
-    }
-    value: number
+    utxo: WitnessUtxo | NonWitnessUtxo
+}
+
+export interface Destination {
+    to: string
+    amount: number // sat unit
+    fee: number
+    changeAddres: string
 }
 
 export interface TxData {
     inputs: TxInputItem[]
-    outputs?: TxOutputItem[]
-    to?: string
-    amount?: number // sta unit
-    fee?: number
-    changeAddres?: string
+    outputs: TxOutputItem[] | Destination    
 }
 
 export default class BTC implements UtxoCoin {
 
     private network: bitcoin.Network
-    constructor(networkType?: netWorkType) {
-        if (networkType === 'mainNet') {
+    constructor(networkType:NetWorkType = NetWorkType.mainNet) {
+        if (networkType === NetWorkType.mainNet) {
             this.network = bitcoin.networks.bitcoin
         } else {
             this.network = bitcoin.networks.regtest
         }
     }
 
-    public generateAddress = (publicKey: string, addressType: AddressType = 'P2SH') => {
-        let btcAddaress: string | undefined;
+    public generateAddress = (publicKey: string, addressType: AddressType = AddressType.P2SH) => {
+        let btcAddress: string | undefined;
         const pubkeyBuffer = SafeBuffer.from(publicKey, 'hex') as unknown as Buffer
-        if (addressType === 'P2SH') {
+        if (addressType === AddressType.P2PKH) {
             const { address } = bitcoin.payments.p2pkh({ pubkey: pubkeyBuffer, network: this.network });
-            btcAddaress = address
+            btcAddress = address
         }
-        if (addressType === 'P2SH') {
+        if (addressType === AddressType.P2SH) {
             const { address } = bitcoin.payments.p2sh({
                 redeem: bitcoin.payments.p2wpkh({ pubkey: pubkeyBuffer, network: this.network }),
                 network: this.network
             });
-            btcAddaress = address
+            btcAddress = address
         }
-        if (addressType === 'P2WPKH') {
+        if (addressType === AddressType.P2WPKH) {
             const { address } = bitcoin.payments.p2wpkh(({ pubkey: pubkeyBuffer, network: this.network }))
-            btcAddaress = address
+            btcAddress = address
         }
 
-        if (btcAddaress) {
-            return btcAddaress
+        if (btcAddress) {
+            return btcAddress
         } else {
             throw new Error('generate address failed')
         }

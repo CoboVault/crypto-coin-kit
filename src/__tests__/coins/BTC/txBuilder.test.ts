@@ -11,23 +11,21 @@ const publicKeyOne = "02f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c824
 const utxoOne = {
     hash: 'd07ce19af4ff4088884dcee2cedba39c364e34f7cfd0b35bb2e07c8c15b07355',
     index: 1,
-    witnessUtxo:{
+    utxo: {
         publicKey,
         script: 'a914915892366a6cdf24afa6e1c480db2ad88c63378087',
         value: 3578100
     },
-    value: 3578100
 }
 
 const utxoTwo = {
     hash: '89e5f831aa67e0f0dad44f9e7a5f06322a7270da02b837e3666a486323dc14e0',
     index: 0,
-    witnessUtxo:{
+    utxo: {
         publicKey: publicKeyOne,
         script: 'a914745c56190d1fe8274e7ebe9dd4fe10ca3484959587',
         value: 2524291
     },
-    value: 2524291
 }
 
 
@@ -35,11 +33,13 @@ describe('BTC.TxBuilder', () => {
     it('should add the input for psbt', () => {
         const txb = new PsbtBuilder(bitcoin.networks.regtest)
         const txData = {
-            inputs:[utxoOne, utxoTwo],
-            to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
-            amount: 102391,
-            fee: 1000,
-            changeAddres:'2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4' 
+            inputs: [utxoOne, utxoTwo],
+            outputs: {
+                to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
+                amount: 102391,
+                fee: 1000,
+                changeAddres: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4'
+            }
         }
         const psbt = txb.addInputsForPsbt(txData).getPsbt()
         expect(psbt.data.inputs.length).toEqual(2)
@@ -49,11 +49,14 @@ describe('BTC.TxBuilder', () => {
     it('should throw error if the input is not matched', () => {
         const txb = new PsbtBuilder(bitcoin.networks.regtest)
         const txData = {
-            inputs:[utxoOne, utxoTwo],
-            to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
-            amount: 8578100,
-            fee: 1000,
-            changeAddres:'2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4' 
+            inputs: [utxoOne, utxoTwo],
+            outputs: {
+                to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
+                amount: 8578100,
+                fee: 1000,
+                changeAddres: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4'
+            }
+
         }
         expect(() => txb.addInputsForPsbt(txData).getPsbt()).toThrowError(/input value are invaild/)
     })
@@ -61,17 +64,19 @@ describe('BTC.TxBuilder', () => {
     it('should add the output for psbt', () => {
         const txb = new PsbtBuilder(bitcoin.networks.regtest)
         const txData = {
-            inputs:[utxoOne, utxoTwo],
-            to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
-            amount: 102391,
-            fee: 1000,
-            changeAddres:'2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4' 
+            inputs: [utxoOne, utxoTwo],
+            outputs: {
+                to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
+                amount: 102391,
+                fee: 1000,
+                changeAddres: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4'
+            }
         }
         const psbt = txb
-        .addInputsForPsbt(txData)
-        .addOutputForPsbt(txData).getPsbt()
+            .addInputsForPsbt(txData)
+            .addOutputForPsbt(txData).getPsbt()
 
-        
+
         expect(psbt.toBase64()).toEqual('cHNidP8BAJwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8C948BAAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIeYiVsAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwAAAAAAAQEg9Jg2AAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIcBBBYAFOnPkTHZwCo6AtJGu0KXtWBsbLL5AAEBIIOEJgAAAAAAF6kUdFxWGQ0f6CdOfr6d1P4QyjSElZWHAQQWABQwB6va/o+HXD07cUQo53YUlKcfbAAAAA==')
         expect(psbt.data.outputs.length).toEqual(2)
         const tx = bitcoin.Transaction.fromBuffer(psbt.data.getTransaction())
