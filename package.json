@@ -25,10 +25,14 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
+    "bitcoinjs-lib": "^5.1.6",
+    "bs58check": "2.0.0",
     "buffer": "^5.2.1",
     "crypto-browserify": "https://github.com/cobowallet/crypto-browserify.git#master-legacy",
     "dcr-core": "https://github.com/cobowallet/dcr-core.git#4f0504472be3de5924ec403b3ae647d213dc06bd",
     "elliptic": "^6.5.1",
+    "ethereumjs-tx": "^2.1.1",
+    "ethereumjs-util": "^6.1.0",
     "hash.js": "^1.1.7",
     "ripple-address-codec": "^2.0.1",
     "ripple-binary-codec": "^0.2.1",
@@ -39,9 +43,7 @@
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
-    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
-    "ethereumjs-tx": "^2.1.1",
-    "ethereumjs-util": "^6.1.0"
+    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
   },
   "files": [
     "lib/**/*"

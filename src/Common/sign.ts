@@ -24,3 +24,11 @@ export interface SignProvider {
 export interface SignProviderSync {
   sign: (hex: string) => Result;
 }
+
+export interface KeyProvider extends SignProvider {
+  publicKey: string
+}
+
+export interface KeyProviderSync extends SignProviderSync {
+  publicKey: string
+}
