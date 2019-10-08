@@ -33,7 +33,6 @@ const utxoTwo = {
         script: 'a914745c56190d1fe8274e7ebe9dd4fe10ca3484959587',
         value: 2524291
     },
-    value: 2524291
 }
 
 describe("coin.BTC", () => {
