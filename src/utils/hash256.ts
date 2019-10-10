@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 // @ts-ignore
-import cryptoB from 'crypto-browserify';
+import cryptoB from "crypto-browserify";
 
 export const sha256 = (data: Buffer) => {
   return createHash("sha256")
@@ -9,9 +9,10 @@ export const sha256 = (data: Buffer) => {
 };
 
 export const blake256 = (data: Buffer) => {
-  return cryptoB.createHash('blake256')
-      .update(data)
-      .digest()
+  return cryptoB
+    .createHash("blake256")
+    .update(data)
+    .digest();
 };
 
 export default (data: Buffer) => {
@@ -19,5 +20,5 @@ export default (data: Buffer) => {
 };
 
 export const doubleBlake256 = (data: Buffer) => {
-  return blake256(blake256(data))
-}
+  return blake256(blake256(data));
+};

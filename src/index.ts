@@ -15,5 +15,5 @@ export default {
     ETH
   },
   KeyProvider,
-  utils,
+  utils
 };

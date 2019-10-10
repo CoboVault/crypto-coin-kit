@@ -1,5 +1,8 @@
 import { DCR } from "../../DCR";
-import { signWithPrivateKey, signWithPrivateKeySync } from "../../DCR/signProvider";
+import {
+  signWithPrivateKey,
+  signWithPrivateKeySync
+} from "../../DCR/signProvider";
 import { TDCR } from "../../DCR/TDCR";
 import { fromSignResultToDER } from "../../utils";
 
@@ -47,13 +50,15 @@ describe("coin.DCR", () => {
 
   it("should valid a address", () => {
     [
-      'Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15K',
-      'DshK38yvv5jhYpFBojcsngXhp9kBsjQ83mi',
-      'TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7',
-      'TshNG87SJsnofAvYd8F2wFYyQFi7SPCVQKG',
+      "Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15K",
+      "DshK38yvv5jhYpFBojcsngXhp9kBsjQ83mi",
+      "TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7",
+      "TshNG87SJsnofAvYd8F2wFYyQFi7SPCVQKG"
     ].forEach(item => expect(dcr.isAddressValid(item)).toBeTruthy());
 
-    expect(dcr.isAddressValid('Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15M')).toBeFalsy();
+    expect(
+      dcr.isAddressValid("Dsii6zYyV6ZK5ETU8VSnu3eGd7SHRzvb15M")
+    ).toBeFalsy();
   });
 
   it("should generate transaction raw hex that can be broadcast directly async", async () => {
@@ -101,7 +106,6 @@ describe("coin.DCR", () => {
   });
 
   it("should not generate transaction raw hex while disableLargeFees=false and fee>150000", () => {
-
     expect(() => {
       const txHex = tdcr.generateTransactionSync(
         {
@@ -148,10 +152,12 @@ describe("coin.DCR", () => {
       message,
       signWithPrivateKeySync(privateKey)
     );
-    expect(fromSignResultToDER({
-      r: result.slice(0, 64),
-      s: result.slice(64, 128),
-    })).toBe(
+    expect(
+      fromSignResultToDER({
+        r: result.slice(0, 64),
+        s: result.slice(64, 128)
+      })
+    ).toBe(
       "3045022100c60806055a6b7eff29de4a7884f90e38a388e028c11c8eeef1cd44b32f8018c30220283af74d24654555bc5192028f03e8a1b9da70928c8e29b2637d6f5030173bc4"
     );
   });

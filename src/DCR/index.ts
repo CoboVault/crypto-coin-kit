@@ -53,10 +53,7 @@ export class DCR implements Coin {
   public generateTransaction = async (
     txData: TxData,
     signer: SignProvider,
-    {
-      disableLargeFees = true,
-      ...options
-    } : Options
+    { disableLargeFees = true, ...options }: Options
   ): Promise<{
     txId: string;
     txHex: string;
@@ -67,16 +64,15 @@ export class DCR implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransaction(transaction, signer.sign, options.signerPubkey, { disableLargeFees });
+    return processTransaction(transaction, signer.sign, options.signerPubkey, {
+      disableLargeFees
+    });
   };
 
   public generateTransactionSync = (
     txData: TxData,
     signer: SignProviderSync,
-    {
-      disableLargeFees = true,
-      ...options
-    } : Options
+    { disableLargeFees = true, ...options }: Options
   ): {
     txId: string;
     txHex: string;
@@ -87,7 +83,12 @@ export class DCR implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransactionSync(transaction, signer.sign, options.signerPubkey, { disableLargeFees });
+    return processTransactionSync(
+      transaction,
+      signer.sign,
+      options.signerPubkey,
+      { disableLargeFees }
+    );
   };
 
   /**
@@ -115,5 +116,5 @@ export class DCR implements Coin {
     const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
 
     return hash256(buffer).toString("hex");
-  }
+  };
 }
