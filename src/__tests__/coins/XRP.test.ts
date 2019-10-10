@@ -1,5 +1,5 @@
 import { XRP } from "../../XRP";
-import { signWithPrivateKey } from "../../XRP/signProvider";
+import { signWithKeyPair } from "../../XRP/signProvider";
 
 const privateKey =
   "3C2D992B7C60792D421495525707A868F14D99361AE6A3A429501BEAC18378B4";
@@ -34,11 +34,12 @@ describe("coin.XRP", () => {
           changeAddress: "rL5BYSLd89uzj4i4J47iLQg9HwmeXE7eCt",
           to: "rHfof1xNbEtJYsXN8MUbnf9iFixCEY84kf",
           tag: 1700373364,
-          amount: 1000000,
-          signingPubKey:
-            "0272DB8641A03008C27EBFBA2234C5BF93952C41FAE5A6295356CDC3991171EBE0"
+          amount: 1000000
         },
-        signWithPrivateKey(privateKey)
+        signWithKeyPair(
+          privateKey,
+          "0272DB8641A03008C27EBFBA2234C5BF93952C41FAE5A6295356CDC3991171EBE0"
+        )
       );
       expect(tx).toStrictEqual({
         txId:

@@ -1,5 +1,5 @@
 import Common, { SignProviderDeprecated } from "../Common";
-import { KeyProvider, KeyProviderSync, SignProvider, SignProviderSync } from "./sign";
+import { KeyProvider, KeyProviderSync } from "./sign";
 
 export interface Result {
   r: string;
@@ -27,22 +27,16 @@ export interface GenerateTransactionResult {
 export interface Coin extends BaseCoin {
   generateTransaction: (
     txData: any,
-    signProvider: SignProvider,
+    keyProvider: KeyProvider,
     options?: any
   ) => Promise<GenerateTransactionResult>;
   generateTransactionSync: (
     txData: any,
-    signProvider: SignProviderSync,
+    keyProvider: KeyProviderSync,
     options?: any
   ) => GenerateTransactionResult;
-  signMessage: (
-    message: string,
-    signProvider: SignProvider
-  ) => Promise<string>;
-  signMessageSync: (
-    message: string,
-    signProvider: SignProviderSync
-  ) => string;
+  signMessage: (message: string, signProvider: KeyProvider) => Promise<string>;
+  signMessageSync: (message: string, signProvider: KeyProviderSync) => string;
 }
 
 export interface UtxoCoin extends BaseCoin {
@@ -56,18 +50,11 @@ export interface UtxoCoin extends BaseCoin {
     keyProviders: KeyProviderSync[],
     options?: any
   ) => GenerateTransactionResult;
-  signMessage: (
-    message: string,
-    keyProvider: KeyProvider
-  ) => Promise<string>;
-  signMessageSync: (
-    message: string,
-    KeyProvider: KeyProviderSync
-  ) => string;
+  signMessage: (message: string, keyProvider: KeyProvider) => Promise<string>;
+  signMessageSync: (message: string, KeyProvider: KeyProviderSync) => string;
 }
 
 interface BaseCoin {
   generateAddress: (publicKey: string, options?: any) => string;
   isAddressValid: (address: string) => boolean;
 }
-

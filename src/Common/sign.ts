@@ -26,9 +26,9 @@ export interface SignProviderSync {
 }
 
 export interface KeyProvider extends SignProvider {
-  publicKey: string
+  publicKey: string;
 }
 
 export interface KeyProviderSync extends SignProviderSync {
-  publicKey: string
+  publicKey: string;
 }

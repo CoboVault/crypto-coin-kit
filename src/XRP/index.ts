@@ -10,13 +10,12 @@ import { computeBinaryTransactionHash } from "ripple-hashes";
 import { deriveAddress } from "ripple-keypairs";
 import { SignProvider, SignProviderSync } from "../Common";
 import { BaseTxData, Coin, GenerateTransactionResult } from "../Common/coin";
-import { Result } from "../Common/sign";
+import { KeyProvider, KeyProviderSync, Result } from "../Common/sign";
 import { fromSignResultToDER, hash256, numberToHex } from "../utils";
 
 interface TxData extends BaseTxData {
   sequence: number;
   tag?: number;
-  signingPubKey: string;
 }
 
 export class XRP implements Coin {
@@ -30,21 +29,27 @@ export class XRP implements Coin {
 
   public generateTransaction = async (
     txData: TxData,
-    signProvider: SignProvider,
+    keyProvider: KeyProvider,
     options?: any
   ): Promise<GenerateTransactionResult> => {
-    const { unsignedTx, txJson } = this.generateUnsignedTx(txData);
-    const signature = await signProvider.sign(unsignedTx);
+    const { unsignedTx, txJson } = this.generateUnsignedTx(
+      txData,
+      keyProvider.publicKey
+    );
+    const signature = await keyProvider.sign(unsignedTx);
     return this.getSignedTx(txJson, signature);
   };
 
   public generateTransactionSync = (
     txData: any,
-    signProvider: SignProviderSync,
+    keyProvider: KeyProviderSync,
     options?: any
   ): GenerateTransactionResult => {
-    const { unsignedTx, txJson } = this.generateUnsignedTx(txData);
-    const signature = signProvider.sign(unsignedTx);
+    const { unsignedTx, txJson } = this.generateUnsignedTx(
+      txData,
+      keyProvider.publicKey
+    );
+    const signature = keyProvider.sign(unsignedTx);
     return this.getSignedTx(txJson, signature);
   };
 
@@ -65,16 +70,8 @@ export class XRP implements Coin {
     return `${r}${s}`;
   };
 
-  private generateUnsignedTx = (txData: TxData) => {
-    const {
-      amount,
-      changeAddress,
-      fee,
-      sequence,
-      signingPubKey,
-      tag,
-      to
-    } = txData;
+  private generateUnsignedTx = (txData: TxData, signingPubKey: string) => {
+    const { amount, changeAddress, fee, sequence, tag, to } = txData;
     const partialTx = {
       Account: changeAddress,
       Amount: amount.toString(),
@@ -110,7 +107,6 @@ export class XRP implements Coin {
       ...txJson,
       TxnSignature: fromSignResultToDER(signature).toUpperCase()
     };
-    console.log(signedTx);
     const txBlob = binary.encode(signedTx);
     const id = computeBinaryTransactionHash(txBlob);
     return {
