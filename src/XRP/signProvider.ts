@@ -2,8 +2,9 @@
 import secp256k1 from "secp256k1";
 import { Result } from "../Common/sign";
 
-export const signWithPrivateKey = (privateKey: string) => {
+export const signWithKeyPair = (privateKey: string, publicKey: string) => {
   return {
+    publicKey,
     sign: async (hex: string): Promise<Result> => {
       try {
         const input = Buffer.from(hex, "hex");
@@ -26,8 +27,9 @@ export const signWithPrivateKey = (privateKey: string) => {
   };
 };
 
-export const signWithPrivateKeySync = (privateKey: string) => {
+export const signWithKeyPairSync = (privateKey: string, publicKey: string) => {
   return {
+    publicKey,
     sign: (hex: string): Result => {
       try {
         const input = Buffer.from(hex, "hex");
