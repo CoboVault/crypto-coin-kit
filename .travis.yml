@@ -12,7 +12,9 @@ jobs:
      script: yarn test
    - stage: deploy
      before_script: yarn
-     before_deploy: yarn build
+     script: yarn build
+     before_deploy:
+      - tar --exclude='./node_modules' --exclude="./.git" -czvf release.tgz .
      deploy:
        provider: releases
        api_key:
@@ -20,6 +22,8 @@ jobs:
        overwrite: true  
        skip_cleanup: true
        draft: true
+       file:
+        - release.tgz
        on:
         tags: true
         repo: cobowallet/crypto-coin-kit
