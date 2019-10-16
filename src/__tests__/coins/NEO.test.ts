@@ -16,8 +16,10 @@ describe("coin.NEO", () => {
   });
 
   it("should return true if it is a valid address", () => {
-    expect(new NEO().isAddressValid('AVr6BhSsy64hZqz4dFehX62o2UxsotXf2z')).toEqual(true)
-  })
+    expect(
+      new NEO().isAddressValid("AVr6BhSsy64hZqz4dFehX62o2UxsotXf2z")
+    ).toEqual(true);
+  });
 
   it("should generate signed tx as async", async () => {
     const neoBalance = buildNeoBalance({ ...neoData, net: "TestNet" });
@@ -28,14 +30,20 @@ describe("coin.NEO", () => {
       "2181be39a81f8fd84a785455bf44ff2f44582c5c03cd9e92a63cf026469f835e"
     );
 
-    const { txId, txHex } = await neo.generateTransaction({
-      tokenName: "NEO",
-      to: "AdeLEMZrNSA7wn5koFxL2AG35UHvFU1vf5",
-      amount: 10,
-      memo: "test net neo",
-      balance: neoBalance
-    }, pKSignProvider, { signerPubkey: '03cf9257d37f4ed524ba90a794fd96b958f3d7b3a4d2bb6baa11b120d15eade3d1' });
-
+    const { txId, txHex } = await neo.generateTransaction(
+      {
+        tokenName: "NEO",
+        to: "AdeLEMZrNSA7wn5koFxL2AG35UHvFU1vf5",
+        amount: 10,
+        memo: "test net neo",
+        balance: neoBalance
+      },
+      pKSignProvider,
+      {
+        signerPubkey:
+          "03cf9257d37f4ed524ba90a794fd96b958f3d7b3a4d2bb6baa11b120d15eade3d1"
+      }
+    );
 
     expect(txId).toEqual(
       "7105c4c478cb7c0c0cdd333bd05d2719a9974ed2a29982d7c695620821849fe0"
@@ -55,14 +63,20 @@ describe("coin.NEO", () => {
       "2181be39a81f8fd84a785455bf44ff2f44582c5c03cd9e92a63cf026469f835e"
     );
 
-    const { txId, txHex } = neo.generateTransactionSync({
-      tokenName: "NEO",
-      to: "AdeLEMZrNSA7wn5koFxL2AG35UHvFU1vf5",
-      amount: 10,
-      memo: "test net neo",
-      balance: neoBalance
-    }, pKSignProviderSync, { signerPubkey: '03cf9257d37f4ed524ba90a794fd96b958f3d7b3a4d2bb6baa11b120d15eade3d1' });
-
+    const { txId, txHex } = neo.generateTransactionSync(
+      {
+        tokenName: "NEO",
+        to: "AdeLEMZrNSA7wn5koFxL2AG35UHvFU1vf5",
+        amount: 10,
+        memo: "test net neo",
+        balance: neoBalance
+      },
+      pKSignProviderSync,
+      {
+        signerPubkey:
+          "03cf9257d37f4ed524ba90a794fd96b958f3d7b3a4d2bb6baa11b120d15eade3d1"
+      }
+    );
 
     expect(txId).toEqual(
       "7105c4c478cb7c0c0cdd333bd05d2719a9974ed2a29982d7c695620821849fe0"
@@ -74,23 +88,27 @@ describe("coin.NEO", () => {
   });
 
   it("should sign message and return expected result", async () => {
-    const neo = new NEO()
+    const neo = new NEO();
     const pKSignProvider = SignProviderWithPrivateKey(
       "2181be39a81f8fd84a785455bf44ff2f44582c5c03cd9e92a63cf026469f835e"
     );
-    const result = await neo.signMessage('hello', pKSignProvider)
-    expect(result).toEqual('ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3')
-  })
+    const result = await neo.signMessage("hello", pKSignProvider);
+    expect(result).toEqual(
+      "ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3"
+    );
+  });
 
   it("should sign message and return expected result", () => {
-    const neo = new NEO()
+    const neo = new NEO();
     const pKSignProviderSync = SignProviderWithPrivateKeySync(
       "2181be39a81f8fd84a785455bf44ff2f44582c5c03cd9e92a63cf026469f835e"
     );
-    const result = neo.signMessageSync('hello', pKSignProviderSync)
-    expect(result).toEqual('ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3')
-  })
-})
+    const result = neo.signMessageSync("hello", pKSignProviderSync);
+    expect(result).toEqual(
+      "ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3"
+    );
+  });
+});
 
 describe("neo.utilis", () => {
   it("shoudld return right balance if the assets is empty", () => {

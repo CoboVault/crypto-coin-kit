@@ -54,7 +54,7 @@ export default (
   sign: (rawTx: string) => Result,
   publicKey: string,
   txConfig: {
-    disableLargeFees: boolean
+    disableLargeFees: boolean;
   }
 ): {
   txId: string;

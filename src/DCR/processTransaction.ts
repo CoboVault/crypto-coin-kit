@@ -54,7 +54,7 @@ export default async (
   sign: (rawTx: string) => Promise<Result>,
   publicKey: string,
   txConfig: {
-    disableLargeFees: boolean
+    disableLargeFees: boolean;
   }
 ): Promise<{
   txId: string;

@@ -81,7 +81,11 @@ export class XZC implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransactionSync(transaction, signer.sign, options.signerPubkey);
+    return processTransactionSync(
+      transaction,
+      signer.sign,
+      options.signerPubkey
+    );
   };
 
   /**
@@ -109,5 +113,5 @@ export class XZC implements Coin {
     const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
 
     return hash256(buffer).toString("hex");
-  }
+  };
 }

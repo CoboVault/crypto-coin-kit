@@ -1,6 +1,6 @@
 import { tx, wallet } from "@cityofzion/neon-core";
 import hexEncoding from "crypto-js/enc-hex";
-import sha256 from 'crypto-js/sha256';
+import sha256 from "crypto-js/sha256";
 import { ec as EC } from "elliptic";
 import { SignProvider } from "../Common";
 import { Result, SignProviderSync } from "../Common/sign";
@@ -38,7 +38,7 @@ export interface ClaimLike {
   end_height?: number;
 }
 
-function signHex(hex: string, privateKey: string): {r:string, s: string} {
+function signHex(hex: string, privateKey: string): { r: string; s: string } {
   const msgHash = sha256(hexEncoding.parse(hex)).toString();
   const msgHashHex = Buffer.from(msgHash, "hex");
   const privateKeyBuffer = Buffer.from(privateKey, "hex");
@@ -46,42 +46,39 @@ function signHex(hex: string, privateKey: string): {r:string, s: string} {
   const sig = curve.sign(msgHashHex, privateKeyBuffer);
   return {
     r: sig.r.toString("hex", 32),
-    s: sig.s.toString("hex", 32),
-  }
+    s: sig.s.toString("hex", 32)
+  };
 }
-
 
 export const SignProviderWithPrivateKey = (
   privateKey: string
 ): SignProvider => {
   return {
     sign: async (hex: string): Promise<Result> => {
-      const {r, s} = signHex(hex, privateKey)
+      const { r, s } = signHex(hex, privateKey);
       return {
         r,
         s,
         recId: 0
       };
-    },
+    }
   };
 };
-
 
 export const SignProviderWithPrivateKeySync = (
   privateKey: string
 ): SignProviderSync => {
   return {
-    sign: (hex: string):Result => {
-      const {r, s} = signHex(hex, privateKey)
+    sign: (hex: string): Result => {
+      const { r, s } = signHex(hex, privateKey);
       return {
         r,
         s,
         recId: 0
       };
-    },
+    }
   };
 };
-
 
 export const buildNeoBalance = (externalNeoBalance: ExternalNeoBalance) => {
   const address = externalNeoBalance.address;

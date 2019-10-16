@@ -1,5 +1,8 @@
 import { XZC } from "../../XZC";
-import { signWithPrivateKey, signWithPrivateKeySync } from "../../XZC/signProvider";
+import {
+  signWithPrivateKey,
+  signWithPrivateKeySync
+} from "../../XZC/signProvider";
 import { TXZC } from "../../XZC/TXZC";
 
 const privateKey =
@@ -52,13 +55,15 @@ describe("coin.XZC", () => {
 
   it("should valid a address", () => {
     [
-      'aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj8',
-      'a9rCXxadJSWS4gY5anVvz3GC3n5oZeUrPY',
-      'TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ',
-      'TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ',
+      "aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj8",
+      "a9rCXxadJSWS4gY5anVvz3GC3n5oZeUrPY",
+      "TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ",
+      "TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ"
     ].forEach(item => expect(xzc.isAddressValid(item)).toBeTruthy());
 
-    expect(xzc.isAddressValid('aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj7')).toBeFalsy();
+    expect(
+      xzc.isAddressValid("aJtu4Ztv64yCUZYm9YzQ7b3Hyrii2foaj7")
+    ).toBeFalsy();
   });
 
   it("should generate transaction raw hex that can be broadcast directly async", async () => {
@@ -109,7 +114,9 @@ describe("coin.XZC", () => {
       message,
       signWithPrivateKey(privateKey)
     );
-    expect(result).toStrictEqual('ff483094eb5f1422ff37c12825738cf403febf8ac1d99a6ce27e5270ba833c9e5c2acf1e53ec622783d417d077003cc5d68cebb3bc29c57bcd142d6e44ee69b01');
+    expect(result).toStrictEqual(
+      "ff483094eb5f1422ff37c12825738cf403febf8ac1d99a6ce27e5270ba833c9e5c2acf1e53ec622783d417d077003cc5d68cebb3bc29c57bcd142d6e44ee69b01"
+    );
   });
 
   it("should sign message sync", () => {
@@ -118,6 +125,8 @@ describe("coin.XZC", () => {
       message,
       signWithPrivateKeySync(privateKey)
     );
-    expect(result).toStrictEqual('ff483094eb5f1422ff37c12825738cf403febf8ac1d99a6ce27e5270ba833c9e5c2acf1e53ec622783d417d077003cc5d68cebb3bc29c57bcd142d6e44ee69b01');
+    expect(result).toStrictEqual(
+      "ff483094eb5f1422ff37c12825738cf403febf8ac1d99a6ce27e5270ba833c9e5c2acf1e53ec622783d417d077003cc5d68cebb3bc29c57bcd142d6e44ee69b01"
+    );
   });
 });
