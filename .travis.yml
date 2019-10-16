@@ -21,7 +21,7 @@ jobs:
           branch: master
           repo: cobowallet/crypto-coin-kit
       - provider: script
-        script: ls && tar --exclude='./node_modules' --exclude="./.git" -czvf release.tgz .
+        script: ls && cd dist && ls -al && tar --exclude='./node_modules' --exclude="./.git" -czvf release.tgz .
         skip_cleanup: true
         on:
           tags: true
