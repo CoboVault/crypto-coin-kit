@@ -5,10 +5,13 @@ node_js:
 jobs:
   include:
    - stage: lint
+     before_script: yarn
      script: yarn lint
    - stage: test
+     before_script: yarn
      script: yarn test
    - stage: deploy
+     before_script: yarn
      before_deploy: yarn build
      deploy:
        provider: releases
