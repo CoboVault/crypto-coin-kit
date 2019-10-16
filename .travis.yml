@@ -11,7 +11,6 @@ jobs:
      before_script: yarn
      script: yarn test
    - stage: deploy
-     if: branch = master
      before_script: yarn
      script: yarn build
      deploy:
@@ -25,3 +24,4 @@ jobs:
        on:
         tags: true
         repo: cobowallet/crypto-coin-kit
+        branch: master
