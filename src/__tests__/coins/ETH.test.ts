@@ -116,4 +116,28 @@ describe("coin.ETH", () => {
       "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e501"
     );
   });
+
+  it('should format TxData to hex',  () => {
+    const data1: TxData = {
+      nonce: "152",
+      gasPrice: "10000000000",
+      gasLimit: "21000",
+      to: "0x3535353535353535353535353535353535353535",
+      value: "1000000000000000",
+      data: "0x",
+      chainId: 1
+    };
+
+    const data2: TxData = {
+      nonce: '0x98',
+      gasPrice: '0x2540be400',
+      gasLimit: '0x5208',
+      chainId: 1,
+      to: '0x3535353535353535353535353535353535353535',
+      value: '0x38d7ea4c68000',
+      data: '0x' };
+
+    expect(eth.formatTxData(data1)).toEqual(data2)
+    expect(eth.formatTxData(data2)).toEqual(data2)
+  });
 });
