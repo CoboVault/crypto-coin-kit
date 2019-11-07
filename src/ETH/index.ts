@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import { Transaction } from "ethereumjs-tx";
 import {
   addHexPrefix,
@@ -30,7 +31,7 @@ export class ETH implements Coin {
   }
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
-    const tx = new Transaction(data);
+    const tx = new Transaction(this.formatTxData(data));
     const hash = tx.hash(false);
     const sig = signer.sign(hash.toString("hex"));
     const signedTx = this.buildSignedTx(tx, sig);
@@ -38,7 +39,7 @@ export class ETH implements Coin {
   };
 
   public generateTransaction = async (data: TxData, signer: SignProvider) => {
-    const tx = new Transaction(data);
+    const tx = new Transaction(this.formatTxData(data));
     const hash = tx.hash(false);
     const sig = await signer.sign(hash.toString("hex"));
     const signedTx = this.buildSignedTx(tx, sig);
@@ -69,6 +70,18 @@ export class ETH implements Coin {
     return isValidAddress(address);
   };
 
+  public formatTxData = (tx: TxData) => {
+    return {
+      nonce: this.toHexString(tx.nonce),
+      gasPrice: this.toHexString(tx.gasPrice),
+      gasLimit: this.toHexString(tx.gasLimit),
+      chainId: tx.chainId || 1,
+      to: tx.to,
+      value: this.toHexString(tx.value),
+      data: tx.data || "0x"
+    }
+  };
+
   private buildSignedTx = (tx: Transaction, sigResult: Result): Transaction => {
     const r = Buffer.from(sigResult.r, "hex");
     const s = Buffer.from(sigResult.s, "hex");
@@ -97,4 +110,10 @@ export class ETH implements Coin {
     const recIdStr = numberToHex(sigResult.recId);
     return addHexPrefix(r.concat(s).concat(recIdStr));
   };
+
+
+
+  private toHexString = (str: string) => {
+    return str.startsWith("0x") ? str : addHexPrefix(new BigNumber(str,10).toString(16))
+  }
 }
