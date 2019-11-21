@@ -10,9 +10,13 @@ jobs:
    - stage: test
      before_script: yarn
      script: yarn test
+   - stage: pre_deploy
+     if: branch = master
+     before_script: yarn
+     script: yarn pub   
    - stage: deploy
+     if: branch = master
      before_deploy:
-      - yarn pub
       - bash ./build.sh
      deploy:
       before_script: yarn
