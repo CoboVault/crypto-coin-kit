@@ -4,12 +4,6 @@ node_js:
 
 jobs:
   include:
-   - stage: lint
-     before_script: yarn
-     script: yarn lint
-   - stage: test
-     before_script: yarn
-     script: yarn test
    - stage: deploy
      if: branch = master
      before_deploy:
