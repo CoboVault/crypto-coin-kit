@@ -27,6 +27,7 @@ https.get(options, res => {
       if(tag ==tagVersion) {
         console.log('skip this build')
       } else {
+        execSync(`export TRAVIS_TAG=${tagVersion}`)
         execSync(`git tag ${tagVersion}`)
       }
     });
