@@ -15,23 +15,24 @@ import { Result, SignProvider, SignProviderSync } from "../Common/sign";
 import numberToHex from "../utils/numberToHex";
 
 export interface TxData {
-  nonce: string;
+  nonce: number;
   gasPrice: string;
   gasLimit: string;
   to: string;
   value: string;
-  data: string;
   chainId: number;
+  memo:string;
 }
-
+const MAINNET_CHAIN_ID = 1;
 export class ETH implements Coin {
   public chainId: number;
+
   constructor(chainId?: number) {
-    this.chainId = chainId || 1;
+    this.chainId = chainId || MAINNET_CHAIN_ID;
   }
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
-    const tx = new Transaction(this.formatTxData(data));
+    const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
     const sig = signer.sign(hash.toString("hex"));
     const signedTx = this.buildSignedTx(tx, sig);
@@ -39,7 +40,7 @@ export class ETH implements Coin {
   };
 
   public generateTransaction = async (data: TxData, signer: SignProvider) => {
-    const tx = new Transaction(this.formatTxData(data));
+    const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
     const sig = await signer.sign(hash.toString("hex"));
     const signedTx = this.buildSignedTx(tx, sig);
@@ -72,14 +73,18 @@ export class ETH implements Coin {
 
   public formatTxData = (tx: TxData) => {
     return {
-      nonce: this.toHexString(tx.nonce),
+      nonce: addHexPrefix(numberToHex(tx.nonce)),
       gasPrice: this.toHexString(tx.gasPrice),
       gasLimit: this.toHexString(tx.gasLimit),
       chainId: tx.chainId || 1,
       to: tx.to,
       value: this.toHexString(tx.value),
-      data: tx.data || "0x"
+      data: addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'))
     }
+  };
+
+  protected constructTransaction = (data: TxData) => {
+    return new Transaction(this.formatTxData(data),{chain:this.chainId});
   };
 
   private buildSignedTx = (tx: Transaction, sigResult: Result): Transaction => {
@@ -111,9 +116,7 @@ export class ETH implements Coin {
     return addHexPrefix(r.concat(s).concat(recIdStr));
   };
 
-
-
   private toHexString = (str: string) => {
-    return str.startsWith("0x") ? str : addHexPrefix(new BigNumber(str,10).toString(16))
+    return addHexPrefix(new BigNumber(str,10).toString(16))
   }
 }

@@ -1,10 +1,13 @@
-import { ETH, TxData } from "../../ETH";
+import { TxData } from "../../ETH";
 import {
   signWithPrivateKey,
   signWithPrivateKeySync
 } from "../../ETH/signProvider";
-describe("coin.ETH", () => {
-  const eth = new ETH(1);
+import {ETC} from "../../ETC";
+import {addHexPrefix} from "ethereumjs-util";
+import {Buffer} from "safe-buffer";
+describe("coin.ETC", () => {
+  const etc = new ETC();
   const testPrivKey =
     "4646464646464646464646464646464646464646464646464646464646464646";
   const data: TxData = {
@@ -13,20 +16,20 @@ describe("coin.ETH", () => {
     gasLimit: "21000",
     to: "0x3535353535353535353535353535353535353535",
     value: "1000000000000000000",
-    memo: "",
-    chainId: 1
+    chainId: 61,
+    memo:""
   };
 
   it("should generate right address", () => {
     const pubkey1 =
       "0x0237b0bb7a8288d38ed49a524b5dc98cff3eb5ca824c9f9dc0dfdb3d9cd600f299";
     const addr1 = "0x9858EfFD232B4033E47d90003D41EC34EcaEda94";
-    expect(eth.generateAddress(pubkey1)).toBe(addr1);
+    expect(etc.generateAddress(pubkey1)).toBe(addr1);
 
     const pubkey2 =
       "0x039fd0991d0222b4e1339c1a1a5b5f6d9f6a96672a3247b638ee6156d9ea877a2f";
     const addr2 = "0x6Fac4D18c912343BF86fa7049364Dd4E424Ab9C0";
-    expect(eth.generateAddress(pubkey2)).toBe(addr2);
+    expect(etc.generateAddress(pubkey2)).toBe(addr2);
   });
 
   it("should valid an address ", () => {
@@ -39,7 +42,7 @@ describe("coin.ETH", () => {
       "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359",
       "0xdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB",
       "0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb"
-    ].forEach(s => expect(eth.isAddressValid(s, true)).toBeTruthy());
+    ].forEach(s => expect(etc.isAddressValid(s, true)).toBeTruthy());
 
     [
       "0x52908400098527886E0F7030069857D2E4169EE7",
@@ -50,44 +53,44 @@ describe("coin.ETH", () => {
       "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359",
       "0xdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB",
       "0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb"
-    ].forEach(s => expect(eth.isAddressValid(s)).toBeTruthy());
+    ].forEach(s => expect(etc.isAddressValid(s)).toBeTruthy());
     expect(
-      eth.isAddressValid("de709f2102306220921060314715629080e2fb77")
+      etc.isAddressValid("de709f2102306220921060314715629080e2fb77")
     ).toBeFalsy();
     expect(
-      eth.isAddressValid("0xde709f2102306220921060314715629080e2fb")
+      etc.isAddressValid("0xde709f2102306220921060314715629080e2fb")
     ).toBeFalsy();
     expect(
-      eth.isAddressValid("0x52908400098527886E0F7030069857D2E4169EE6", true)
+      etc.isAddressValid("0x52908400098527886E0F7030069857D2E4169EE6", true)
     ).toBeFalsy();
     expect(
-      eth.isAddressValid("0x52908400098527886E0F7030069857D2E4169Ee7", true)
+      etc.isAddressValid("0x52908400098527886E0F7030069857D2E4169Ee7", true)
     ).toBeFalsy();
   });
 
   it("should sign a tx sync", () => {
-    const { txId, txHex } = eth.generateTransactionSync(
+    const { txId, txHex } = etc.generateTransactionSync(
       data,
       signWithPrivateKeySync(testPrivKey)
     );
     expect(txId).toBe(
-      "0x33469b22e9f636356c4160a87eb19df52b7412e8eac32a4a55ffe88ea8350788"
+      "0x1b535f2bf9325a3ed159a63c4781eb0c743514b9b5624bdecd14156f748481d5"
     );
     expect(txHex).toBe(
-      "0xf86c098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a76400008025a028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83"
+      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819ea09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a08e648dc00e4bf3de3bdca34442553f3f4352f3f23585838d17cbed7d5f3cb81a"
     );
   });
 
   it("should sign a tx async", async () => {
-    const { txId, txHex } = await eth.generateTransaction(
+    const { txId, txHex } = await etc.generateTransaction(
       data,
       signWithPrivateKey(testPrivKey)
     );
     expect(txId).toBe(
-      "0x33469b22e9f636356c4160a87eb19df52b7412e8eac32a4a55ffe88ea8350788"
+      "0x1b535f2bf9325a3ed159a63c4781eb0c743514b9b5624bdecd14156f748481d5"
     );
     expect(txHex).toBe(
-      "0xf86c098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a76400008025a028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83"
+      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819ea09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a08e648dc00e4bf3de3bdca34442553f3f4352f3f23585838d17cbed7d5f3cb81a"
     );
   });
 
@@ -95,7 +98,7 @@ describe("coin.ETH", () => {
     const message = "hello world";
     const privkey =
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
-    const signedMessage = eth.signMessageSync(
+    const signedMessage = etc.signMessageSync(
       message,
       signWithPrivateKeySync(privkey)
     );
@@ -108,7 +111,7 @@ describe("coin.ETH", () => {
     const message = "hello world";
     const privkey =
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
-    const signedMessage = await eth.signMessage(
+    const signedMessage = await etc.signMessage(
       message,
       signWithPrivateKey(privkey)
     );
@@ -125,17 +128,17 @@ describe("coin.ETH", () => {
       to: "0x3535353535353535353535353535353535353535",
       value: "1000000000000000",
       memo: "",
-      chainId: 1
+      chainId: 61
     };
 
     const data2 = {
       nonce: '0x98',
       gasPrice: '0x2540be400',
       gasLimit: '0x5208',
-      chainId: 1,
+      chainId: 61,
       to: '0x3535353535353535353535353535353535353535',
       value: '0x38d7ea4c68000',
       data: '0x' };
-    expect(eth.formatTxData(data1)).toEqual(data2)
+    expect(etc.formatTxData(data1)).toEqual(data2)
   });
 });
