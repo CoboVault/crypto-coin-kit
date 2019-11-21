@@ -1,5 +1,6 @@
 import BTC from "./BTC";
 import { DCR } from "./DCR";
+import {ETC} from "./ETC";
 import { ETH } from "./ETH";
 import KeyProvider from "./keyProvider";
 import NEO from "./NEO";
@@ -14,7 +15,8 @@ export default {
     XZC,
     DCR,
     ETH,
-    BTC
+    BTC,
+    ETC
   },
   KeyProvider,
   utils
