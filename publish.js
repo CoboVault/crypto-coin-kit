@@ -1,5 +1,5 @@
 const https = require("https");
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
 const package = require('./package.json')
 
 const version = package['version']
@@ -27,8 +27,8 @@ https.get(options, res => {
       if(tag ==tagVersion) {
         console.log('skip this build')
       } else {
-        exec(`git tag ${tagVersion}`)
-        exec(`git push origin ${tagVersion}`)        
+        execSync(`git tag ${tagVersion}`)
+        execSync(`git push origin ${tagVersion}`)        
       }
     });
 });
