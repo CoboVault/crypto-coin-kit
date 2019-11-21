@@ -9,6 +9,8 @@ jobs:
    - stage: test
      script: yarn test    
    - stage: deploy
+     before_deploy:
+      - bash ./build.sh
      deploy:
       before_script: yarn
       script: bash ./build.sh
