@@ -28,7 +28,6 @@ https.get(options, res => {
         console.log('skip this build')
       } else {
         execSync(`git tag ${tagVersion}`)
-        execSync(`git push origin ${tagVersion}`)        
       }
     });
 });
