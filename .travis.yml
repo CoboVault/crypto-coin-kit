@@ -11,12 +11,11 @@ jobs:
      before_script: yarn
      script: yarn test
    - stage: deploy
-     if: branch = master
-     before_script: yarn
      before_deploy:
       - yarn pub
       - bash ./build.sh
      deploy:
+      before_script: yarn
       script: bash ./build.sh
       provider: releases
       api_key:
