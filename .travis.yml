@@ -5,18 +5,12 @@ node_js:
 jobs:
   include:
    - stage: lint
-     before_script: yarn
      script: yarn lint
    - stage: test
-     before_script: yarn
-     script: yarn test
+     script: yarn test    
    - stage: deploy
-     if: branch = master
-     before_script: yarn
-     before_deploy:
-      - yarn pub
-      - bash ./build.sh
      deploy:
+      before_script: yarn
       script: bash ./build.sh
       provider: releases
       api_key:
@@ -27,4 +21,4 @@ jobs:
       file: 'release.tgz'
       on:
         tags: true
-        branch: master
+        condition: $TRAVIS_BRANCH = $TRAVIS_TAG
