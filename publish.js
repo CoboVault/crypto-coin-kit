@@ -1,12 +1,34 @@
-const { exec } = require('child_process');
+const https = require("https");
+const { execSync } = require('child_process');
 const package = require('./package.json')
-
-exec('git pull origin master -r ')
 
 const version = package['version']
 
 const tagVersion = `v${version}`
 
-exec(`git tag ${tagVersion}`)
+options = {
+    host: 'api.github.com',
+    path: '/repos/cobowallet/crypto-coin-kit/releases/latest',
+    method: 'GET',
+    headers: {'user-agent': 'node.js'}
+}
 
-exec(`git push origin ${tagVersion}`)
+
+https.get(options, res => {
+    res.setEncoding("utf8");
+    let body = "";
+    res.on("data", data => {
+      body += data;
+    });
+    res.on("end", () => {
+      result = JSON.parse(body);
+      const tag = result['tag_name']
+      console.log('current version:', tag)
+      if(tag ==tagVersion) {
+        console.log('skip this build')
+      } else {
+        execSync(`export TRAVIS_TAG=${tagVersion}`)
+        execSync(`git tag ${tagVersion}`)
+      }
+    });
+});
