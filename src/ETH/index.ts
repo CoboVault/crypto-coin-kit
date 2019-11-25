@@ -73,7 +73,7 @@ export class ETH implements Coin {
 
   public formatTxData = (tx: TxData) => {
     return {
-      nonce: addHexPrefix(numberToHex(tx.nonce)),
+      nonce: addHexPrefix(numberToHex(tx.nonce || 0)),
       gasPrice: this.toHexString(tx.gasPrice),
       gasLimit: this.toHexString(tx.gasLimit),
       chainId: tx.chainId || 1,
