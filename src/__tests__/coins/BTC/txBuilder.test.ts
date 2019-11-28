@@ -37,7 +37,7 @@ describe("BTC.TxBuilder", () => {
         to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
         amount: 102391,
         fee: 1000,
-        changeAddres: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
+        changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
       }
     };
     const psbt = txb.addInputsForPsbt(txData).getPsbt();
@@ -55,7 +55,7 @@ describe("BTC.TxBuilder", () => {
         to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
         amount: 8578100,
         fee: 1000,
-        changeAddres: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
+        changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
       }
     };
     expect(() => txb.addInputsForPsbt(txData).getPsbt()).toThrowError(
@@ -71,7 +71,7 @@ describe("BTC.TxBuilder", () => {
         to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
         amount: 102391,
         fee: 1000,
-        changeAddres: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
+        changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
       }
     };
     const psbt = txb
