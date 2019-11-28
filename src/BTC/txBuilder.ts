@@ -60,7 +60,7 @@ export default class PsbtBuilder {
       const changeAmount =
         totalInputs - txData.outputs.amount - txData.outputs.fee;
       this.psbt.addOutput({
-        address: txData.outputs.changeAddres,
+        address: txData.outputs.changeAddress,
         value: changeAmount
       });
     } else {
@@ -109,7 +109,7 @@ export default class PsbtBuilder {
       output.to !== undefined &&
       output.amount !== undefined &&
       output.fee !== undefined &&
-      output.changeAddres !== undefined
+      output.changeAddress !== undefined
     );
   };
 }

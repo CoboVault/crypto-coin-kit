@@ -19,7 +19,7 @@ export enum NetWorkType {
 }
 
 export interface TxOutputItem {
-  address: "string";
+  address: string;
   value: number;
 }
 
@@ -44,7 +44,7 @@ export interface Destination {
   to: string;
   amount: number; // sat unit
   fee: number;
-  changeAddres: string;
+  changeAddress: string;
 }
 
 export interface TxData {
