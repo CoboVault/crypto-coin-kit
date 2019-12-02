@@ -60,6 +60,12 @@ describe("coin.BTC", () => {
     expect(failResult).toBe(false);
     const failedResult = btc.isAddressValid("0xtastere2uieuriur");
     expect(failedResult).toBe(false);
+    const validP2wpkhAddr = "bc1qcsfgcpf0nhcqg7psw2729a6cld7z4fsq4w7qtz";
+    expect(btc.isAddressValid(validP2wpkhAddr)).toBe(true);
+    const validP2wshAddr = "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej";
+    expect(btc.isAddressValid(validP2wshAddr)).toBe(true);
+    const invalidP2wshAddr = "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvze";
+    expect(btc.isAddressValid(invalidP2wshAddr)).toBe(false);
   });
 
   it("should generate the transaction", async () => {
