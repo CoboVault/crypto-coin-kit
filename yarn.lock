@@ -374,6 +374,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/bech32@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/bech32/-/bech32-1.1.1.tgz#a8574f9519369c91d5e69287551f675621a67f44"
+  integrity sha512-Kggl80lb2fVzRUhJlkZlrN9BJqrKCPe+QfpZ/TgiPlPTKbWcrgWuDPEAODNOUzfxVJyL4tzkwhH4qCWysVKIhg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bn.js@*", "@types/bn.js@4.11.5":
   version "4.11.5"
   resolved "https://registry.npm.taobao.org/@types/bn.js/download/@types/bn.js-4.11.5.tgz#40e36197433f78f807524ec623afcf0169ac81dc"
