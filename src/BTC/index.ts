@@ -1,3 +1,4 @@
+import {decode as bech32Decode} from "bech32"
 import * as bitcoin from "bitcoinjs-lib";
 // @ts-ignore
 import bs58check from "bs58check";
@@ -107,11 +108,17 @@ export default class BTC implements UtxoCoin {
     if (
       address.startsWith("1") ||
       address.startsWith("3") ||
-      address.startsWith("2") ||
-      address.startsWith("bc")
+      address.startsWith("2")
     ) {
       try {
         bs58check.decode(address);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    } else if(address.startsWith("bc")) {
+      try {
+        bech32Decode(address);
         return true;
       } catch (e) {
         return false;
