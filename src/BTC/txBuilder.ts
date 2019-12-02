@@ -1,3 +1,4 @@
+import {crypto} from "bitcoinjs-lib";
 import * as bitcoin from "bitcoinjs-lib";
 import {
   Destination,
@@ -32,7 +33,9 @@ export default class PsbtBuilder {
             hash: eachInput.hash,
             index: eachInput.index,
             witnessUtxo: {
-              script: Buffer.from(eachInput.utxo.script, "hex"),
+              script: Buffer.from(eachInput.utxo.script ||
+                  this.calculateScript(eachInput.utxo.publicKey).toString('hex'),
+                  "hex"),
               value: eachInput.utxo.value
             },
             redeemScript: bitcoin.payments.p2wpkh({
@@ -71,6 +74,26 @@ export default class PsbtBuilder {
 
   public getPsbt = () => {
     return this.psbt;
+  };
+
+  public calculateScript = (publicKey: string) => {
+    const p2wpkh = bitcoin.payments.p2wpkh({
+      pubkey: Buffer.from(publicKey,'hex'),
+      network: this.network
+    });
+
+    const p2sh = bitcoin.payments.p2sh({
+      redeem: p2wpkh,
+      network: this.network });
+
+    const script = bitcoin.script.compile([
+        bitcoin.script.OPS.OP_HASH160,
+        // @ts-ignore
+        crypto.hash160(p2sh.redeem.output),
+        bitcoin.script.OPS.OP_EQUAL,
+    ]);
+
+    return script;
   };
 
   private verifyInput = (txData: TxData, disableLargeFee: boolean = true) => {

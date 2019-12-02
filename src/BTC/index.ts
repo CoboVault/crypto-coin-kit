@@ -26,7 +26,7 @@ export interface TxOutputItem {
 
 export interface WitnessUtxo {
   publicKey: string;
-  script: string;
+  script?: string;
   value: number;
 }
 

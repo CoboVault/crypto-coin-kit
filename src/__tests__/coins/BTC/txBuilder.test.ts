@@ -63,6 +63,11 @@ describe("BTC.TxBuilder", () => {
     );
   });
 
+  it('should create correct script from public key',  () => {
+    const txb = new PsbtBuilder(bitcoin.networks.bitcoin);
+    expect(txb.calculateScript(publicKey).toString('hex')).toBe("a914915892366a6cdf24afa6e1c480db2ad88c63378087");
+    expect(txb.calculateScript(publicKeyOne).toString('hex')).toBe("a914745c56190d1fe8274e7ebe9dd4fe10ca3484959587");
+  });
   it("should add the output for psbt", () => {
     const txb = new PsbtBuilder(bitcoin.networks.regtest);
     const txData = {
