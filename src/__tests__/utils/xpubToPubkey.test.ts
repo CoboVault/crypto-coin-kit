@@ -5,10 +5,10 @@ const pubkey = '02709e6fd9e2e77167536d5bdd5464ac2dc00b63a16d2a96018e18c9ede8edc4
 
 describe("xpubToPubkey", () => {
   it("should generate corret pubkey", () => {
-    expect(Buffer.from(xpubToPubkey(xpub, index)).toString('hex')).toBe(pubkey);
+    expect(Buffer.from(xpubToPubkey(xpub, [0, index])).toString('hex')).toBe(pubkey);
   });
 
   it("should generate unmatch pubkey", () => {
-    expect(Buffer.from(xpubToPubkey(xpub, index - 1)).toString('hex')).not.toBe(pubkey);
+    expect(Buffer.from(xpubToPubkey(xpub, [0, index - 1])).toString('hex')).not.toBe(pubkey);
   });
 });
