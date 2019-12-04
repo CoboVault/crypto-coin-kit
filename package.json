@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bech32": "^1.1.1",
     "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
-    "@types/bech32": "^1.1.1",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
@@ -35,6 +35,7 @@
     "ethereumjs-tx": "^2.1.1",
     "ethereumjs-util": "^6.1.0",
     "hash.js": "^1.1.7",
+    "hdkey": "^1.1.1",
     "ripple-address-codec": "^2.0.1",
     "ripple-binary-codec": "^0.2.1",
     "ripple-hashes": "^0.3.2",
