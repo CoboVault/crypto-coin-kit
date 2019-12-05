@@ -1,6 +1,6 @@
 import BTC from "./BTC";
 import { DCR } from "./DCR";
-import {ETC} from "./ETC";
+import { ETC } from "./ETC";
 import { ETH } from "./ETH";
 import KeyProvider from "./keyProvider";
 import NEO from "./NEO";

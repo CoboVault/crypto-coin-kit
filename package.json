@@ -8,7 +8,7 @@
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "test": "jest",
-    "build": "tsc -p ./tsconfig.json",
+    "build": "tsc -p ./tsconfig.json; webpack --config webpack.config.js",
     "pub": "node publish.js"
   },
   "author": "",
@@ -19,10 +19,13 @@
     "jest": "^24.8.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
+    "ts-loader": "^6.2.1",
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.2",
-    "typescript-tslint-plugin": "^0.5.4"
+    "typescript": "^3.7.3",
+    "typescript-tslint-plugin": "^0.5.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
