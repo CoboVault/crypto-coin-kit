@@ -30,6 +30,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     libraryTarget: 'umd',
+    library: ['cryptoCoinKit', '[name]'],
     path: path.resolve(__dirname, 'dist/subBundle')
   }
 };
