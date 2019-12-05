@@ -8,7 +8,7 @@ enum SupportedCurves {
 
 export default (
   xpub: string,
-  indexArr: number[],
+  indexArr: number[] = [],
   curve: SupportedCurves = SupportedCurves.secp256k1
 ): Buffer => {
   switch (curve) {
