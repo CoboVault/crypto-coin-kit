@@ -53,7 +53,7 @@ export interface TxData {
   outputs: TxOutputItem[] | Destination;
 }
 
-export default class BTC implements UtxoCoin {
+export class BTC implements UtxoCoin {
   private network: bitcoin.Network;
   constructor(networkType: NetWorkType = NetWorkType.mainNet) {
     if (networkType === NetWorkType.mainNet) {

@@ -1,4 +1,4 @@
-import NEO from "../../NEO";
+import { NEO } from "../../NEO";
 import {
   buildNeoBalance,
   buildNeoClaims,
