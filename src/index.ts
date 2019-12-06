@@ -1,9 +1,9 @@
-import BTC from "./BTC";
+import { BTC } from "./BTC";
 import { DCR } from "./DCR";
 import { ETC } from "./ETC";
 import { ETH } from "./ETH";
 import KeyProvider from "./keyProvider";
-import NEO from "./NEO";
+import { NEO } from "./NEO";
 import * as utils from "./utils";
 import { XRP } from "./XRP";
 import { XZC } from "./XZC";

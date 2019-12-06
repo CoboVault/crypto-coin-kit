@@ -1,4 +1,4 @@
-import BTC, { NetWorkType } from "../../../BTC";
+import {BTC, NetWorkType} from "../../../BTC";
 import keyProvider from "../../../BTC/keyProvider";
 
 const privateKey =

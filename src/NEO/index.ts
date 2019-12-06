@@ -15,7 +15,7 @@ export interface TxData {
   memo?: string;
   balance: wallet.Balance;
 }
-export default class NEO implements Coin {
+export class NEO implements Coin {
   public static utils = {
     SignProviderWithPrivateKey,
     buildNeoBalance,
