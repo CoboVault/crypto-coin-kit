@@ -8,7 +8,7 @@ import { KeyProvider, KeyProviderSync } from "../Common/sign";
 import { hash256, numberToHex } from "../utils";
 import PsbtBuilder from "./txBuilder";
 
-enum AddressType {
+export enum AddressType {
   P2PKH = "P2PKH",
   P2SH = "P2SH",
   P2WPKH = "P2WPKH"
@@ -54,7 +54,7 @@ export interface TxData {
 }
 
 export class BTC implements UtxoCoin {
-  private network: bitcoin.Network;
+  protected network: bitcoin.Network;
   constructor(networkType: NetWorkType = NetWorkType.mainNet) {
     if (networkType === NetWorkType.mainNet) {
       this.network = bitcoin.networks.bitcoin;
@@ -63,10 +63,10 @@ export class BTC implements UtxoCoin {
     }
   }
 
-  public generateAddress = (
+  public generateAddress (
     publicKey: string,
     addressType: AddressType = AddressType.P2SH
-  ) => {
+  ) {
     let btcAddress: string | undefined;
     const pubkeyBuffer = (SafeBuffer.from(
       publicKey,

@@ -12,6 +12,8 @@ module.exports = {
     NEO: './src/NEO/index.ts',
     XRP: './src/XRP/index.ts',
     XZC: './src/XZC/index.ts',
+    BCH: './src/BCH/index.ts',
+    DASH:'./src/DASH/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
