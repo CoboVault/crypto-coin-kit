@@ -8,6 +8,7 @@
     "rules": {
         "interface-name": [true, "never-prefix"],
         "object-literal-sort-keys": [false],
+        "no-console": false,
         "no-bitwise": false
     },
     "rulesDirectory": []
