@@ -1,15 +1,13 @@
 import bchaddr from "bchaddrjs";
 import { networks, Transaction} from "bitcoinjs-lib";
-import {AddressFormat} from "../BCH";
 import {BTC, NetWorkType} from "../BTC";
-import {UtxoCoin} from "../Common/coin";
 import {KeyProvider, KeyProviderSync} from "../Common/sign";
 import {Network, SIGHASH_FORKID} from "./index";
 import {Psbt} from "./psbt";
 import {TxData} from "./tx_data";
 
 
-export abstract class BTCFORK extends BTC implements UtxoCoin{
+export abstract class BTCFORK extends BTC{
     protected network: Network;
     protected networkType: NetWorkType;
     protected constructor(networkType: NetWorkType = NetWorkType.mainNet) {
@@ -53,7 +51,6 @@ export abstract class BTCFORK extends BTC implements UtxoCoin{
         signers: KeyProvider[]
     ) => {
         const psbt = new Psbt({network: this.network});
-
         this.addInputs(txData, psbt, signers);
         txData.outputs.forEach(output => psbt.addOutput(output));
         for (const signer of signers) {
