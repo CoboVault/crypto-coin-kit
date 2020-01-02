@@ -15,14 +15,6 @@ export class BCH extends BTCFORK {
         this.network = this.initNetwork(networkType)
     }
 
-    public initNetwork = (networkType: NetWorkType) => {
-        if (networkType === NetWorkType.mainNet) {
-            return  bitcoincash;
-        } else {
-            return  bitcoincash_testnet;
-        }
-    };
-
     public generateAddress(publicKey: string,
                            addressType: AddressType = AddressType.P2PKH,
                            format?: AddressFormat) {
@@ -45,5 +37,13 @@ export class BCH extends BTCFORK {
                 return bchaddr.toCashAddress(addr);
         }
         return addr;
+    };
+
+    protected initNetwork = (networkType: NetWorkType) => {
+        if (networkType === NetWorkType.mainNet) {
+            return  bitcoincash;
+        } else {
+            return  bitcoincash_testnet;
+        }
     };
 }
