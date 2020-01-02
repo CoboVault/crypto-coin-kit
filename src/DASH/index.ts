@@ -1,11 +1,11 @@
 // @ts-ignore
 import bs58check from "bs58check";
-import {AddressType, BTC, NetWorkType} from "../BTC";
+import {AddressType} from "../BTC";
 import {BTCFORK} from "../BTC_FORK/BTCFORK";
 import {dash} from "../BTC_FORK/networks";
 
 export class DASH extends BTCFORK{
-    constructor(networkType: NetWorkType = NetWorkType.mainNet) {
+    constructor() {
         super();
         this.network = dash
     }

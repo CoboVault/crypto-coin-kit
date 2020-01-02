@@ -1,9 +1,8 @@
-import bchaddr from "bchaddrjs";
 import { networks, Transaction} from "bitcoinjs-lib";
 import {BTC, NetWorkType} from "../BTC";
 import {KeyProvider, KeyProviderSync} from "../Common/sign";
+import {HookPsbt} from "./hookPsbt";
 import {Network, SIGHASH_FORKID} from "./index";
-import {Psbt} from "./psbt";
 import {TxData} from "./tx_data";
 
 
@@ -15,20 +14,12 @@ export abstract class BTCFORK extends BTC{
         this.networkType = networkType;
         this.network = this.initNetwork(networkType);
     }
-
-    public initNetwork = (networkType: NetWorkType) => {
-        if (networkType === NetWorkType.mainNet) {
-            return  networks.bitcoin;
-        } else {
-            return  networks.regtest;
-        }
-    };
     // @ts-ignore
     public generateTransactionSync = (
         txData: TxData,
         signers: KeyProviderSync[]
     ) => {
-        const psbt = new Psbt({network: this.network});
+        const psbt = new HookPsbt({network: this.network});
         this.addInputs(txData, psbt, signers);
         txData.outputs.forEach(output => psbt.addOutput(output));
         for (const signer of signers) {
@@ -50,7 +41,7 @@ export abstract class BTCFORK extends BTC{
         txData: TxData,
         signers: KeyProvider[]
     ) => {
-        const psbt = new Psbt({network: this.network});
+        const psbt = new HookPsbt({network: this.network});
         this.addInputs(txData, psbt, signers);
         txData.outputs.forEach(output => psbt.addOutput(output));
         for (const signer of signers) {
@@ -67,11 +58,17 @@ export abstract class BTCFORK extends BTC{
         return this.buildTx(psbt)
     };
 
-    public isAddressValid = (address: string) => {
-        return bchaddr.isValidAddress(address);
+    public abstract isAddressValid(address: string) : boolean;
+
+    protected initNetwork = (networkType: NetWorkType) => {
+        if (networkType === NetWorkType.mainNet) {
+            return  networks.bitcoin;
+        } else {
+            return  networks.regtest;
+        }
     };
 
-    private addInputs(txData: TxData, psbt: Psbt, signers: KeyProvider[] | KeyProviderSync[]) {
+    private addInputs(txData: TxData, psbt: HookPsbt, signers: KeyProvider[] | KeyProviderSync[]) {
         for (let i = 0; i < txData.inputs.length; i++) {
             psbt.addInput({
                 hash: txData.inputs[i].hash,
@@ -91,7 +88,7 @@ export abstract class BTCFORK extends BTC{
         return Transaction.SIGHASH_ALL;
     };
 
-    private buildTx = (psbt: Psbt) => {
+    private buildTx = (psbt: HookPsbt) => {
         if (psbt.validateSignaturesOfAllInputs()) {
             psbt.finalizeAllInputs();
             const txHex = psbt.extractTransaction().toHex();

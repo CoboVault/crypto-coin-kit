@@ -1,11 +1,7 @@
 import bchaddr from 'bchaddrjs';
-import {default as bitcoin, Transaction} from "bitcoinjs-lib";
-import {AddressType, BTC, NetWorkType} from "../BTC";
-
-import {Network, Psbt, SIGHASH_FORKID, TxData} from "../BTC_FORK";
+import {AddressType, NetWorkType} from "../BTC";
 import {BTCFORK} from "../BTC_FORK/BTCFORK";
 import {bitcoincash, bitcoincash_testnet} from "../BTC_FORK/networks";
-import {KeyProvider, KeyProviderSync} from "../Common/sign";
 
 export enum AddressFormat {
     LEGACY,
@@ -32,6 +28,10 @@ export class BCH extends BTCFORK {
                            format?: AddressFormat) {
         const address = super.generateAddress(publicKey, addressType);
         return this.convertAddrFormat(address, format || AddressFormat.LEGACY);
+    };
+
+    public isAddressValid = (address: string) => {
+        return bchaddr.isValidAddress(address);
     };
 
     public convertAddrFormat = (addr: string,

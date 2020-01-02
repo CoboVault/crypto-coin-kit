@@ -85,20 +85,20 @@ const DEFAULT_OPTS: PsbtOpts = {
  * Transaction Extractor: This role will perform some checks before returning a
  *   Transaction object. Such as fee rate not being larger than maximumFeeRate etc.
  */
-export class Psbt {
-  public static fromBase64(data: string, opts: PsbtOptsOptional = {}): Psbt {
+export class HookPsbt {
+  public static fromBase64(data: string, opts: PsbtOptsOptional = {}): HookPsbt {
     const buffer = Buffer.from(data, 'base64');
     return this.fromBuffer(buffer, opts);
   }
 
-  public static fromHex(data: string, opts: PsbtOptsOptional = {}): Psbt {
+  public static fromHex(data: string, opts: PsbtOptsOptional = {}): HookPsbt {
     const buffer = Buffer.from(data, 'hex');
     return this.fromBuffer(buffer, opts);
   }
 
-  public static fromBuffer(buffer: Buffer, opts: PsbtOptsOptional = {}): Psbt {
+  public static fromBuffer(buffer: Buffer, opts: PsbtOptsOptional = {}): HookPsbt {
     const psbtBase = PsbtBase.fromBuffer(buffer, transactionFromBuffer);
-    const psbt = new Psbt(opts, psbtBase);
+    const psbt = new HookPsbt(opts, psbtBase);
     checkTxForDupeIns(psbt.__CACHE.__TX, psbt.__CACHE);
     return psbt;
   }
@@ -142,14 +142,14 @@ export class Psbt {
     return this.data.inputs.length;
   }
 
-  public combine(...those: Psbt[]): this {
+  public combine(...those: HookPsbt[]): this {
     this.data.combine(...those.map(o => o.data));
     return this;
   }
 
-  public clone(): Psbt {
+  public clone(): HookPsbt {
     // TODO: more efficient cloning
-    const res = Psbt.fromBuffer(this.data.toBuffer());
+    const res = HookPsbt.fromBuffer(this.data.toBuffer());
     res.opts = JSON.parse(JSON.stringify(this.opts));
     return res;
   }
@@ -823,7 +823,7 @@ function check32Bit(num: number): void {
   }
 }
 
-function checkFees(psbt: Psbt, cache: PsbtCache, opts: PsbtOpts): void {
+function checkFees(psbt: HookPsbt, cache: PsbtCache, opts: PsbtOpts): void {
   const feeRate = cache.__FEE_RATE || psbt.getFeeRate();
   const vsize = cache.__EXTRACTED_TX!.virtualSize();
   const satoshis = feeRate * vsize;

@@ -104,7 +104,7 @@ export class BTC implements UtxoCoin {
     }
   };
 
-  public isAddressValid = (address: string) => {
+  public isAddressValid (address: string){
     if (
       address.startsWith("1") ||
       address.startsWith("3") ||
