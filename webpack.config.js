@@ -12,6 +12,8 @@ module.exports = {
     NEO: './src/NEO/index.ts',
     XRP: './src/XRP/index.ts',
     XZC: './src/XZC/index.ts',
+    BCH: './src/BCH/index.ts',
+    DASH:'./src/DASH/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
@@ -30,7 +32,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     libraryTarget: 'umd',
-    library: ['cryptoCoinKit', '[name]'],
+    // library: ['cryptoCoinKit', '[name]'],
     path: path.resolve(__dirname, 'dist/subBundle')
   }
 };

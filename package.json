@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bchaddrjs": "^0.4.0",
     "@types/bech32": "^1.1.1",
     "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
@@ -29,6 +30,8 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
+    "bchaddrjs": "^0.4.4",
+    "bip66": "^1.1.0",
     "bitcoinjs-lib": "^5.1.6",
     "bs58check": "2.0.0",
     "buffer": "^5.2.1",
@@ -48,6 +51,7 @@
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
+    "typeforce": "^1.11.3",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
   },
   "files": [

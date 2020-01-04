@@ -1,4 +1,6 @@
+import { BCH } from "./BCH";
 import { BTC } from "./BTC";
+import {DASH} from "./DASH";
 import { DCR } from "./DCR";
 import { ETC } from "./ETC";
 import { ETH } from "./ETH";
@@ -16,7 +18,9 @@ export default {
     DCR,
     ETH,
     BTC,
-    ETC
+    ETC,
+    BCH,
+    DASH
   },
   KeyProvider,
   utils
