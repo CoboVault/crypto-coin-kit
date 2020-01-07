@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
+    "@tronscan/client": "0.2.16",
     "bchaddrjs": "^0.4.4",
     "bip66": "^1.1.0",
     "bitcoinjs-lib": "^5.1.6",

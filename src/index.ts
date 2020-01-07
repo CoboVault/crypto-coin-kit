@@ -5,7 +5,9 @@ import { DCR } from "./DCR";
 import { ETC } from "./ETC";
 import { ETH } from "./ETH";
 import KeyProvider from "./keyProvider";
+import {LTC} from "./LTC";
 import { NEO } from "./NEO";
+import {TRX} from "./TRX";
 import * as utils from "./utils";
 import { XRP } from "./XRP";
 import { XZC } from "./XZC";
@@ -20,7 +22,9 @@ export default {
     BTC,
     ETC,
     BCH,
-    DASH
+    DASH,
+    LTC,
+    TRX
   },
   KeyProvider,
   utils
