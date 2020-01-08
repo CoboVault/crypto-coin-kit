@@ -1,7 +1,7 @@
 // @ts-ignore
 import {Transaction} from "@tronscan/client/src/protocol/core/Tron_pb";
 // @ts-ignore
-import {buildTransferTransaction} from '@tronscan/client/src/utils/transactionBuilder';
+import {buildTransferTransaction,buildTriggerSmartContract} from '@tronscan/client/src/utils/transactionBuilder';
 import assert from "assert";
 // @ts-ignore
 import bs58check from "bs58check";
@@ -17,6 +17,8 @@ import {Result} from "../Common/sign";
 import {numberToHex} from "../utils";
 import {sha256} from "../utils/hash256";
 
+import * as Ethers from 'ethers'
+
 interface LatestBlock {
     hash: string,
     number: number,
@@ -24,11 +26,14 @@ interface LatestBlock {
 }
 
 interface Override {
+    tokenShortName?: string,
     tokenFullName: string,
+    decimals: 0
 }
 
 export interface TxData {
-    token?: string,
+    token?: string, // required for TRC10 token, for example '1001090' for TRONONE
+    contractAddress?:string, // required for TRC20 token
     from: string,
     to: string,
     memo?: string,
@@ -60,7 +65,12 @@ export class TRX implements Coin {
     };
 
     public generateTransaction = async (txData: TxData, signProvider: SignProvider) => {
-        const tx = this.buildTransferTx(txData);
+        let tx: Transaction;
+        if (txData.contractAddress) {
+            tx = this.generateTRC20Transaction(txData)
+        } else {
+            tx = this.buildTransferTx(txData);
+        }
         const raw = tx.getRawData();
         const rawBytes = raw.serializeBinary();
         const hash = sha256(rawBytes);
@@ -69,7 +79,12 @@ export class TRX implements Coin {
     };
 
     public generateTransactionSync = (txData: TxData, signProvider: SignProviderSync) => {
-        const tx = this.buildTransferTx(txData);
+        let tx: Transaction;
+        if (txData.contractAddress) {
+            tx = this.generateTRC20Transaction(txData)
+        } else {
+            tx = this.buildTransferTx(txData);
+        }
         const raw = tx.getRawData();
         const rawBytes = raw.serializeBinary();
         const hash = sha256(rawBytes);
@@ -139,5 +154,25 @@ export class TRX implements Coin {
             txHex: hex.toString('hex'),
             txId: sha256(hex).toString('hex'),
         };
+    };
+
+    private generateTRC20Transaction = (txData: TxData) => {
+        const ownerAddress = bs58check.decode(txData.from).toString('hex');
+        const contractAddress = bs58check.decode(txData.contractAddress).toString('hex');
+        const data = this.composeTRC20Data(txData.to,txData.value);
+        const tx = buildTriggerSmartContract(ownerAddress, contractAddress, 0, data);
+        return this.refWithLatestBlock(tx, txData.latestBlock, true)
+    };
+
+    private composeTRC20Data = (to: string, value: number = 0) => {
+        const functionSelector = 'transfer(address,uint256)';
+        const types = ['address', 'uint256'];
+        const toAddress = bs58check.decode(to).toString('hex')
+            .replace(/^(41)/, '0x');
+        const values = [toAddress, value];
+        const abiCoder = new Ethers.utils.AbiCoder();
+        const parameters = abiCoder.encode(types, values).replace(/^(0x)/, '');
+        const selectorStr = sha3.keccak_256(Buffer.from(functionSelector)).slice(0, 8);
+        return selectorStr + parameters
     };
 }

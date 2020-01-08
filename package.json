@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "https://github.com/cobowallet/cobo-neon-js.git#e29b2ca620684197fc55357cf9d091190be9993a",
-    "@tronscan/client": "0.2.16",
+    "@tronscan/client": "cobowallet/tronscan-node-client",
     "bchaddrjs": "^0.4.4",
     "bip66": "^1.1.0",
     "bitcoinjs-lib": "^5.1.6",
@@ -53,7 +53,8 @@
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
     "typeforce": "^1.11.3",
-    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
+    "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
+    "ethers": "^4.0.13"
   },
   "files": [
     "lib/**/*"
