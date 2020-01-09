@@ -14,6 +14,13 @@ import { Coin, GenerateTransactionResult } from "../Common/coin";
 import { Result, SignProvider, SignProviderSync } from "../Common/sign";
 import numberToHex from "../utils/numberToHex";
 
+// tslint:disable-next-line: class-name
+interface Override {
+  decimals:number;
+  tokenShortName:string;
+  tokenFullName:string;
+}
+
 export interface TxData {
   nonce: number;
   gasPrice: string;
@@ -22,6 +29,8 @@ export interface TxData {
   value: string;
   chainId: number;
   memo:string;
+  data?:string;
+  override?:Override;
 }
 const MAINNET_CHAIN_ID = 1;
 export class ETH implements Coin {
@@ -79,7 +88,7 @@ export class ETH implements Coin {
       chainId: tx.chainId || 1,
       to: tx.to,
       value: this.toHexString(tx.value),
-      data: addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'))
+      data: tx.data||addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'))
     }
   };
 

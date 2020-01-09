@@ -1,7 +1,7 @@
 import { TxData } from "../../ETH";
 import {
-  signWithPrivateKey,
-  signWithPrivateKeySync
+  SignProviderWithPrivateKey,
+  SignProviderWithPrivateKeySync
 } from "../../ETH/signProvider";
 import {ETC} from "../../ETC";
 import {addHexPrefix} from "ethereumjs-util";
@@ -71,26 +71,26 @@ describe("coin.ETC", () => {
   it("should sign a tx sync", () => {
     const { txId, txHex } = etc.generateTransactionSync(
       data,
-      signWithPrivateKeySync(testPrivKey)
+        SignProviderWithPrivateKeySync(testPrivKey)
     );
     expect(txId).toBe(
-      "0x1b535f2bf9325a3ed159a63c4781eb0c743514b9b5624bdecd14156f748481d5"
+      "0xcfba3fce26e6ab8c276f3689220ad8dea89da186b00d7fa8f473519a763a3d0b"
     );
     expect(txHex).toBe(
-      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819ea09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a08e648dc00e4bf3de3bdca34442553f3f4352f3f23585838d17cbed7d5f3cb81a"
+      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819da09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a0719b723ff1b40c21c4235cbbbdaac0bf775be8f479c31caea806710f70f98927"
     );
   });
 
   it("should sign a tx async", async () => {
     const { txId, txHex } = await etc.generateTransaction(
       data,
-      signWithPrivateKey(testPrivKey)
+        SignProviderWithPrivateKey(testPrivKey)
     );
     expect(txId).toBe(
-      "0x1b535f2bf9325a3ed159a63c4781eb0c743514b9b5624bdecd14156f748481d5"
+      "0xcfba3fce26e6ab8c276f3689220ad8dea89da186b00d7fa8f473519a763a3d0b"
     );
     expect(txHex).toBe(
-      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819ea09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a08e648dc00e4bf3de3bdca34442553f3f4352f3f23585838d17cbed7d5f3cb81a"
+      "0xf86d098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a764000080819da09e59aa73a10ec8fe5a97fe7560806315624c1a67aeeb59310fdc0001ba2b38a0a0719b723ff1b40c21c4235cbbbdaac0bf775be8f479c31caea806710f70f98927"
     );
   });
 
@@ -100,10 +100,10 @@ describe("coin.ETC", () => {
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
     const signedMessage = etc.signMessageSync(
       message,
-      signWithPrivateKeySync(privkey)
+        SignProviderWithPrivateKeySync(privkey)
     );
     expect(signedMessage).toBe(
-      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e501"
+      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e500"
     );
   });
 
@@ -113,10 +113,10 @@ describe("coin.ETC", () => {
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
     const signedMessage = await etc.signMessage(
       message,
-      signWithPrivateKey(privkey)
+        SignProviderWithPrivateKey(privkey)
     );
     expect(signedMessage).toBe(
-      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e501"
+      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e500"
     );
   });
 

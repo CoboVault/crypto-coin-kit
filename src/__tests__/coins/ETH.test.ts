@@ -1,8 +1,9 @@
 import { ETH, TxData } from "../../ETH";
 import {
-  signWithPrivateKey,
-  signWithPrivateKeySync
+  SignProviderWithPrivateKey,
+  SignProviderWithPrivateKeySync
 } from "../../ETH/signProvider";
+
 describe("coin.ETH", () => {
   const eth = new ETH(1);
   const testPrivKey =
@@ -68,7 +69,7 @@ describe("coin.ETH", () => {
   it("should sign a tx sync", () => {
     const { txId, txHex } = eth.generateTransactionSync(
       data,
-      signWithPrivateKeySync(testPrivKey)
+        SignProviderWithPrivateKeySync(testPrivKey)
     );
     expect(txId).toBe(
       "0x33469b22e9f636356c4160a87eb19df52b7412e8eac32a4a55ffe88ea8350788"
@@ -81,7 +82,7 @@ describe("coin.ETH", () => {
   it("should sign a tx async", async () => {
     const { txId, txHex } = await eth.generateTransaction(
       data,
-      signWithPrivateKey(testPrivKey)
+        SignProviderWithPrivateKey(testPrivKey)
     );
     expect(txId).toBe(
       "0x33469b22e9f636356c4160a87eb19df52b7412e8eac32a4a55ffe88ea8350788"
@@ -91,16 +92,43 @@ describe("coin.ETH", () => {
     );
   });
 
+  //https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
+  it('should generate right erc20 tx',  () => {
+    const erc20Tx:TxData = {
+      to:"0xea26c4ac16d4a5a106820bc8aee85fd0b7b2b664",
+      value:"0",
+      gasPrice:"0xb2d05e00",
+      gasLimit:"0x21660",
+      nonce:202,
+      memo:"",
+      chainId:1,
+      data:"0xa9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+      override:{
+        decimals:18,
+        tokenShortName:"QKC",
+        tokenFullName:"QuarkChain"
+      }
+    };
+
+    const {txId,txHex} = eth.generateTransactionSync(
+        erc20Tx,
+        SignProviderWithPrivateKeySync('1e799db5ff3e2df04775afd82bdb3b02302f4d2cdab904cda426032d35768aed')
+    );
+
+    expect(txId).toBe('0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f');
+    expect(txHex).toBe('0xf8aa81ca84b2d05e008302166094ea26c4ac16d4a5a106820bc8aee85fd0b7b2b66480b844a9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a764000025a0068b92d2cafd9941d7f5d4e128b59b33197014057033b40a83c47b373c089b63a06cf04a6e27d0dc2362d146b0f9a36bd3f4f1aea651017934f9f3537987b15fae');
+
+  });
   it("should sign message sync", () => {
     const message = "hello world";
     const privkey =
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
     const signedMessage = eth.signMessageSync(
       message,
-      signWithPrivateKeySync(privkey)
+        SignProviderWithPrivateKeySync(privkey)
     );
     expect(signedMessage).toBe(
-      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e501"
+      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e500"
     );
   });
 
@@ -110,10 +138,10 @@ describe("coin.ETH", () => {
       "1ab42cc412b618bdea3a599e3c9bae199ebf030895b039e9db1e30dafb12b727";
     const signedMessage = await eth.signMessage(
       message,
-      signWithPrivateKey(privkey)
+        SignProviderWithPrivateKey(privkey)
     );
     expect(signedMessage).toBe(
-      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e501"
+      "0xae35d9375b015664a7b115a63a4515142b68059b164dd187e0b5232d47ca69685104d05d1c6c58b1fe5842f28459e2ea5bd571c0196f10da25fd2140eeef47e500"
     );
   });
 
