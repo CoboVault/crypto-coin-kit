@@ -2,8 +2,8 @@
 import { Address, PublicKey, Transaction } from "zcore-lib";
 import { SignProvider, SignProviderSync } from "../Common";
 import { Coin } from "../Common/coin";
+import {KeyProvider, KeyProviderSync} from "../Common/sign";
 import { hash256, numberToHex } from "../utils";
-import { fromSignResultToDER } from "../utils/toDER";
 import formatInput from "./formatInput";
 import processTransaction from "./processTransaction";
 import processTransactionSync from "./processTransactionSync";
@@ -48,10 +48,7 @@ export class XZC implements Coin {
 
   public generateTransaction = async (
     txData: TxData,
-    signer: SignProvider,
-    options: {
-      signerPubkey: string;
-    }
+    signer: KeyProvider,
   ): Promise<{
     txId: string;
     txHex: string;
@@ -62,15 +59,12 @@ export class XZC implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransaction(transaction, signer.sign, options.signerPubkey);
+    return processTransaction(transaction, signer.sign, signer.publicKey);
   };
 
   public generateTransactionSync = (
     txData: TxData,
-    signer: SignProviderSync,
-    options: {
-      signerPubkey: string;
-    }
+    signer: KeyProviderSync,
   ): {
     txId: string;
     txHex: string;
@@ -83,8 +77,7 @@ export class XZC implements Coin {
       .change(changeAddress);
     return processTransactionSync(
       transaction,
-      signer.sign,
-      options.signerPubkey
+      signer.sign, signer.publicKey
     );
   };
 

@@ -2,6 +2,7 @@
 import { Address, PublicKey, Transaction } from "dcr-core";
 import { SignProvider, SignProviderSync } from "../Common";
 import { Coin } from "../Common/coin";
+import {KeyProvider, KeyProviderSync} from "../Common/sign";
 import { hash256, numberToHex } from "../utils";
 import formatInput from "./formatInput";
 import processTransaction from "./processTransaction";
@@ -31,7 +32,6 @@ interface TxData {
 }
 
 interface Options {
-  signerPubkey: string;
   disableLargeFees?: boolean;
 }
 
@@ -52,8 +52,8 @@ export class DCR implements Coin {
 
   public generateTransaction = async (
     txData: TxData,
-    signer: SignProvider,
-    { disableLargeFees = true, ...options }: Options
+    signer: KeyProvider,
+    { disableLargeFees = true}: Options
   ): Promise<{
     txId: string;
     txHex: string;
@@ -64,15 +64,15 @@ export class DCR implements Coin {
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransaction(transaction, signer.sign, options.signerPubkey, {
+    return processTransaction(transaction, signer.sign, signer.publicKey, {
       disableLargeFees
     });
   };
 
   public generateTransactionSync = (
     txData: TxData,
-    signer: SignProviderSync,
-    { disableLargeFees = true, ...options }: Options
+    signer: KeyProviderSync,
+    { disableLargeFees = true}: Options
   ): {
     txId: string;
     txHex: string;
@@ -86,7 +86,7 @@ export class DCR implements Coin {
     return processTransactionSync(
       transaction,
       signer.sign,
-      options.signerPubkey,
+      signer.publicKey,
       { disableLargeFees }
     );
   };
