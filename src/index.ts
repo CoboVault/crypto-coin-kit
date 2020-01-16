@@ -4,6 +4,7 @@ import {DASH} from "./DASH";
 import { DCR } from "./DCR";
 import { ETC } from "./ETC";
 import { ETH } from "./ETH";
+import { IOST } from "./IOST";
 import KeyProvider from "./keyProvider";
 import {LTC} from "./LTC";
 import { NEO } from "./NEO";
@@ -24,7 +25,8 @@ export default {
     BCH,
     DASH,
     LTC,
-    TRX
+    TRX,
+    IOST
   },
   KeyProvider,
   utils

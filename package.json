@@ -54,6 +54,7 @@
     "tweetnacl": "^1.0.1",
     "typeforce": "^1.11.3",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
+    "iost": "https://github.com/cobowallet/iost.js#ffbaeb59623813d66703ef47605cc891455c2247",
     "ethers": "^4.0.13"
   },
   "files": [
