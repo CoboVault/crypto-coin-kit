@@ -5,11 +5,16 @@ import {
 } from "../../XZC/signProvider";
 import { TXZC } from "../../XZC/TXZC";
 
+import keyProvider,{SignProviderWithPrivateKeySync} from "../../BTC/keyProvider";
+
 const privateKey =
   "5a6661e8354d612c5a045075c0fe758d87b6aa39e5e1d578f439c7300730e9bf";
 const signerPubkey =
   "039f1ca2b5b17ef01d1e86111a79af62ba09f1d72a77cb4382e6ae0e76cf5aae96";
 
+
+const kp = keyProvider(privateKey, signerPubkey);
+const kpSync = SignProviderWithPrivateKeySync(privateKey, signerPubkey);
 const simpleUtxoWith1BTC = {
   address: "TK6wo7WjENdYAKAcAeqWjudpMChmYDU6NZ",
   txId: "6491e2d390d8b08b5dcd9f0c11567acb94c1e9faddad459f6552822645eaa46b",
@@ -75,10 +80,7 @@ describe("coin.XZC", () => {
         to: "TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ",
         fee: 1000
       },
-      signWithPrivateKey(privateKey),
-      {
-        signerPubkey
-      }
+        kp
     );
     expect(txHex).toStrictEqual({
       txHex:
@@ -96,10 +98,7 @@ describe("coin.XZC", () => {
         to: "TU9eKiq2216JaCBHjRKysTQvHHLfyRiXjJ",
         fee: 1000
       },
-      signWithPrivateKeySync(privateKey),
-      {
-        signerPubkey
-      }
+        kpSync
     );
     expect(txHex).toStrictEqual({
       txHex:

@@ -5,11 +5,15 @@ import {
 } from "../../DCR/signProvider";
 import { TDCR } from "../../DCR/TDCR";
 import { fromSignResultToDER } from "../../utils";
+import keyProvider,{SignProviderWithPrivateKeySync} from "../../BTC/keyProvider";
 
 const privateKey =
   "5a6661e8354d612c5a045075c0fe758d87b6aa39e5e1d578f439c7300730e9bf";
 const signerPubkey =
   "039f1ca2b5b17ef01d1e86111a79af62ba09f1d72a77cb4382e6ae0e76cf5aae96";
+
+const kp = keyProvider(privateKey, signerPubkey);
+const kpSync = SignProviderWithPrivateKeySync(privateKey, signerPubkey);
 
 const simpleUtxoWith1BTC = {
   address: "TshNG87SJsnofAvYd8F2wFYyQFi7SPCVQKG",
@@ -70,9 +74,8 @@ describe("coin.DCR", () => {
         to: "TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7",
         fee: 1000
       },
-      signWithPrivateKey(privateKey),
+      kp,
       {
-        signerPubkey,
         disableLargeFees: true
       }
     );
@@ -92,9 +95,8 @@ describe("coin.DCR", () => {
         to: "TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7",
         fee: 1000
       },
-      signWithPrivateKeySync(privateKey),
+      kpSync,
       {
-        signerPubkey,
         disableLargeFees: true
       }
     );
@@ -115,9 +117,8 @@ describe("coin.DCR", () => {
           to: "TsimKygUstcRBb8pwt4x3cfYDDQCzhqFdS7",
           fee: 150001
         },
-        signWithPrivateKeySync(privateKey),
+        kpSync,
         {
-          signerPubkey,
           disableLargeFees: false
         }
       );
