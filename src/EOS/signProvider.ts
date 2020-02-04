@@ -1,21 +1,11 @@
 // @ts-ignore
 import {Signature} from 'eosjs-ecc'
 // @ts-ignore
-import secp256k1 from "secp256k1";
-// @ts-ignore
 import wif from 'wif';
 import {Result} from "../Common/sign";
 
 export const SignProviderWithPrivateKey = (
-    privateKey: string,// console.log('****rrr',res.toHex());
-    // // console.log('****sss',res.s);
-    // while (true) {
-    //     console.log('sign',nonce);
-    //     const sigObj = secp256k1.sign(input, privKey, {
-    //         noncefn: () => {
-    //             console.log(123, nonce)
-    //             return nonce;
-    //         }
+    privateKey: string,
     ) => {
         return {
             sign: async (hex: string): Promise<Result> => {
