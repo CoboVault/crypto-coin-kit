@@ -2,6 +2,7 @@ import { BCH } from "./BCH";
 import { BTC } from "./BTC";
 import {DASH} from "./DASH";
 import { DCR } from "./DCR";
+import {EOS} from "./EOS";
 import { ETC } from "./ETC";
 import { ETH } from "./ETH";
 import { IOST } from "./IOST";
@@ -26,7 +27,8 @@ export default {
     DASH,
     LTC,
     TRX,
-    IOST
+    IOST,
+    EOS
   },
   KeyProvider,
   utils

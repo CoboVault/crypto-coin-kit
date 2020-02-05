@@ -55,7 +55,10 @@
     "typeforce": "^1.11.3",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a",
     "iost": "https://github.com/cobowallet/iost.js#ffbaeb59623813d66703ef47605cc891455c2247",
-    "ethers": "^4.0.13"
+    "ethers": "^4.0.13",
+    "eosjs": "^16.0.6",
+    "eosjs-ecc": "^4.0.4",
+    "wif": "2.0.6"
   },
   "files": [
     "lib/**/*"
