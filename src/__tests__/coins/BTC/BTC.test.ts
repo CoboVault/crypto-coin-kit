@@ -134,4 +134,41 @@ describe("coin.BTC", () => {
     expect(tx.outputs[0].value).toEqual(102391);
     expect(tx.outputs[1].value).toEqual(5999000);
   });
+
+  // https://btc.com/a7263645784c46f36a8200c06d349df82206f8b2b5f16f0ddd9adaf0b1a0f675
+  it('should generate omni tx',  async () => {
+    const privateKey = '0437d0a4ae601819365884a858da3f61074e7bedff30b7d716c406e1937092e1';
+    const publicKey = '02a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c382';
+    const keyPair = keyProvider(privateKey,publicKey);
+
+    const utxo = {
+      hash: 'e6f3d78f3d9acf72329263e2c85206129c5c3c56519e21879325b01b0748e2b8',
+      index:0,
+      utxo: {
+        publicKey:publicKey,
+        value:40000
+      }
+    };
+
+    const output1 = {
+      address : '38c8FFS9W4QEW55WXgo2wX8HZJCutH89VT',
+      value:546
+    };
+
+    const output2 = {
+      address : '6a146f6d6e69000000000000001f0000000003f83c40',
+      value: 0,
+      op_return: true
+    };
+
+    const txData = {
+      inputs:[utxo],
+      outputs:[output1,output2]
+    };
+
+    const tx = await btc.generateTransaction(txData,[keyPair]);
+    expect(tx.txId).toBe('d556fa715e96c99b2ace29b2a57fa43a9acea239ae258b04a96c846ef78ad199');
+    expect(tx.txHex).toBe('02000000000101b8e248071bb0259387219e51563c5c9c120652c8e263923272cf9a3d8fd7f3e600000000171600141ea4ea0a12d7c2b07e9084d36abd03a2edd72798ffffffff02220200000000000017a9144bdc14152999fc8ad8c6df4c20946ba1e572c95e870000000000000000166a146f6d6e69000000000000001f0000000003f83c400247304402201e6dbbee8c909a91efc5954fc58112d74a7069deb1e4aebc3a8516b88d158f1c02203872389b0a7b425ab94e2931b7ceaec4054b1eaea9ca9e2a0955ddd5def571b9012102a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c38200000000')
+  });
+
 });

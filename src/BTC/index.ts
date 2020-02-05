@@ -22,6 +22,7 @@ export enum NetWorkType {
 export interface TxOutputItem {
   address: string;
   value: number;
+  op_return?: boolean;
 }
 
 export interface WitnessUtxo {

@@ -67,7 +67,16 @@ export default class PsbtBuilder {
         value: changeAmount
       });
     } else {
-      this.psbt.addOutputs(txData.outputs);
+      txData.outputs.forEach(out => {
+        if (out.op_return) {
+          this.psbt.addOutput({
+            script: Buffer.from(out.address,'hex'),
+            value: 0
+          })
+        } else {
+          this.psbt.addOutput(out);
+        }
+      });
     }
     return this;
   };
