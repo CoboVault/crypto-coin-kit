@@ -114,14 +114,14 @@ export class EOS implements Coin {
         return numberToHex(sig.recId + 4 + 27).concat(sig.r).concat(sig.s);
     };
 
-    public getSignProvider(signer: SignProvider) {
+    private getSignProvider(signer: SignProvider) {
         return async (tx: any) => {
             const sig = await signer.sign(sha256(tx.buf));
             return this.buildSignature(sig);
         };
     }
 
-    public getSignProviderSync(signer: SignProviderSync) {
+    private getSignProviderSync(signer: SignProviderSync) {
         return (tx: any) => {
             const sig = signer.sign(sha256(tx.buf));
             return this.buildSignature(sig);

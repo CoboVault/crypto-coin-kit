@@ -37,7 +37,9 @@ describe("Coin.EOS",()=>{
     it('should generate tx',async () => {
         const eosTx = await eos.generateTransaction(txData,SignProviderWithPrivateKey(privKey));
         expect(eosTx.txId).toBe('7af10fb78976604e080b0fe34c523e5ec722b800f4a9b1af350d6238039560dd');
-        expect(JSON.parse(eosTx.txHex).signatures[0]).toBe('SIG_K1_Kf8yNx2UXUgqxuCMWzaune51QEE7BPungQiVcKx8dKtfhVPkc5SCjB4fPrUbqi2avEzioG6da3NR19j77dG3wmGaX3ssNS')
+        const tx = JSON.parse(eosTx.txHex);
+        expect(tx.signatures[0])
+            .toBe('SIG_K1_Kf8yNx2UXUgqxuCMWzaune51QEE7BPungQiVcKx8dKtfhVPkc5SCjB4fPrUbqi2avEzioG6da3NR19j77dG3wmGaX3ssNS')
     });
 
     //  curl -X POST --url https://api.eosnewyork.io/v1/chain/push_transaction -d '{"compression":"none","transaction":{"expiration":"2020-02-04T09:17:03","ref_block_num":54688,"ref_block_prefix":508621698,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0,"context_free_actions":[],"actions":[{"account":"eosio.token","name":"transfer","authorization":[{"actor":"cobowalletcn","permission":"active"}],"data":"305156311a4e0f45e08e3b19ab4c0f45102700000000000004454f530000000000"}],"transaction_extensions":[]},"signatures":["SIG_K1_JxRVz8WGEeaJtdy27UmqT68E2pVB62u1hBBL98xL2Cn4kmpQ7DeGNkjtzhzCFmt7Tn7SYfRJnnCRcyny4rLCGkenAZgPDD"]}'
@@ -45,6 +47,8 @@ describe("Coin.EOS",()=>{
     it('should generate tx sync',   () => {
         const eosTx = eos.generateTransactionSync(txData,SignProviderWithPrivateKeySync(privKey));
         expect(eosTx.txId).toBe('7af10fb78976604e080b0fe34c523e5ec722b800f4a9b1af350d6238039560dd');
-        expect(JSON.parse(eosTx.txHex).signatures[0]).toBe('SIG_K1_Kf8yNx2UXUgqxuCMWzaune51QEE7BPungQiVcKx8dKtfhVPkc5SCjB4fPrUbqi2avEzioG6da3NR19j77dG3wmGaX3ssNS')
+        const tx = JSON.parse(eosTx.txHex);
+        expect(tx.signatures[0])
+            .toBe('SIG_K1_Kf8yNx2UXUgqxuCMWzaune51QEE7BPungQiVcKx8dKtfhVPkc5SCjB4fPrUbqi2avEzioG6da3NR19j77dG3wmGaX3ssNS')
     });
 });
