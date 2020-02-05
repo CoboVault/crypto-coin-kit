@@ -22,7 +22,7 @@ export enum NetWorkType {
 export interface TxOutputItem {
   address: string;
   value: number;
-  op_return?: boolean;
+  op_return?: boolean; // for omni usdt , op_return should be true
 }
 
 export interface WitnessUtxo {
