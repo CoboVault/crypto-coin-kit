@@ -116,7 +116,7 @@ export default class PsbtBuilder {
           });
 
           const propertyID = this.network === bitcoin.networks.bitcoin ?
-              USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET
+              USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET;
           this.psbt.addOutput({
               script: this.generateOmniPayload(omniTxData.omniAmount,propertyID),
               value:0
@@ -130,7 +130,7 @@ export default class PsbtBuilder {
           }
           return this;
       } else {
-          throw new Error("input value are invaild");
+          throw new Error("input value are invalid");
       }
   };
 
