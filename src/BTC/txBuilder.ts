@@ -13,6 +13,8 @@ import {
 
 const MAX_FEE = 1000000;
 export const DUST_AMOUNT = 546; // sat unit
+export const USDT_PROPERTYID_MAINNET = 31;
+export const USDT_PROPERTYID_TESTNET = 1;
 
 export default class PsbtBuilder {
   private psbt: bitcoin.Psbt;
@@ -112,8 +114,11 @@ export default class PsbtBuilder {
               address: omniTxData.to,
               value: DUST_AMOUNT,
           });
+
+          const propertyID = this.network === bitcoin.networks.bitcoin ?
+              USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET
           this.psbt.addOutput({
-              script: this.generateOmniPayload(omniTxData.omniAmount,31),
+              script: this.generateOmniPayload(omniTxData.omniAmount,propertyID),
               value:0
           });
           const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
