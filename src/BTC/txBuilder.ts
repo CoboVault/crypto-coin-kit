@@ -115,14 +115,15 @@ export default class PsbtBuilder {
               value: DUST_AMOUNT,
           });
 
-          const propertyID = this.network === bitcoin.networks.bitcoin ?
+          const usdtPropertyId = this.network === bitcoin.networks.bitcoin ?
               USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET;
           this.psbt.addOutput({
-              script: this.generateOmniPayload(omniTxData.omniAmount,propertyID),
-              value:0
+              script: this.generateOmniPayload(omniTxData.omniAmount,
+                  omniTxData.propertyId || usdtPropertyId),
+              value: 0
           });
           const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
-          if (change > 0) {
+          if (change > DUST_AMOUNT) {
               this.psbt.addOutput({
                   address: omniTxData.changeAddress,
                   value: change

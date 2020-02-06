@@ -21,7 +21,7 @@ export enum NetWorkType {
 
 export interface TxOutputItem {
   address: string;
-  value: number
+  value: number;
 }
 
 export interface WitnessUtxo {
@@ -58,7 +58,8 @@ export interface OmniTxData {
   to: string;
   fee: number;
   changeAddress:string;
-  omniAmount: number // sat unit
+  omniAmount: number; // sat unit
+  propertyId?: number;
 }
 
 export class BTC implements UtxoCoin {
