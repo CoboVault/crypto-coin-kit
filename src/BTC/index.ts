@@ -21,8 +21,7 @@ export enum NetWorkType {
 
 export interface TxOutputItem {
   address: string;
-  value: number;
-  op_return?: boolean; // for omni usdt , op_return should be true
+  value: number
 }
 
 export interface WitnessUtxo {
@@ -52,6 +51,14 @@ export interface Destination {
 export interface TxData {
   inputs: TxInputItem[];
   outputs: TxOutputItem[] | Destination;
+}
+
+export interface OmniTxData {
+  inputs: TxInputItem[];
+  to: string;
+  fee: number;
+  changeAddress:string;
+  omniAmount: number // sat unit
 }
 
 export class BTC implements UtxoCoin {
@@ -152,6 +159,25 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   };
 
+  public generateOmniTx = async (
+      omniTxData: OmniTxData,
+      signers: KeyProvider[]) => {
+      const psbtBuilder = new PsbtBuilder(this.network);
+      const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+      for (const signer of signers) {
+          const keyPair = {
+              publicKey: Buffer.from(signer.publicKey, "hex"),
+              sign: async (hashBuffer: Buffer) => {
+                  const hexString = hashBuffer.toString("hex");
+                  const { r, s } = await signer.sign(hexString);
+                  return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
+              }
+          };
+          await psbt.signAllInputsAsync(keyPair);
+      }
+      return this.extractTx(psbt);
+  };
+
   public generateTransactionSync = (
     txData: TxData,
     signers: KeyProviderSync[]
@@ -174,6 +200,25 @@ export class BTC implements UtxoCoin {
     }
     return this.extractTx(psbt);
   };
+
+    public generateOmniTxSync = (
+        omniTxData: OmniTxData,
+        signers: KeyProviderSync[]) => {
+        const psbtBuilder = new PsbtBuilder(this.network);
+        const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+        for (const signer of signers) {
+            const keyPair = {
+                publicKey: Buffer.from(signer.publicKey, "hex"),
+                sign: (hashBuffer: Buffer) => {
+                    const hexString = hashBuffer.toString("hex");
+                    const { r, s } = signer.sign(hexString);
+                    return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
+                }
+            };
+            psbt.signAllInputs(keyPair);
+        }
+        return this.extractTx(psbt);
+    };
 
   public signMessage = async (message: string, signer: KeyProvider) => {
     const hashHex = this.constructMessageHash(message);
