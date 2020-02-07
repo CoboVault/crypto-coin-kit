@@ -1,8 +1,10 @@
 import {crypto} from "bitcoinjs-lib";
 import * as bitcoin from "bitcoinjs-lib";
+// @ts-ignore
+import padstart from 'lodash.padstart';
 import {
   Destination,
-  NonWitnessUtxo,
+  NonWitnessUtxo, OmniTxData,
   TxData,
   TxInputItem,
   TxOutputItem,
@@ -10,6 +12,9 @@ import {
 } from "./index";
 
 const MAX_FEE = 1000000;
+export const DUST_AMOUNT = 546; // sat unit
+export const USDT_PROPERTYID_MAINNET = 31;
+export const USDT_PROPERTYID_TESTNET = 1;
 
 export default class PsbtBuilder {
   private psbt: bitcoin.Psbt;
@@ -22,35 +27,16 @@ export default class PsbtBuilder {
   public addInputsForPsbt = (txData: TxData) => {
     if (this.verifyInput(txData)) {
       txData.inputs.forEach(eachInput => {
-        if (this.isNonWitnessUtxo(eachInput.utxo)) {
-          return this.psbt.addInput({
-            hash: eachInput.hash,
-            index: eachInput.index,
-            nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
-          });
-        } else {
-          return this.psbt.addInput({
-            hash: eachInput.hash,
-            index: eachInput.index,
-            witnessUtxo: {
-              script: Buffer.from(eachInput.utxo.script ||
-                  this.calculateScript(eachInput.utxo.publicKey).toString('hex'),
-                  "hex"),
-              value: eachInput.utxo.value
-            },
-            redeemScript: bitcoin.payments.p2wpkh({
-              pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
-              network: this.network
-            }).output
-          });
-        }
+        return this.addInputForPsbt(eachInput);
       });
       return this;
     }
     throw new Error("input value are invaild");
   };
 
-  public addOutputForPsbt = (txData: TxData) => {
+
+
+    public addOutputForPsbt = (txData: TxData) => {
     if (this.isDestinationOutputs(txData.outputs)) {
       this.psbt.addOutput({
         address: txData.outputs.to,
@@ -96,6 +82,59 @@ export default class PsbtBuilder {
     return script;
   };
 
+  public verifyOmniInput = (txData:OmniTxData) => {
+      const totalInputs = txData.inputs.reduce(
+          (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
+          0
+      );
+      return totalInputs >= DUST_AMOUNT + txData.fee;
+  };
+
+  public generateOmniPayload = (amount:number, propertyId:number):Buffer => {
+      const hexAmount = padstart(amount.toString(16), 16, '0').toUpperCase();
+      const simpleSend = [
+            '6f6d6e69', // omni
+            '0000', // version
+            padstart(propertyId.toString(16), 12, '0'),
+            hexAmount,
+        ].join('');
+        const data = [Buffer.from(simpleSend, 'hex')];
+        // @ts-ignore
+        return bitcoin.payments.embed({ data }).output;
+    };
+
+  public buildOmniPsbt = (omniTxData:OmniTxData)=>{
+      const totalInputs = omniTxData.inputs.reduce(
+          (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
+          0
+      );
+      if(totalInputs >= DUST_AMOUNT + omniTxData.fee) {
+          omniTxData.inputs.forEach(input => this.addInputForPsbt(input));
+          this.psbt.addOutput({
+              address: omniTxData.to,
+              value: DUST_AMOUNT,
+          });
+
+          const usdtPropertyId = this.network === bitcoin.networks.bitcoin ?
+              USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET;
+          this.psbt.addOutput({
+              script: this.generateOmniPayload(omniTxData.omniAmount,
+                  omniTxData.propertyId || usdtPropertyId),
+              value: 0
+          });
+          const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
+          if (change > DUST_AMOUNT) {
+              this.psbt.addOutput({
+                  address: omniTxData.changeAddress,
+                  value: change
+              })
+          }
+          return this;
+      } else {
+          throw new Error("input value are invalid");
+      }
+  };
+
   private verifyInput = (txData: TxData, disableLargeFee: boolean = true) => {
     const totalInputs = txData.inputs.reduce(
       (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
@@ -117,6 +156,31 @@ export default class PsbtBuilder {
     }
     return false;
   };
+
+    private addInputForPsbt(eachInput:TxInputItem) {
+        if (this.isNonWitnessUtxo(eachInput.utxo)) {
+            return this.psbt.addInput({
+                hash: eachInput.hash,
+                index: eachInput.index,
+                nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
+            });
+        } else {
+            return this.psbt.addInput({
+                hash: eachInput.hash,
+                index: eachInput.index,
+                witnessUtxo: {
+                    script: Buffer.from(eachInput.utxo.script ||
+                        this.calculateScript(eachInput.utxo.publicKey).toString('hex'),
+                        "hex"),
+                    value: eachInput.utxo.value
+                },
+                redeemScript: bitcoin.payments.p2wpkh({
+                    pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
+                    network: this.network
+                }).output
+            });
+        }
+    }
 
   private isNonWitnessUtxo = (
     utxo: WitnessUtxo | NonWitnessUtxo

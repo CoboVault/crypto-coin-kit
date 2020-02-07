@@ -58,7 +58,8 @@
     "ethers": "^4.0.13",
     "eosjs": "^16.0.6",
     "eosjs-ecc": "^4.0.4",
-    "wif": "2.0.6"
+    "wif": "2.0.6",
+    "lodash.padstart": "4.6.1"
   },
   "files": [
     "lib/**/*"
