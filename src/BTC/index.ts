@@ -160,7 +160,7 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   };
 
-  public generateOmniTx = async (
+  public generateOmniTransaction = async (
       omniTxData: OmniTxData,
       signers: KeyProvider[]) => {
       const psbtBuilder = new PsbtBuilder(this.network);
@@ -202,7 +202,7 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   };
 
-    public generateOmniTxSync = (
+    public generateOmniTransactionSync = (
         omniTxData: OmniTxData,
         signers: KeyProviderSync[]) => {
         const psbtBuilder = new PsbtBuilder(this.network);
