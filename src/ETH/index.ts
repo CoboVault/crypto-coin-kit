@@ -28,7 +28,7 @@ export interface TxData {
   to: string;
   value: string;
   chainId: number;
-  memo:string;
+  memo?:string;
   data?:string;
   override?:Override;
 }
@@ -81,6 +81,10 @@ export class ETH implements Coin {
   };
 
   public formatTxData = (tx: TxData) => {
+    let memo = '0x';
+    if (tx.memo) {
+      memo = addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'));
+    }
     return {
       nonce: addHexPrefix(numberToHex(tx.nonce || 0)),
       gasPrice: this.toHexString(tx.gasPrice),
@@ -88,7 +92,7 @@ export class ETH implements Coin {
       chainId: tx.chainId || 1,
       to: tx.to,
       value: this.toHexString(tx.value),
-      data: tx.data||addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'))
+      data: tx.data|| memo,
     }
   };
 
