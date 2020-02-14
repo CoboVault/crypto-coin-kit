@@ -68,8 +68,28 @@ describe("coin.BCH", () => {
         );
     });
 
+    it("should generate the transaction sync if kpsync is duplicated", async () => {
+        const result = bch.generateTransactionSync(txData, [kpSync, kpSync]);
+        expect(result.txId).toEqual(
+            "2347c3307db78ba5efda4a6a283abf8e5e2f7b700f42513c12371afa211f6ea7"
+        );
+        expect(result.txHex).toEqual(
+            "020000000137fcf293749aeaba687902e9dae7d9d2fa31900ad603758091294befaae83a05000000006a47304402204781564e25515e00f1487d9a0a772e19dac9ec13d8cd92190fb5d825e769423d022043a0ee25481a9e21042e033384feadc6005383586377572d8196cf7d5a0006b6412102c1b6f5e4917cbc628d914e2f1155e4195504ab3bfa58e4a8d367896c9d8016f8ffffffff0260ae0a00000000001976a914b5423a5b2ab6af3a174cf2e53a3c85190418163688aca0860100000000001976a914530523097222a54328b4ab78bdbcab172232065888ac00000000"
+        );
+    });
+
     it("should generate the transaction async", async () => {
         const result = await bch.generateTransaction(txData, [kp]);
+        expect(result.txId).toEqual(
+            "2347c3307db78ba5efda4a6a283abf8e5e2f7b700f42513c12371afa211f6ea7"
+        );
+        expect(result.txHex).toEqual(
+            "020000000137fcf293749aeaba687902e9dae7d9d2fa31900ad603758091294befaae83a05000000006a47304402204781564e25515e00f1487d9a0a772e19dac9ec13d8cd92190fb5d825e769423d022043a0ee25481a9e21042e033384feadc6005383586377572d8196cf7d5a0006b6412102c1b6f5e4917cbc628d914e2f1155e4195504ab3bfa58e4a8d367896c9d8016f8ffffffff0260ae0a00000000001976a914b5423a5b2ab6af3a174cf2e53a3c85190418163688aca0860100000000001976a914530523097222a54328b4ab78bdbcab172232065888ac00000000"
+        );
+    });
+
+    it("should generate the transaction async if kp is duplicated", async () => {
+        const result = await bch.generateTransaction(txData, [kp, kp]);
         expect(result.txId).toEqual(
             "2347c3307db78ba5efda4a6a283abf8e5e2f7b700f42513c12371afa211f6ea7"
         );

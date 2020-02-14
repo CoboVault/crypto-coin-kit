@@ -141,12 +141,13 @@ export class BTC implements UtxoCoin {
     txData: TxData,
     signers: KeyProvider[]
   ) => {
+    const uniqueSigners = this.filterUniqueSigner(signers)
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
       .addInputsForPsbt(txData)
       .addOutputForPsbt(txData)
       .getPsbt();
-    for (const signer of signers) {
+    for (const signer of uniqueSigners) {
       const keyPair = {
         publicKey: Buffer.from(signer.publicKey, "hex"),
         sign: async (hashBuffer: Buffer) => {
@@ -163,9 +164,10 @@ export class BTC implements UtxoCoin {
   public generateOmniTransaction = async (
       omniTxData: OmniTxData,
       signers: KeyProvider[]) => {
+      const uniqueSigners =  this.filterUniqueSigner(signers)
       const psbtBuilder = new PsbtBuilder(this.network);
       const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
-      for (const signer of signers) {
+      for (const signer of uniqueSigners) {
           const keyPair = {
               publicKey: Buffer.from(signer.publicKey, "hex"),
               sign: async (hashBuffer: Buffer) => {
@@ -183,12 +185,13 @@ export class BTC implements UtxoCoin {
     txData: TxData,
     signers: KeyProviderSync[]
   ) => {
+    const uniqueSigners =  this.filterUniqueSigner(signers)
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
       .addInputsForPsbt(txData)
       .addOutputForPsbt(txData)
       .getPsbt();
-    for (const signer of signers) {
+    for (const signer of uniqueSigners) {
       const keyPair = {
         publicKey: Buffer.from(signer.publicKey, "hex"),
         sign: (hashBuffer: Buffer) => {
@@ -205,9 +208,10 @@ export class BTC implements UtxoCoin {
     public generateOmniTransactionSync = (
         omniTxData: OmniTxData,
         signers: KeyProviderSync[]) => {
+        const uniqueSigners =  this.filterUniqueSigner(signers)  
         const psbtBuilder = new PsbtBuilder(this.network);
         const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
-        for (const signer of signers) {
+        for (const signer of uniqueSigners) {
             const keyPair = {
                 publicKey: Buffer.from(signer.publicKey, "hex"),
                 sign: (hashBuffer: Buffer) => {
@@ -299,6 +303,12 @@ export class BTC implements UtxoCoin {
     }
     return this.extractTx(psbt);
   };
+
+  protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(signers:T[]) : T[] => {
+    const singerMap:{[key:string]: T} = {}
+    signers.forEach((each: T) => singerMap[each.publicKey] = each)
+    return Object.values(singerMap)  
+  } 
 
   private constructMessageHash = (message: string) => {
     const MAGIC_BYTES = Buffer.from(this.network.messagePrefix, "utf-8");
