@@ -19,10 +19,11 @@ export abstract class BTCFORK extends BTC{
         txData: TxData,
         signers: KeyProviderSync[]
     ) => {
+        const uniqueSigners =  this.filterUniqueSigner(signers)  
         const psbt = new HookPsbt({network: this.network});
         this.addInputs(txData, psbt, signers);
         txData.outputs.forEach(output => psbt.addOutput(output));
-        for (const signer of signers) {
+        for (const signer of uniqueSigners) {
             const keyPair = {
                 publicKey: Buffer.from(signer.publicKey, "hex"),
                 sign: (hashBuffer: Buffer) => {
@@ -41,10 +42,11 @@ export abstract class BTCFORK extends BTC{
         txData: TxData,
         signers: KeyProvider[]
     ) => {
+        const uniqueSigners =  this.filterUniqueSigner(signers)  
         const psbt = new HookPsbt({network: this.network});
         this.addInputs(txData, psbt, signers);
         txData.outputs.forEach(output => psbt.addOutput(output));
-        for (const signer of signers) {
+        for (const signer of uniqueSigners) {
             const keyPair = {
                 publicKey: Buffer.from(signer.publicKey, "hex"),
                 sign: async (hashBuffer: Buffer) => {
