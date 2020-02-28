@@ -1,11 +1,9 @@
+import {ETC} from "../../ETC";
 import { TxData } from "../../ETH";
 import {
   SignProviderWithPrivateKey,
   SignProviderWithPrivateKeySync
 } from "../../ETH/signProvider";
-import {ETC} from "../../ETC";
-import {addHexPrefix} from "ethereumjs-util";
-import {Buffer} from "safe-buffer";
 describe("coin.ETC", () => {
   const etc = new ETC();
   const testPrivKey =
@@ -16,7 +14,6 @@ describe("coin.ETC", () => {
     gasLimit: "21000",
     to: "0x3535353535353535353535353535353535353535",
     value: "1000000000000000000",
-    chainId: 61,
     memo:""
   };
 
@@ -128,7 +125,6 @@ describe("coin.ETC", () => {
       to: "0x3535353535353535353535353535353535353535",
       value: "1000000000000000",
       memo: "",
-      chainId: 61
     };
 
     const data2 = {

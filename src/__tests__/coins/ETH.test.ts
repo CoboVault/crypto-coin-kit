@@ -15,7 +15,6 @@ describe("coin.ETH", () => {
     to: "0x3535353535353535353535353535353535353535",
     value: "1000000000000000000",
     memo: "",
-    chainId: 1
   };
 
   it("should generate right address", () => {
@@ -92,7 +91,7 @@ describe("coin.ETH", () => {
     );
   });
 
-  //https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
+  // https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
   it('should generate right erc20 tx',  () => {
     const erc20Tx:TxData = {
       to:"0xea26c4ac16d4a5a106820bc8aee85fd0b7b2b664",
@@ -101,7 +100,6 @@ describe("coin.ETH", () => {
       gasLimit:"0x21660",
       nonce:202,
       memo:"",
-      chainId:1,
       data:"0xa9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a7640000",
       override:{
         decimals:18,
@@ -153,7 +151,6 @@ describe("coin.ETH", () => {
       to: "0x3535353535353535353535353535353535353535",
       value: "1000000000000000",
       memo: "",
-      chainId: 1
     };
 
     const data2 = {
