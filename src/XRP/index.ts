@@ -80,7 +80,7 @@ export class XRP implements Coin {
       Flags: 2147483648,
       Sequence: sequence,
       TransactionType: "Payment",
-      SigningPubKey: signingPubKey
+      SigningPubKey: signingPubKey.toUpperCase()
     };
     const txWithDestinationTag = tag
       ? { ...partialTx, DestinationTag: tag }
