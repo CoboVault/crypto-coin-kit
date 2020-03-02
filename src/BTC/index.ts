@@ -137,10 +137,10 @@ export class BTC implements UtxoCoin {
     }
   };
 
-  public generateTransaction = async (
+  public async generateTransaction  (
     txData: TxData,
     signers: KeyProvider[]
-  ) => {
+  ){
     const uniqueSigners = this.filterUniqueSigner(signers)
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
@@ -181,10 +181,10 @@ export class BTC implements UtxoCoin {
       return this.extractTx(psbt);
   };
 
-  public generateTransactionSync = (
+  public generateTransactionSync (
     txData: TxData,
     signers: KeyProviderSync[]
-  ) => {
+  ){
     const uniqueSigners =  this.filterUniqueSigner(signers)
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
