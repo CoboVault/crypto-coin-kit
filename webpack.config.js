@@ -17,6 +17,7 @@ module.exports = {
     LTC:'./src/LTC/index.ts',
     EOS:'./src/EOS/index.ts',
     IOST:'./src/IOST/index.ts',
+    TRON:'./src/TRON/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',

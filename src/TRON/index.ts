@@ -43,7 +43,7 @@ export interface TxData {
     fee: number
 }
 
-export class TRX implements Coin {
+export class TRON implements Coin {
     public generateAddress = (publicKey: string) => {
         let pubBytes = Buffer.from(publicKey, 'hex');
         pubBytes = secp256k1.publicKeyConvert(pubBytes, false).slice(1);
