@@ -71,13 +71,13 @@ export abstract class BTCFORK extends BTC{
     };
 
     private addInputs(txData: TxData, psbt: HookPsbt, signers: KeyProvider[] | KeyProviderSync[]) {
-        for (let i = 0; i < txData.inputs.length; i++) {
+        for (const input of txData.inputs) {
             psbt.addInput({
-                hash: txData.inputs[i].hash,
-                index: txData.inputs[i].index,
-                value: txData.inputs[i].value,
+                hash: input.hash,
+                index: input.index,
+                value: input.value,
                 sighashType: this.getSighashType(),
-                pubkey: Buffer.from(signers[i].publicKey, 'hex')
+                pubkey: Buffer.from(input.pubkey, 'hex')
             })
         }
     }
