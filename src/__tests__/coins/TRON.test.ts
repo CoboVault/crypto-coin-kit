@@ -69,6 +69,7 @@ describe("coin.TRON", () => {
     // https://tronscan.org/#/transaction/9451437c0f306c0eaf73d54b9584aeaac6dc7d83672bfc192596bfed4f94a282
     it('should generate signed tx', async () => {
         const tx = await tron.generateTransaction(txData, signWithPrivateKey(privKey));
+        expect(tx.txId).toBe('9451437c0f306c0eaf73d54b9584aeaac6dc7d83672bfc192596bfed4f94a282');
         expect(tx.txHex).toBe('0a7e0a02665c2208ec27b63954f5913d40f8a198d3f72d5a67080112630a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412320a1541c2ac1d2a29ea27b9bbf049370c3505139c7c9d90121541ee6d1ffba872573971562a70f9ad1dc2d4af8c8b1880897a12411a1d35a2c6a114242a6ebf9e656c8606bf047c6f8cbafb983e7d2efc8adbee9678eb172e1b24668ca755c0eaf4e340b9ab158da2702d4b620d4c919d5cedbe9c01');
     });
 
@@ -77,6 +78,7 @@ describe("coin.TRON", () => {
     // https://tronscan.org/#/transaction/07ceaad1c4145723392b36fe0ec3bea5fd2985583b6e93ef212f6063b08ea301
     it('should generate signed TRC10 token', async () => {
         const tx = await tron.generateTransaction(txDataTRC10, signWithPrivateKey('965cecde62f3c448a6bae0c3ce0c16267069eb0aae9f5390af8182eaee60bf47'));
+        expect(tx.txId).toBe('07ceaad1c4145723392b36fe0ec3bea5fd2985583b6e93ef212f6063b08ea301');
         expect(tx.txHex).toBe('0a8a010a022e1e2208543e546a43ad4e5f4098d6b09cf82d5a730802126f0a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e736665724173736574436f6e747261637412390a0731303031303930121541ee6d1ffba872573971562a70f9ad1dc2d4af8c8b1a1541654eb440c1a0640aca337ad9ebf3a122976a910520011241af78b81230901b89ca74506a9680b4ac1e533817a87e9cede87c597bbb97f5e4da9ab6438b1c7cbec762ab165d5e7c7f7f4f0fb97df23570ad4b047a0e67894b01');
     });
     it('should generate signed TRC20 token', async () => {
