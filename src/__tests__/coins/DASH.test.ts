@@ -15,7 +15,8 @@ const txData = {
     inputs: [{
         hash: "dc5b627077f2d4a88345ab24f09e8fd8e1d7ac0f2dd20b138ff2322b45d0c9bd",
         index: 0,
-        value: 6646114
+        value: 6646114,
+        pubkey:'02ef6075495297ce696f6fae4fb1bf1383176c2aad3cc08e7a7dacb31ea74df968'
     }],
     outputs: [{
         "address": "XytBC2ADpxBVVqvTpCqpPyqCmUbFLyu3bP",
