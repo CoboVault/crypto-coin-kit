@@ -2,6 +2,8 @@
  * @file webpack build for j2v8 call this lib, Multi entry for each coin and utils
  */
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
+
 
 module.exports = {
   entry: {
@@ -38,5 +40,21 @@ module.exports = {
     libraryTarget: 'umd',
     // library: ['cryptoCoinKit', '[name]'],
     path: path.resolve(__dirname, 'dist/subBundle')
-  }
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      extractComments: true,
+      cache: true,
+      parallel: true,
+      sourceMap: true, // Must be set to true if using source-maps in production
+      terserOptions: {
+        // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+        extractComments: 'all',
+        compress: {
+          drop_console: true,
+        },
+      }
+    })],
+  },
 };
