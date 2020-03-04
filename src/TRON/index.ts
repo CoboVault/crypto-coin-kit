@@ -148,11 +148,10 @@ export class TRON implements Coin {
         for (let i = 0; i < count; ++i) {
             tx.addSignature(unit8Array)
         }
-
         const hex = Buffer.from(tx.serializeBinary());
         return {
             txHex: hex.toString('hex'),
-            txId: sha256(hex).toString('hex'),
+            txId: sha256(tx.getRawData().serializeBinary()).toString('hex'),
         };
     };
 
