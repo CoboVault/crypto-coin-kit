@@ -75,7 +75,7 @@ export class TRON implements Coin {
         const rawBytes = raw.serializeBinary();
         const hash = sha256(rawBytes);
         const sig = await signProvider.sign(hash.toString('hex'));
-        return this.buildSignTxResult(sig, tx, hash);
+        return this.buildSignTxResult(sig, tx);
     };
 
     public generateTransactionSync = (txData: TxData, signProvider: SignProviderSync) => {
@@ -89,7 +89,7 @@ export class TRON implements Coin {
         const rawBytes = raw.serializeBinary();
         const hash = sha256(rawBytes);
         const sig = signProvider.sign(hash.toString('hex'));
-        return this.buildSignTxResult(sig, tx, hash);
+        return this.buildSignTxResult(sig, tx);
     };
 
     public signMessage = async (message: string, signProvider: SignProvider) => {
@@ -141,18 +141,17 @@ export class TRON implements Coin {
         return byteArray
     };
 
-    private buildSignTxResult = (sig: Result, tx: Transaction, hash: Buffer) => {
+    private buildSignTxResult = (sig: Result, tx: Transaction) => {
         const sigStr = sig.r.concat(sig.s).concat(numberToHex(sig.recId));
         const unit8Array = Uint8Array.from(Buffer.from(sigStr, 'hex'));
         const count = tx.getRawData().getContractList().length;
         for (let i = 0; i < count; ++i) {
             tx.addSignature(unit8Array)
         }
-
         const hex = Buffer.from(tx.serializeBinary());
         return {
             txHex: hex.toString('hex'),
-            txId: hash.toString('hex'),
+            txId: sha256(tx.getRawData().serializeBinary()).toString('hex'),
         };
     };
 
