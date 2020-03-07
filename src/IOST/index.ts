@@ -32,6 +32,9 @@ export class IOST implements Coin {
     };
 
     public generateAddress = (publicKey: string) => {
+        if (publicKey.length !== 64) {
+            throw Error("invalid public key length")
+        }
         return Bs58.encode(Buffer.from(publicKey, 'hex'));
     };
 

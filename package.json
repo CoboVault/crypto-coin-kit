@@ -47,6 +47,7 @@
     "ethers": "^4.0.13",
     "hash.js": "^1.1.7",
     "hdkey": "^1.1.1",
+    "human-standard-token-abi": "1.0.2",
     "iost": "https://github.com/cobowallet/iost.js#ffbaeb59623813d66703ef47605cc891455c2247",
     "lodash.padstart": "4.6.1",
     "ripple-address-codec": "^2.0.1",
@@ -59,6 +60,7 @@
     "secp256r1": "^0.0.3",
     "tweetnacl": "^1.0.1",
     "typeforce": "^1.11.3",
+    "web3": "0.20.6",
     "wif": "2.0.6",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
   },
