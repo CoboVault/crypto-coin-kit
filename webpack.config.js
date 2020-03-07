@@ -36,7 +36,7 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ]
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].bundle_[hash].js',
     libraryTarget: 'umd',
     // library: ['cryptoCoinKit', '[name]'],
     path: path.resolve(__dirname, 'dist/subBundle')
@@ -47,7 +47,7 @@ module.exports = {
       extractComments: true,
       cache: true,
       parallel: true,
-      sourceMap: true, // Must be set to true if using source-maps in production
+      sourceMap: false, // Must be set to true if using source-maps in production
       terserOptions: {
         // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
         extractComments: 'all',

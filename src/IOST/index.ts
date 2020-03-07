@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 // @ts-ignore
 import {Bs58, IOST as Iost, Signature, Tx} from 'iost';
 import sha3 from "js-sha3";
@@ -46,14 +47,16 @@ export class IOST implements Coin {
 
     public generateTransaction = async (txData: TxData, signer: KeyProvider) => {
         const {tx, hash} = this.unsignedTx(txData);
-        const sig = await signer.sign(hash);
+        const hashHex = Buffer.from(hash).toString('hex')
+        const sig = await signer.sign(hashHex);
         tx.publisher_sigs.push(this.generateSignature(sig, Buffer.from(signer.publicKey, 'hex')));
         return this.generateOutput(tx);
     };
 
     public generateTransactionSync = (txData: TxData, signer: KeyProviderSync) => {
         const {tx, hash} = this.unsignedTx(txData);
-        const sig = signer.sign(hash);
+        const hashHex = Buffer.from(hash).toString('hex')
+        const sig = signer.sign(hashHex);
         tx.publisher_sigs.push(this.generateSignature(sig, Buffer.from(signer.publicKey, 'hex')));
         return this.generateOutput(tx);
     };
