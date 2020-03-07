@@ -91,20 +91,20 @@ describe("coin.ETH", () => {
     );
   });
 
-  // https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
+  //https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
   it('should generate right erc20 tx',  () => {
     const erc20Tx:TxData = {
-      to:"0xea26c4ac16d4a5a106820bc8aee85fd0b7b2b664",
-      value:"0",
+      to:"0xeeacb7a5e53600c144c0b9839a834bb4b39e540c",
+      value:"1000000000000000000",
       gasPrice:"0xb2d05e00",
       gasLimit:"0x21660",
       nonce:202,
       memo:"",
-      data:"0xa9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a7640000",
-      override:{
+      override: {
         decimals:18,
         tokenShortName:"QKC",
-        tokenFullName:"QuarkChain"
+        tokenFullName:"QuarkChain",
+        contractAddress:'0xea26c4ac16d4a5a106820bc8aee85fd0b7b2b664'
       }
     };
 
@@ -117,6 +117,20 @@ describe("coin.ETH", () => {
     expect(txHex).toBe('0xf8aa81ca84b2d05e008302166094ea26c4ac16d4a5a106820bc8aee85fd0b7b2b66480b844a9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a764000025a0068b92d2cafd9941d7f5d4e128b59b33197014057033b40a83c47b373c089b63a06cf04a6e27d0dc2362d146b0f9a36bd3f4f1aea651017934f9f3537987b15fae');
 
   });
+
+  it('should generate erc20 data',  () => {
+    const data = eth.generateTokenTransferData('0xE410157345be56688F43FF0D9e4B2B38Ea8F7828',
+        '100000',
+        '0xdac17f958d2ee523a2206206994597c13d831ec7'
+        );
+    expect(data).toBe('0xa9059cbb000000000000000000000000e410157345be56688f43ff0d9e4b2b38ea8f782800000000000000000000000000000000000000000000000000000000000186a0')
+    const tokenData = eth.decodeTokenTransferData('a9059cbb000000000000000000000000e410157345be56688f43ff0d9e4b2b38ea8f782800000000000000000000000000000000000000000000000000000000000186a0');
+    expect(tokenData).toStrictEqual(
+        { transferTo: '0xe410157345be56688f43ff0d9e4b2b38ea8f7828',
+      tokenAmount: '100000' }
+      )
+  });
+
   it("should sign message sync", () => {
     const message = "hello world";
     const privkey =

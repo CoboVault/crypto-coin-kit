@@ -8,7 +8,11 @@ import {
   toBuffer,
   toChecksumAddress
 } from "ethereumjs-util";
+// @ts-ignore
+import abi from 'human-standard-token-abi';
 import { Buffer } from "safe-buffer";
+// @ts-ignore
+import Web3 from 'web3';
 
 import { Coin, GenerateTransactionResult } from "../Common/coin";
 import { Result, SignProvider, SignProviderSync } from "../Common/sign";
@@ -19,6 +23,7 @@ interface Override {
   decimals:number;
   tokenShortName:string;
   tokenFullName:string;
+  contractAddress:string;
 }
 
 export interface TxData {
@@ -28,7 +33,6 @@ export interface TxData {
   to: string;
   value: string;
   memo?:string;
-  data?:string;
   override?:Override;
 }
 const MAINNET_CHAIN_ID = 1;
@@ -84,14 +88,42 @@ export class ETH implements Coin {
     if (tx.memo) {
       memo = addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'));
     }
+    let inputData = memo;
+    let toAddress = tx.to;
+    let transferValue = this.toHexString(tx.value);
+    if (tx.override) {
+      inputData  = this.generateTokenTransferData(tx.to, tx.value, tx.override.contractAddress);
+      toAddress = tx.override.contractAddress;
+      transferValue = '0x';
+    }
+
     return {
       nonce: addHexPrefix(numberToHex(tx.nonce || 0)),
       gasPrice: this.toHexString(tx.gasPrice),
       gasLimit: this.toHexString(tx.gasLimit),
       chainId: this.chainId,
-      to: tx.to,
-      value: this.toHexString(tx.value),
-      data: tx.data|| memo,
+      to: toAddress,
+      value: transferValue,
+      data: inputData,
+    }
+  };
+
+  public generateTokenTransferData = (to: string,
+                                      value: string,
+                                      contractAddress: string) => {
+    const token = new Web3().eth.contract(abi).at(contractAddress);
+    return token.transfer.getData(to, this.toHexString(value));
+  };
+
+  public decodeTokenTransferData = (data: string) => {
+    const dataBuf = Buffer.from(data,'hex');
+    if (dataBuf.length === 68) {
+        const transferTo = '0x' + dataBuf.slice(-52, -32).toString('hex')
+        const tokenAmount = new BigNumber(dataBuf.slice(-32).toString('hex'), 16).toString(10)
+        return {
+          transferTo,
+          tokenAmount,
+        }
     }
   };
 
