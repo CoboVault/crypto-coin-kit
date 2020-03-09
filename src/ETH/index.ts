@@ -18,22 +18,14 @@ import { Coin, GenerateTransactionResult } from "../Common/coin";
 import { Result, SignProvider, SignProviderSync } from "../Common/sign";
 import numberToHex from "../utils/numberToHex";
 
-// tslint:disable-next-line: class-name
-interface Override {
-  decimals:number;
-  tokenShortName:string;
-  tokenFullName:string;
-  contractAddress:string;
-}
-
 export interface TxData {
   nonce: number;
   gasPrice: string;
   gasLimit: string;
   to: string;
   value: string;
-  memo?:string;
-  override?:Override;
+  memo?: string;
+  contractAddress?: string; // optional,required for erc20 token
 }
 const MAINNET_CHAIN_ID = 1;
 export class ETH implements Coin {
@@ -83,31 +75,6 @@ export class ETH implements Coin {
     return isValidAddress(address);
   };
 
-  public formatTxData = (tx: TxData) => {
-    let memo = '0x';
-    if (tx.memo) {
-      memo = addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'));
-    }
-    let inputData = memo;
-    let toAddress = tx.to;
-    let transferValue = this.toHexString(tx.value);
-    if (tx.override) {
-      inputData  = this.generateTokenTransferData(tx.to, tx.value, tx.override.contractAddress);
-      toAddress = tx.override.contractAddress;
-      transferValue = '0x';
-    }
-
-    return {
-      nonce: addHexPrefix(numberToHex(tx.nonce || 0)),
-      gasPrice: this.toHexString(tx.gasPrice),
-      gasLimit: this.toHexString(tx.gasLimit),
-      chainId: this.chainId,
-      to: toAddress,
-      value: transferValue,
-      data: inputData,
-    }
-  };
-
   public generateTokenTransferData = (to: string,
                                       value: string,
                                       contractAddress: string) => {
@@ -129,6 +96,31 @@ export class ETH implements Coin {
 
   protected constructTransaction = (data: TxData) => {
     return new Transaction(this.formatTxData(data),{chain:this.chainId});
+  };
+
+  protected formatTxData = (tx: TxData) => {
+    let memo = '0x';
+    if (tx.memo) {
+      memo = addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'));
+    }
+    let inputData = memo;
+    let toAddress = tx.to;
+    let transferValue = this.toHexString(tx.value);
+    if (tx.contractAddress) {
+      inputData  = this.generateTokenTransferData(tx.to, tx.value, tx.contractAddress);
+      toAddress = tx.contractAddress;
+      transferValue = '0x';
+    }
+
+    return {
+      nonce: addHexPrefix(numberToHex(tx.nonce || 0)),
+      gasPrice: this.toHexString(tx.gasPrice),
+      gasLimit: this.toHexString(tx.gasLimit),
+      chainId: this.chainId,
+      to: toAddress,
+      value: transferValue,
+      data: inputData,
+    }
   };
 
   private buildSignedTx = (tx: Transaction, sigResult: Result): Transaction => {
