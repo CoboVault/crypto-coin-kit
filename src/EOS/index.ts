@@ -52,7 +52,7 @@ export class EOS implements Coin {
             txData.data.from,
             txData.data.to,
             this.toEOSAmount(txData.data.amount, txData.data.symbol),
-            txData.data.memo);
+            txData.data.memo || '');
         return {txId: tx.transaction_id, txHex: JSON.stringify(tx.transaction)}
     };
 
@@ -79,7 +79,7 @@ export class EOS implements Coin {
                 from: txData.data.from,
                 to: txData.data.to,
                 quantity: this.toEOSAmount(txData.data.amount, txData.data.symbol),
-                memo: txData.data.memo
+                memo: txData.data.memo || ''
             }
         }];
         // @ts-ignore
