@@ -57,7 +57,9 @@ export class EOS implements Coin {
     };
 
     public generateTransactionSync = (txData: TxData, signer: SignProviderSync) => {
-        const eosInstance = EosInstance({});
+        const eosInstance = EosInstance({
+            httpEndpoint:null,
+        });
         const Transaction = eosInstance.fc.structs.transaction;
         const defaultHeaders = {
             max_net_usage_words: 0,
