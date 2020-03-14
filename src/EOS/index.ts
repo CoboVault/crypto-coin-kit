@@ -213,7 +213,7 @@ export class EOS implements Coin {
 
   private toEOSAmount = (amount: number, symbol = "EOS", decimal: number) => {
     const divider = new BigNumber(10).pow(decimal);
-    return new BigNumber(amount).dividedBy(divider).toFixed(9) + " " + symbol;
+    return new BigNumber(amount).dividedBy(divider).toFixed(decimal) + " " + symbol;
   };
 
   private getExpiration = (txHeader: Header) => {
