@@ -1,4 +1,5 @@
 // @ts-ignore
+import BigNumber from "bignumber.js";
 import { Buffer } from "buffer";
 // @ts-ignore
 import EosInstance from "eosjs";
@@ -12,7 +13,6 @@ import { SignProvider, SignProviderSync } from "../Common";
 import { Coin } from "../Common/coin";
 import { Result } from "../Common/sign";
 import numberToHex from "../utils/numberToHex";
-import BigNumber from "bignumber.js";
 
 export interface Header {
   time: number;
