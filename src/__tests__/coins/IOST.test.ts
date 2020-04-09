@@ -29,7 +29,7 @@ describe("Coin.IOST",()=>{
     it('should generate right tx',  async () => {
         // txData.timestamp = new Date().getTime();
         const tx = await iost.generateTransaction(txData, Ed25519KeyProvider(privKey,pubKey));
-        expect(tx.txId).toBe('C9UNh3VxaGM8xjnX5zMZvTYJ4y7djC4kDGCoqVdTZfCX');
+        expect(tx.txId).toBe('x5tJ8Q6vnsyaiPDdynKA5V3C1Xriz4GwLtEH1yqGubT');
     });
 
     // curl -X POST -H "Content-Type: text/plain" --data '{"gasRatio":1,"gasLimit":1000000,"actions":[{"contract":"token.iost","actionName":"transfer","data":"[\"iost\",\"chendong99\",\"88_88_88_88\",\"1\",\"\"]"}],"signers":[],"signatures":[],"publisher":"chendong99","publisher_sigs":[{"algorithm":"ED25519","public_key":"NsvLQJw3R4ZDmqaQegTkHbw0AqvJXJI0kJzSGwSWwkM=","signature":"K56HtN54ar3Lho4zYqnbpkhfVsF6YRXmZYqrLG4ZZCUBAP+gZOM8/Us7mhT/wjXBbQu/imdyU6TJ9u3/JHK7DA=="}],"amount_limit":[{"token":"iost","value":"1"}],"chain_id":1024,"reserved":null,"referredTx":"","time":1579152770678000000,"expiration":1579153070678000000,"delay":0}' http://api.iost.io/sendTx
