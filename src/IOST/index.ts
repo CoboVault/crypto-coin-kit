@@ -78,7 +78,7 @@ export class IOST implements Coin {
         const {tokenName = 'iost', from, to, amount, memo, config = this.defaultConfig} = txData;
         const iostInstance = new Iost(config);
         const tx = iostInstance.transfer(tokenName, from, to, amount, memo);
-        tx.amount_limit = [{token: 'iost', value: '1'}];
+        tx.amount_limit = [{token: '*', value: 'unlimited'}];
         tx.publisher = from;
         tx.time = txData.timestamp * 1e6;
         tx.expiration = tx.time + (txData.expiration || 300) * 1e9;
