@@ -19,6 +19,7 @@ const kp2 = keyProvider(privateKeyOne, publicKeyOne);
 const utxoOne = {
   hash: "d07ce19af4ff4088884dcee2cedba39c364e34f7cfd0b35bb2e07c8c15b07355",
   index: 1,
+  sequence:0xffffffff,
   utxo: {
     publicKey,
     script: "a914915892366a6cdf24afa6e1c480db2ad88c63378087",
@@ -76,7 +77,9 @@ describe("coin.BTC", () => {
         amount: 102391,
         fee: 1000,
         changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
-      }
+      },
+      version: 2,
+      locktime: 0,
     };
 
     const result = await xtn.generateTransaction(txData, [kp1, kp2]);

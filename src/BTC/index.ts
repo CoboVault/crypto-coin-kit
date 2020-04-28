@@ -150,6 +150,15 @@ export class BTC implements UtxoCoin {
       .addInputsForPsbt(txData)
       .addOutputForPsbt(txData)
       .getPsbt();
+
+    if (txData.locktime) {
+      psbt.setLocktime(txData.locktime);
+    }
+
+    if (txData.version) {
+      psbt.setVersion(txData.version);
+    }
+
     for (const signer of uniqueSigners) {
       const keyPair = {
         publicKey: Buffer.from(signer.publicKey, "hex"),
