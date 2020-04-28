@@ -38,6 +38,7 @@ export interface NonWitnessUtxo {
 export interface TxInputItem {
   hash: string;
   index: number;
+  sequence?: number;
   utxo: WitnessUtxo | NonWitnessUtxo;
 }
 
@@ -51,6 +52,8 @@ export interface Destination {
 export interface TxData {
   inputs: TxInputItem[];
   outputs: TxOutputItem[] | Destination;
+  version?: number;
+  locktime?: number;
 }
 
 export interface OmniTxData {
@@ -191,6 +194,13 @@ export class BTC implements UtxoCoin {
       .addInputsForPsbt(txData)
       .addOutputForPsbt(txData)
       .getPsbt();
+    if (txData.locktime) {
+      psbt.setLocktime(txData.locktime);
+    }
+
+    if (txData.version) {
+      psbt.setVersion(txData.version);
+    }
     for (const signer of uniqueSigners) {
       const keyPair = {
         publicKey: Buffer.from(signer.publicKey, "hex"),
