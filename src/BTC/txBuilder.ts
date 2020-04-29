@@ -162,12 +162,14 @@ export default class PsbtBuilder {
             return this.psbt.addInput({
                 hash: eachInput.hash,
                 index: eachInput.index,
+                sequence: eachInput.sequence,
                 nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
             });
         } else {
             return this.psbt.addInput({
                 hash: eachInput.hash,
                 index: eachInput.index,
+                sequence: eachInput.sequence,
                 witnessUtxo: {
                     script: Buffer.from(eachInput.utxo.script ||
                         this.calculateScript(eachInput.utxo.publicKey).toString('hex'),
