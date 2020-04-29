@@ -91,6 +91,28 @@ describe("coin.BTC", () => {
     );
   });
 
+  it("should generate the transaction with locktime and version 1", async () => {
+    const txData = {
+      inputs: [utxoOne, utxoTwo],
+      outputs: {
+        to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
+        amount: 102391,
+        fee: 1000,
+        changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
+      },
+      version: 1,
+      locktime: 628083,
+    };
+
+    const result = await xtn.generateTransaction(txData, [kp1, kp2]);
+    expect(result.txId).toEqual(
+        "17eca42ddd5cb440636c333c79b6fee67dfe1368da3790b2022d5f61bd58fc62"
+    );
+    expect(result.txHex).toEqual(
+        "010000000001025573b0158c7ce0b25bb3d0cff7344e369ca3dbcee2ce4d888840fff49ae17cd00100000017160014e9cf9131d9c02a3a02d246bb4297b5606c6cb2f9ffffffffe014dc2363486a66e337b802da70722a32065f7a9e4fd4daf0e067aa31f8e58900000000171600143007abdafe8f875c3d3b714428e7761494a71f6cffffffff02f78f01000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808798895b000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808702483045022100f5b55b77cc6379a73767e31f759b4f1dbb3ae9a544cfd5c78bf7a4ef4be339880220210ed1a9a60d75ce1fe9224618ffc9af331256d674dc497a8df1d3630b91f431012103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd72024730440220335114f2b9b3805eef2607c3b699d788187eab54c0279edb3d28a59c507ba1d2022007d32006272932820aaeb5d140469edeb62ba325fae5ad97ee9da376bf1c20e9012102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa273950900"
+    );
+  });
+
   it("should generate the transaction even if it have duplicated key provider", async () => {
     const txData = {
       inputs: [utxoOne, utxoTwo],
