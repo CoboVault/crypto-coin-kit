@@ -207,4 +207,23 @@ describe("coin.BTC", () => {
     expect(tx.txId).toBe('d556fa715e96c99b2ace29b2a57fa43a9acea239ae258b04a96c846ef78ad199');
     expect(tx.txHex).toBe('02000000000101b8e248071bb0259387219e51563c5c9c120652c8e263923272cf9a3d8fd7f3e600000000171600141ea4ea0a12d7c2b07e9084d36abd03a2edd72798ffffffff02220200000000000017a9144bdc14152999fc8ad8c6df4c20946ba1e572c95e870000000000000000166a146f6d6e69000000000000001f0000000003f83c400247304402201e6dbbee8c909a91efc5954fc58112d74a7069deb1e4aebc3a8516b88d158f1c02203872389b0a7b425ab94e2931b7ceaec4054b1eaea9ca9e2a0955ddd5def571b9012102a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c38200000000')
   });
+
+  it("should generate the multiSign transaction", async () => {
+    const txData = {
+      inputs: [utxoOne, utxoTwo],
+      outputs: {
+        to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
+        amount: 102391,
+        fee: 1000,
+        changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
+      },
+      version: 2,
+      locktime: 0,
+    };
+    const result = await xtn.generateMultiSignTransaction(txData, [kp1, kp2]);
+    expect(result.signatures).toEqual([
+      "304402206b891a2c6b2a95bb7b7e25275544f3dd761269392dde98ab65c8f8187194ce0502203061881a7d0e92fd19ac68b77a1fee35d7b6b7b72e8fce369a35088c1b35cca701",
+      "30440220236f1c70df027dd7c0c862c9b89b28cb3fca6a96d4c73f7f565b7cc4b0fdff6902202262c87aec91d1ad9e661d807d5f9a8aaacd8a634028a74013cc2141c8750d1301",
+    ]);
+  });
 });
