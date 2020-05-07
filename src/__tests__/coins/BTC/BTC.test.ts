@@ -37,6 +37,17 @@ const utxoTwo = {
   }
 };
 
+const multiSignUtxo = [
+  {
+    hash: 'ef0323f679a2406165ab490d24b8fa5773b7721e7cd6e421098f00a9afdc7ee0',
+    index: 0,
+    utxo: {
+      publicKeys: [publicKey, publicKeyOne],
+      value: 11110,
+    }
+  },
+]
+
 describe("coin.BTC", () => {
   const btc = new BTC(NetWorkType.mainNet);
   const xtn = new BTC(NetWorkType.testNet);
@@ -52,6 +63,11 @@ describe("coin.BTC", () => {
     expect(xtn.generateAddress(publicKeyOne)).toBe(
       "2N3rUzBBAMqkiSra2o6DCb6LZPReQVU3LVe"
     );
+
+    expect(xtn.generateMultiSignAddress([
+      publicKey,
+      publicKeyOne,
+    ], 2)).toBe('2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V');
   });
 
   it("should valid a address", () => {
@@ -206,5 +222,68 @@ describe("coin.BTC", () => {
     const tx = await btc.generateOmniTransaction(txData,[keyPair]);
     expect(tx.txId).toBe('d556fa715e96c99b2ace29b2a57fa43a9acea239ae258b04a96c846ef78ad199');
     expect(tx.txHex).toBe('02000000000101b8e248071bb0259387219e51563c5c9c120652c8e263923272cf9a3d8fd7f3e600000000171600141ea4ea0a12d7c2b07e9084d36abd03a2edd72798ffffffff02220200000000000017a9144bdc14152999fc8ad8c6df4c20946ba1e572c95e870000000000000000166a146f6d6e69000000000000001f0000000003f83c400247304402201e6dbbee8c909a91efc5954fc58112d74a7069deb1e4aebc3a8516b88d158f1c02203872389b0a7b425ab94e2931b7ceaec4054b1eaea9ca9e2a0955ddd5def571b9012102a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c38200000000')
+  });
+
+  it("should generate the multiSign transaction", async () => {
+    const txData = {
+      inputs: multiSignUtxo,
+      outputs: {
+        to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
+        amount: 10110,
+        fee: 1000,
+        changeAddress: "2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V"
+      },
+      version: 2,
+      locktime: 0,
+      requires: 2,
+    };
+    const {txId, txHex} = await xtn.generateMultiSignTransaction(txData, [kp1, kp2]);
+
+    expect(txId).toBe('848f52e0ab465eac50f499d9b662b43d0914149995d856faedb82d43640af862');
+    expect(txHex).toBe('02000000000101e07edcafa9008f0921e4d67c1e72b77357fab8240d49ab656140a279f62303ef00000000232200207690f26b840a14f928d7182e348ef3b2faa484e4b34d49ecec1b3013faadb75affffffff027e2700000000000017a914915892366a6cdf24afa6e1c480db2ad88c63378087000000000000000017a914ab465b094d7aaad13cbdbdfebb32115690b36ad687040047304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301483045022100b2122f170e9eeb2d7e18126e804085af912e10d27925acf428329642a0e14aa2022079a9e1c602b7f1987cf12aa849314116fdb9dc57f3498195ca91a65075f4b2780147522103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd722102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa252ae00000000');
+  });
+
+  it("should generate the multiSign transaction signatures", async () => {
+    const txData = {
+      inputs: multiSignUtxo,
+      outputs: {
+        to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
+        amount: 10110,
+        fee: 1000,
+        changeAddress: "2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V"
+      },
+      version: 2,
+      locktime: 0,
+      requires: 2,
+    };
+    const signatures = await xtn.getMultiSignTransactionSignature(txData, [kp1]);
+
+    expect(signatures).toStrictEqual(['304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301'])
+  })
+
+
+  it("the multiSign transaction signer count cannot less than requires", async () => {
+    const txData = {
+      inputs: multiSignUtxo,
+      outputs: {
+        to: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4",
+        amount: 10110,
+        fee: 1000,
+        changeAddress: "2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V"
+      },
+      version: 2,
+      locktime: 0,
+      requires: 2,
+    };
+
+    const testFn = async () => {
+      try {
+        const {txId, txHex} = await xtn.generateMultiSignTransaction(txData, [kp1])
+      } catch (e) {
+        throw new Error(e);
+      }
+    };
+
+    await expect(testFn()).rejects.toThrow();
   });
 });
