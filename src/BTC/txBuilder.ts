@@ -84,14 +84,10 @@ export default class PsbtBuilder {
 
     const p2sh = bitcoin.payments.p2sh({
       redeem: p2wpkh,
-      network: this.network });
-
-    const script = bitcoin.script.compile([
-        bitcoin.script.OPS.OP_HASH160,
-        // @ts-ignore
-        crypto.hash160(p2sh.redeem.output),
-        bitcoin.script.OPS.OP_EQUAL,
-    ]);
+      network: this.network 
+    }) as any;
+  
+    const script = this.compileScript(p2sh.redeem.output)
 
     return script;
   };
@@ -203,38 +199,31 @@ export default class PsbtBuilder {
     eachInput: MultiSignTxInputItem,
     requires: number,
   ) {
-    let mixin:{};
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
-      mixin = {nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")}
-    } else {
-      const {payment} = this.createMultiSignPayment(requires, eachInput.utxo.publicKeys);
-
-      const witnessUtxoScript = bitcoin.script.compile([
-          bitcoin.script.OPS.OP_HASH160,
-          // @ts-ignore
-          crypto.hash160(payment.redeem.output),
-          bitcoin.script.OPS.OP_EQUAL,
-      ]);
-
-      mixin = {
-        witnessUtxo: {
-          script: Buffer.from(eachInput.utxo.script || witnessUtxoScript.toString('hex'), "hex"),
-          value: eachInput.utxo.value
-        },
-        witnessScript: payment.redeem.redeem.output,
-        redeemScript: payment.redeem.output,
+      return {
+        hash: eachInput.hash,
+        index: eachInput.index,
+        nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
       }
     }
+
+    const {payment} = this.createMultiSignPayment(requires, eachInput.utxo.publicKeys);
+
+    const witnessUtxoScript = this.compileScript(payment.redeem.output);
 
     return {
       hash: eachInput.hash,
       index: eachInput.index,
-      ...mixin,
-    };
+      witnessUtxo: {
+        script: Buffer.from(eachInput.utxo.script || witnessUtxoScript.toString('hex'), "hex"),
+        value: eachInput.utxo.value
+      },
+      witnessScript: payment.redeem.redeem.output,
+      redeemScript: payment.redeem.output,
+    }
   }
 
   private createMultiSignPayment(requires: number, publicKeys: string[]): any {
-    const splitType = ['p2ms', 'p2wsh', 'p2sh'];
     const network = this.network;
 
     if (publicKeys.length === 0) {
@@ -246,7 +235,7 @@ export default class PsbtBuilder {
     })
 
     let payment: any;
-    splitType.forEach(type => {
+    ['p2ms', 'p2wsh', 'p2sh'].forEach(type => {
       if (type === 'p2ms') {
         payment = bitcoin.payments.p2ms({
           m: requires,
@@ -265,6 +254,15 @@ export default class PsbtBuilder {
       payment,
       keys: pubkeys,
     };
+  }
+
+  private compileScript(script: Buffer) {
+    return bitcoin.script.compile([
+      bitcoin.script.OPS.OP_HASH160,
+      // @ts-ignore
+      crypto.hash160(script),
+      bitcoin.script.OPS.OP_EQUAL,
+    ]);
   }
 
   private isNonWitnessUtxo = (

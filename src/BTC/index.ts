@@ -149,9 +149,8 @@ export class BTC implements UtxoCoin {
       ) as unknown) as Buffer;
     })
 
-    const splitType = ['p2ms', 'p2wsh', 'p2sh'];
     let payment: any;
-    splitType.forEach(type => {
+    ['p2ms', 'p2wsh', 'p2sh'].forEach(type => {
       if (type === 'p2ms') {
         payment = bitcoin.payments.p2ms({
           m: requires,
@@ -308,7 +307,7 @@ export class BTC implements UtxoCoin {
     txData: MultiSignTxData,
     signers: KeyProvider[]
   ){
-    const psbt = await this.psbtSignAllInputs(txData, signers);
+    const psbt = await this.psbtSignMultiSignTx(txData, signers);
     return this.extractTx(psbt);
   };
 
@@ -316,7 +315,7 @@ export class BTC implements UtxoCoin {
     txData: MultiSignTxData,
     signers: KeyProviderSync[]
   ){
-    const psbt = this.psbtSignAllInputsSync(txData, signers);
+    const psbt = this.psbtSignMultiSignTxSync(txData, signers);
     return this.extractTx(psbt);
   };
 
@@ -324,7 +323,7 @@ export class BTC implements UtxoCoin {
     txData: MultiSignTxData,
     signers: KeyProvider[]
   ){
-    const psbt = await this.psbtSignAllInputs(txData, signers);
+    const psbt = await this.psbtSignMultiSignTx(txData, signers);
     return this.extractMultiSignSignatures(psbt);
   };
 
@@ -332,7 +331,7 @@ export class BTC implements UtxoCoin {
     txData: MultiSignTxData,
     signers: KeyProviderSync[]
   ){
-    const psbt = this.psbtSignAllInputsSync(txData, signers);
+    const psbt = this.psbtSignMultiSignTxSync(txData, signers);
     return this.extractMultiSignSignatures(psbt);
   };
 
@@ -430,7 +429,7 @@ export class BTC implements UtxoCoin {
     return hashHex;
   };
 
-  private async psbtSignAllInputs  (
+  private async psbtSignMultiSignTx  (
     txData: MultiSignTxData,
     signers: KeyProvider[]
   ){
@@ -454,7 +453,7 @@ export class BTC implements UtxoCoin {
     return psbt;
   };
 
-  private psbtSignAllInputsSync  (
+  private psbtSignMultiSignTxSync  (
     txData: MultiSignTxData,
     signers: KeyProviderSync[]
   ){
