@@ -1,18 +1,18 @@
-import { Output } from 'bitcoinjs-lib/types/transaction';
 import {crypto} from "bitcoinjs-lib";
 import * as bitcoin from "bitcoinjs-lib";
 // @ts-ignore
 import padstart from 'lodash.padstart';
 import {
   Destination,
-  NonWitnessUtxo, OmniTxData,
+  MultiSignTxData,
+  MultiSignTxInputItem,
+  MultiSignWitnessUtxo,
+  NonWitnessUtxo, 
+  OmniTxData,
   TxData,
   TxInputItem,
   TxOutputItem,
   WitnessUtxo,
-  MultiSignTxData,
-  MultiSignTxInputItem,
-  MultiSignWitnessUtxo
 } from "./index";
 
 const MAX_FEE = 1000000;
