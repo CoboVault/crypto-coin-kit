@@ -500,6 +500,6 @@ export class BTC implements UtxoCoin {
       }, [])
       return signatures;
     }
-    return [];
+    throw new Error("signature verification failed");
   }
 }
