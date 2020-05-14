@@ -371,6 +371,32 @@ export class BTC implements UtxoCoin {
   };
 
   public signPsbt = async (psbtString: string, signers: KeyProvider[]) => {
+    const psbt = await this.getSignedPSBT(psbtString, signers);
+    return this.extractTx(psbt);
+  };
+
+  public signPsbtSync = (psbtString: string, signers: KeyProviderSync[]) => {
+    const psbt = this.getSignedPSBTSync(psbtString, signers);
+    return this.extractTx(psbt);
+  };
+
+  public signPsbtRaw = async (psbtString: string, signers: KeyProvider[]) => {
+    const psbt = await this.getSignedPSBT(psbtString, signers);
+    return psbt.toBase64();
+  };
+
+  public signPsbtRawSync = (psbtString: string, signers: KeyProviderSync[]) => {
+    const psbt = this.getSignedPSBTSync(psbtString, signers);
+    return psbt.toBase64();
+  };
+
+  protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(signers:T[]) : T[] => {
+    const singerMap:{[key:string]: T} = {}
+    signers.forEach((each: T) => singerMap[each.publicKey] = each)
+    return Object.values(singerMap)  
+  }
+
+  private getSignedPSBT = async (psbtString: string, signers: KeyProvider[]) => {
     const psbt = bitcoin.Psbt.fromBase64(psbtString);
     for (const signer of signers) {
       const keyPair = {
@@ -383,10 +409,10 @@ export class BTC implements UtxoCoin {
       };
       await psbt.signAllInputsAsync(keyPair);
     }
-    return this.extractTx(psbt);
-  };
+    return psbt;
+  }
 
-  public signPsbtSync = (psbtString: string, signers: KeyProviderSync[]) => {
+  private getSignedPSBTSync = (psbtString: string, signers: KeyProviderSync[]) => {
     const psbt = bitcoin.Psbt.fromBase64(psbtString);
     for (const signer of signers) {
       const keyPair = {
@@ -399,18 +425,9 @@ export class BTC implements UtxoCoin {
       };
       psbt.signAllInputs(keyPair);
     }
-    return this.extractTx(psbt);
-  };
-
-  public parseTxHex = (txHex: string) => {
-    return bitcoin.Transaction.fromHex(txHex);
+    return psbt;
   }
 
-  protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(signers:T[]) : T[] => {
-    const singerMap:{[key:string]: T} = {}
-    signers.forEach((each: T) => singerMap[each.publicKey] = each)
-    return Object.values(singerMap)  
-  } 
 
   private constructMessageHash = (message: string) => {
     const MAGIC_BYTES = Buffer.from(this.network.messagePrefix, "utf-8");
