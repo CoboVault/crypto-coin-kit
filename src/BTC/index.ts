@@ -402,6 +402,10 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   };
 
+  public parseTxHex = (txHex: string) => {
+    return bitcoin.Transaction.fromHex(txHex);
+  }
+
   protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(signers:T[]) : T[] => {
     const singerMap:{[key:string]: T} = {}
     signers.forEach((each: T) => singerMap[each.publicKey] = each)
@@ -490,4 +494,5 @@ export class BTC implements UtxoCoin {
     }
     throw new Error("signature verification failed");
   }
+
 }
