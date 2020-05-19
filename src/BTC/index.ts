@@ -46,6 +46,11 @@ export interface TxInputItem {
   index: number;
   sequence?: number;
   utxo: WitnessUtxo | NonWitnessUtxo;
+  bip32Derivation: Array<{
+    pubkey: Buffer,
+    masterFingerprint: Buffer,
+    path: string,
+  }>
 }
 
 export interface MultiSignTxInputItem {

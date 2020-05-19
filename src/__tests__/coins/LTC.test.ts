@@ -15,7 +15,12 @@ const utxoOne = {
   utxo: {
     publicKey,
     value: 2985386
-  }
+  },
+  bip32Derivation: [{
+    pubkey: Buffer.from(publicKey, 'hex'),
+    masterFingerprint: Buffer.from('01010101', 'hex'),
+    path: `m/49'/0'/0'/0/0`,
+  }]
 };
 
 describe("coin.LTC", () => {
