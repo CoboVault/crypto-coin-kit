@@ -1,4 +1,4 @@
-import {decode as bech32Decode} from "bech32"
+import { decode as bech32Decode } from "bech32";
 import * as bitcoin from "bitcoinjs-lib";
 // @ts-ignore
 import bs58check from "bs58check";
@@ -81,7 +81,7 @@ export interface OmniTxData {
   inputs: TxInputItem[];
   to: string;
   fee: number;
-  changeAddress:string;
+  changeAddress: string;
   omniAmount: number; // sat unit
   propertyId?: number;
 }
@@ -96,7 +96,7 @@ export class BTC implements UtxoCoin {
     }
   }
 
-  public generateAddress (
+  public generateAddress(
     publicKey: string,
     addressType: AddressType = AddressType.P2SH
   ) {
@@ -135,19 +135,12 @@ export class BTC implements UtxoCoin {
     } else {
       throw new Error("generate address failed");
     }
-  };
+  }
 
-
-  public generateMultiSignAddress (
-    publicKeys: string[],
-    requires: number,
-  ) {
+  public generateMultiSignAddress(publicKeys: string[], requires: number) {
     const pubkeysBuffer = publicKeys.map(pubkey => {
-      return (SafeBuffer.from(
-        pubkey,
-        "hex"
-      ) as unknown) as Buffer;
-    })
+      return (SafeBuffer.from(pubkey, "hex") as unknown) as Buffer;
+    });
 
     const p2ms = bitcoin.payments.p2ms({ m: requires, pubkeys: pubkeysBuffer, network: this.network });
     const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network: this.network });
@@ -159,9 +152,9 @@ export class BTC implements UtxoCoin {
     } else {
       throw new Error("generate address failed");
     }
-  };
+  }
 
-  public isAddressValid (address: string){
+  public isAddressValid(address: string) {
     if (
       address.startsWith("1") ||
       address.startsWith("3") ||
@@ -173,7 +166,7 @@ export class BTC implements UtxoCoin {
       } catch (e) {
         return false;
       }
-    } else if(address.startsWith("bc")) {
+    } else if (address.startsWith("bc")) {
       try {
         bech32Decode(address);
         return true;
@@ -183,13 +176,10 @@ export class BTC implements UtxoCoin {
     } else {
       return false;
     }
-  };
+  }
 
-  public async generateTransaction  (
-    txData: TxData,
-    signers: KeyProvider[]
-  ){
-    const uniqueSigners = this.filterUniqueSigner(signers)
+  public async generateTransaction(txData: TxData, signers: KeyProvider[]) {
+    const uniqueSigners = this.filterUniqueSigner(signers);
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
       .addInputsForPsbt(txData)
@@ -217,33 +207,31 @@ export class BTC implements UtxoCoin {
     }
 
     return this.extractTx(psbt);
-  };
+  }
 
   public generateOmniTransaction = async (
-      omniTxData: OmniTxData,
-      signers: KeyProvider[]) => {
-      const uniqueSigners =  this.filterUniqueSigner(signers)
-      const psbtBuilder = new PsbtBuilder(this.network);
-      const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
-      for (const signer of uniqueSigners) {
-          const keyPair = {
-              publicKey: Buffer.from(signer.publicKey, "hex"),
-              sign: async (hashBuffer: Buffer) => {
-                  const hexString = hashBuffer.toString("hex");
-                  const { r, s } = await signer.sign(hexString);
-                  return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
-              }
-          };
-          await psbt.signAllInputsAsync(keyPair);
-      }
-      return this.extractTx(psbt);
+    omniTxData: OmniTxData,
+    signers: KeyProvider[]
+  ) => {
+    const uniqueSigners = this.filterUniqueSigner(signers);
+    const psbtBuilder = new PsbtBuilder(this.network);
+    const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+    for (const signer of uniqueSigners) {
+      const keyPair = {
+        publicKey: Buffer.from(signer.publicKey, "hex"),
+        sign: async (hashBuffer: Buffer) => {
+          const hexString = hashBuffer.toString("hex");
+          const { r, s } = await signer.sign(hexString);
+          return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
+        }
+      };
+      await psbt.signAllInputsAsync(keyPair);
+    }
+    return this.extractTx(psbt);
   };
 
-  public generateTransactionSync (
-    txData: TxData,
-    signers: KeyProviderSync[]
-  ){
-    const uniqueSigners =  this.filterUniqueSigner(signers)
+  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[]) {
+    const uniqueSigners = this.filterUniqueSigner(signers);
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
       .addInputsForPsbt(txData)
@@ -269,59 +257,60 @@ export class BTC implements UtxoCoin {
     }
 
     return this.extractTx(psbt);
-  };
+  }
 
   public generateOmniTransactionSync = (
-      omniTxData: OmniTxData,
-      signers: KeyProviderSync[]) => {
-      const uniqueSigners =  this.filterUniqueSigner(signers)  
-      const psbtBuilder = new PsbtBuilder(this.network);
-      const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
-      for (const signer of uniqueSigners) {
-          const keyPair = {
-              publicKey: Buffer.from(signer.publicKey, "hex"),
-              sign: (hashBuffer: Buffer) => {
-                  const hexString = hashBuffer.toString("hex");
-                  const { r, s } = signer.sign(hexString);
-                  return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
-              }
-          };
-          psbt.signAllInputs(keyPair);
-      }
-      return this.extractTx(psbt);
-  };
-
-  public async generateMultiSignTransaction  (
-    txData: MultiSignTxData,
-    signers: KeyProvider[]
-  ){
-    const psbt = await this.psbtSignMultiSignTx(txData, signers);
+    omniTxData: OmniTxData,
+    signers: KeyProviderSync[]
+  ) => {
+    const uniqueSigners = this.filterUniqueSigner(signers);
+    const psbtBuilder = new PsbtBuilder(this.network);
+    const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+    for (const signer of uniqueSigners) {
+      const keyPair = {
+        publicKey: Buffer.from(signer.publicKey, "hex"),
+        sign: (hashBuffer: Buffer) => {
+          const hexString = hashBuffer.toString("hex");
+          const { r, s } = signer.sign(hexString);
+          return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
+        }
+      };
+      psbt.signAllInputs(keyPair);
+    }
     return this.extractTx(psbt);
   };
 
-  public generateMultiSignTransactionSync  (
-    txData: MultiSignTxData,
-    signers: KeyProviderSync[]
-  ){
-    const psbt = this.psbtSignMultiSignTxSync(txData, signers);
-    return this.extractTx(psbt);
-  };
-
-  public async getMultiSignTransactionSignature  (
+  public async generateMultiSignTransaction(
     txData: MultiSignTxData,
     signers: KeyProvider[]
-  ){
+  ) {
     const psbt = await this.psbtSignMultiSignTx(txData, signers);
-    return this.extractMultiSignSignatures(psbt);
-  };
+    return this.extractTx(psbt);
+  }
 
-  public getMultiSignTransactionSignatureSync  (
+  public generateMultiSignTransactionSync(
     txData: MultiSignTxData,
     signers: KeyProviderSync[]
-  ){
+  ) {
+    const psbt = this.psbtSignMultiSignTxSync(txData, signers);
+    return this.extractTx(psbt);
+  }
+
+  public async getMultiSignTransactionSignature(
+    txData: MultiSignTxData,
+    signers: KeyProvider[]
+  ) {
+    const psbt = await this.psbtSignMultiSignTx(txData, signers);
+    return this.extractMultiSignSignatures(psbt);
+  }
+
+  public getMultiSignTransactionSignatureSync(
+    txData: MultiSignTxData,
+    signers: KeyProviderSync[]
+  ) {
     const psbt = this.psbtSignMultiSignTxSync(txData, signers);
     return this.extractMultiSignSignatures(psbt);
-  };
+  }
 
   public signMessage = async (message: string, signer: KeyProvider) => {
     const hashHex = this.constructMessageHash(message);
@@ -348,10 +337,24 @@ export class BTC implements UtxoCoin {
     const psbt = bitcoin.Psbt.fromBase64(psbtString);
     const txBuffer = psbt.data.getTransaction();
     const tx = bitcoin.Transaction.fromBuffer(txBuffer);
-    const inputs = tx.ins.map(each => ({
-      txId: each.hash.reverse().toString("hex"),
-      index: each.index
-    }));
+    const inputs = tx.ins.map((each, index) => {
+      // TODO: deal with witnessUTXO and non-witnessUTXO to get input value;
+      const bip32Derivation = psbt.data.inputs[index].bip32Derivation;
+      if (!bip32Derivation) {
+        throw new Error("invalid psbt");
+      }
+      return {
+        txId: each.hash.reverse().toString("hex"),
+        index: each.index,
+        hdPath: bip32Derivation.map(item => {
+          return {
+            masterFingerprint: item.masterFingerprint.toString("hex"),
+            path: item.path,
+            pubkey: item.pubkey.toString("hex")
+          };
+        })
+      };
+    });
     const outputs = tx.outs.map(each => {
       const address = bitcoin.address.fromOutputScript(
         each.script,
@@ -382,21 +385,32 @@ export class BTC implements UtxoCoin {
 
   public signPsbtRaw = async (psbtString: string, signers: KeyProvider[]) => {
     const psbt = await this.getSignedPSBT(psbtString, signers);
+    if (psbt.validateSignaturesOfAllInputs()) {
+      psbt.finalizeAllInputs();
+    }
     return psbt.toBase64();
   };
 
   public signPsbtRawSync = (psbtString: string, signers: KeyProviderSync[]) => {
     const psbt = this.getSignedPSBTSync(psbtString, signers);
+    if (psbt.validateSignaturesOfAllInputs()) {
+      psbt.finalizeAllInputs();
+    }
     return psbt.toBase64();
   };
 
-  protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(signers:T[]) : T[] => {
-    const singerMap:{[key:string]: T} = {}
-    signers.forEach((each: T) => singerMap[each.publicKey] = each)
-    return Object.values(singerMap)  
-  }
+  protected filterUniqueSigner = <T extends KeyProvider | KeyProviderSync>(
+    signers: T[]
+  ): T[] => {
+    const singerMap: { [key: string]: T } = {};
+    signers.forEach((each: T) => (singerMap[each.publicKey] = each));
+    return Object.values(singerMap);
+  };
 
-  private getSignedPSBT = async (psbtString: string, signers: KeyProvider[]) => {
+  private getSignedPSBT = async (
+    psbtString: string,
+    signers: KeyProvider[]
+  ) => {
     const psbt = bitcoin.Psbt.fromBase64(psbtString);
     for (const signer of signers) {
       const keyPair = {
@@ -410,9 +424,12 @@ export class BTC implements UtxoCoin {
       await psbt.signAllInputsAsync(keyPair);
     }
     return psbt;
-  }
+  };
 
-  private getSignedPSBTSync = (psbtString: string, signers: KeyProviderSync[]) => {
+  private getSignedPSBTSync = (
+    psbtString: string,
+    signers: KeyProviderSync[]
+  ) => {
     const psbt = bitcoin.Psbt.fromBase64(psbtString);
     for (const signer of signers) {
       const keyPair = {
@@ -426,7 +443,7 @@ export class BTC implements UtxoCoin {
       psbt.signAllInputs(keyPair);
     }
     return psbt;
-  }
+  };
 
 
   private constructMessageHash = (message: string) => {
@@ -438,14 +455,17 @@ export class BTC implements UtxoCoin {
     return hashHex;
   };
 
-  private async psbtSignMultiSignTx  (
+  private async psbtSignMultiSignTx(
     txData: MultiSignTxData,
     signers: KeyProvider[]
-  ){
-    const uniqueSigners = this.filterUniqueSigner(signers)
+  ) {
+    const uniqueSigners = this.filterUniqueSigner(signers);
 
     const psbtBuilder = new PsbtBuilder(this.network);
-    const psbt = psbtBuilder.addMultiSignInputsForPsbt(txData).addOutputForPsbt(txData).getPsbt();
+    const psbt = psbtBuilder
+      .addMultiSignInputsForPsbt(txData)
+      .addOutputForPsbt(txData)
+      .getPsbt();
 
     for (const signer of uniqueSigners) {
       const keyPair = {
@@ -456,20 +476,23 @@ export class BTC implements UtxoCoin {
           return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
         }
       };
-      await psbt.signAllInputsAsync(keyPair)
+      await psbt.signAllInputsAsync(keyPair);
     }
 
     return psbt;
-  };
+  }
 
-  private psbtSignMultiSignTxSync  (
+  private psbtSignMultiSignTxSync(
     txData: MultiSignTxData,
     signers: KeyProviderSync[]
-  ){
-    const uniqueSigners = this.filterUniqueSigner(signers)
+  ) {
+    const uniqueSigners = this.filterUniqueSigner(signers);
 
     const psbtBuilder = new PsbtBuilder(this.network);
-    const psbt = psbtBuilder.addMultiSignInputsForPsbt(txData).addOutputForPsbt(txData).getPsbt();
+    const psbt = psbtBuilder
+      .addMultiSignInputsForPsbt(txData)
+      .addOutputForPsbt(txData)
+      .getPsbt();
 
     for (const signer of uniqueSigners) {
       const keyPair = {
@@ -480,11 +503,11 @@ export class BTC implements UtxoCoin {
           return Buffer.concat([Buffer.from(r, "hex"), Buffer.from(s, "hex")]);
         }
       };
-      psbt.signAllInputsAsync(keyPair)
+      psbt.signAllInputsAsync(keyPair);
     }
 
     return psbt;
-  };
+  }
 
   private extractTx = (psbt: bitcoin.Psbt) => {
     if (psbt.validateSignaturesOfAllInputs()) {
@@ -503,13 +526,223 @@ export class BTC implements UtxoCoin {
   private extractMultiSignSignatures = (psbt: bitcoin.Psbt): string[] => {
     if (psbt.validateSignaturesOfAllInputs()) {
       const signatures = psbt.data.inputs.reduce((result: string[], input) => {
-        const {partialSig = []} = input;
-        const partialSigs = partialSig.map(item => item.signature.toString('hex'));
+        const { partialSig = [] } = input;
+        const partialSigs = partialSig.map(item =>
+          item.signature.toString("hex")
+        );
         return result.concat(partialSigs);
-      }, [])
+      }, []);
       return signatures;
     }
     throw new Error("signature verification failed");
   }
-
 }
+
+const data = {
+  data: {
+    inputs: [
+      {
+        witnessUtxo: {
+          script: {
+            type: "Buffer",
+            data: [
+              0,
+              20,
+              7,
+              2,
+              240,
+              216,
+              1,
+              189,
+              200,
+              189,
+              123,
+              221,
+              166,
+              252,
+              70,
+              38,
+              11,
+              17,
+              138,
+              89,
+              25,
+              118
+            ]
+          },
+          value: 4324
+        },
+        bip32Derivation: [
+          {
+            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
+            pubkey: {
+              type: "Buffer",
+              data: [
+                3,
+                242,
+                211,
+                12,
+                24,
+                101,
+                192,
+                185,
+                221,
+                31,
+                199,
+                174,
+                115,
+                51,
+                70,
+                255,
+                131,
+                29,
+                196,
+                69,
+                103,
+                40,
+                240,
+                29,
+                23,
+                23,
+                135,
+                169,
+                79,
+                134,
+                214,
+                132,
+                139
+              ]
+            },
+            path: "m/84'/0'/0'/1/8"
+          }
+        ]
+      },
+      {
+        witnessUtxo: {
+          script: {
+            type: "Buffer",
+            data: [
+              0,
+              20,
+              202,
+              156,
+              52,
+              66,
+              24,
+              58,
+              108,
+              201,
+              93,
+              196,
+              142,
+              240,
+              64,
+              224,
+              24,
+              4,
+              194,
+              151,
+              168,
+              86
+            ]
+          },
+          value: 4370
+        },
+        bip32Derivation: [
+          {
+            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
+            pubkey: {
+              type: "Buffer",
+              data: [
+                3,
+                51,
+                63,
+                94,
+                96,
+                189,
+                226,
+                90,
+                143,
+                114,
+                95,
+                159,
+                193,
+                181,
+                54,
+                223,
+                113,
+                184,
+                197,
+                84,
+                139,
+                135,
+                48,
+                3,
+                188,
+                186,
+                158,
+                208,
+                210,
+                214,
+                247,
+                157,
+                245
+              ]
+            },
+            path: "m/84'/0'/0'/0/3"
+          }
+        ]
+      }
+    ],
+    outputs: [
+      {
+        bip32Derivation: [
+          {
+            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
+            pubkey: {
+              type: "Buffer",
+              data: [
+                2,
+                59,
+                239,
+                98,
+                239,
+                231,
+                112,
+                48,
+                102,
+                130,
+                147,
+                53,
+                143,
+                201,
+                149,
+                195,
+                168,
+                75,
+                239,
+                45,
+                108,
+                146,
+                212,
+                128,
+                172,
+                22,
+                4,
+                24,
+                15,
+                91,
+                65,
+                89,
+                53
+              ]
+            },
+            path: "m/84'/0'/0'/1/13"
+          }
+        ]
+      },
+      {}
+    ],
+    globalMap: { unsignedTx: {} }
+  }
+};
