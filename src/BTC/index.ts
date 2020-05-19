@@ -149,23 +149,11 @@ export class BTC implements UtxoCoin {
       ) as unknown) as Buffer;
     })
 
-    let payment: any;
-    ['p2ms', 'p2wsh', 'p2sh'].forEach(type => {
-      if (type === 'p2ms') {
-        payment = bitcoin.payments.p2ms({
-          m: requires,
-          pubkeys: pubkeysBuffer,
-          network: this.network,
-        });
-      } else if (['p2sh', 'p2wsh'].indexOf(type) > -1) {
-        payment = (bitcoin.payments as any)[type]({
-          redeem: payment,
-          network: this.network,
-        });
-      }
-    });
+    const p2ms = bitcoin.payments.p2ms({ m: requires, pubkeys: pubkeysBuffer, network: this.network });
+    const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network: this.network });
+    const p2sh = bitcoin.payments.p2sh({ redeem: p2wsh, network: this.network });
   
-    const btcAddress = payment.address;
+    const btcAddress = p2sh.address;
     if (btcAddress) {
       return btcAddress;
     } else {
