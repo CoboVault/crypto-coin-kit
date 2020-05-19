@@ -373,17 +373,17 @@ export class BTC implements UtxoCoin {
     };
   };
 
-  public signPsbt = async (psbtString: string, signers: KeyProvider[]) => {
+  public signPSBTHex = async (psbtString: string, signers: KeyProvider[]) => {
     const psbt = await this.getSignedPSBT(psbtString, signers);
     return this.extractTx(psbt);
   };
 
-  public signPsbtSync = (psbtString: string, signers: KeyProviderSync[]) => {
+  public signPSBTHexSync = (psbtString: string, signers: KeyProviderSync[]) => {
     const psbt = this.getSignedPSBTSync(psbtString, signers);
     return this.extractTx(psbt);
   };
 
-  public signPsbtRaw = async (psbtString: string, signers: KeyProvider[]) => {
+  public signPSBTBase64 = async (psbtString: string, signers: KeyProvider[]) => {
     const psbt = await this.getSignedPSBT(psbtString, signers);
     if (psbt.validateSignaturesOfAllInputs()) {
       psbt.finalizeAllInputs();
@@ -391,7 +391,7 @@ export class BTC implements UtxoCoin {
     return psbt.toBase64();
   };
 
-  public signPsbtRawSync = (psbtString: string, signers: KeyProviderSync[]) => {
+  public signPSBTBase64Sync = (psbtString: string, signers: KeyProviderSync[]) => {
     const psbt = this.getSignedPSBTSync(psbtString, signers);
     if (psbt.validateSignaturesOfAllInputs()) {
       psbt.finalizeAllInputs();
@@ -537,212 +537,3 @@ export class BTC implements UtxoCoin {
     throw new Error("signature verification failed");
   }
 }
-
-const data = {
-  data: {
-    inputs: [
-      {
-        witnessUtxo: {
-          script: {
-            type: "Buffer",
-            data: [
-              0,
-              20,
-              7,
-              2,
-              240,
-              216,
-              1,
-              189,
-              200,
-              189,
-              123,
-              221,
-              166,
-              252,
-              70,
-              38,
-              11,
-              17,
-              138,
-              89,
-              25,
-              118
-            ]
-          },
-          value: 4324
-        },
-        bip32Derivation: [
-          {
-            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
-            pubkey: {
-              type: "Buffer",
-              data: [
-                3,
-                242,
-                211,
-                12,
-                24,
-                101,
-                192,
-                185,
-                221,
-                31,
-                199,
-                174,
-                115,
-                51,
-                70,
-                255,
-                131,
-                29,
-                196,
-                69,
-                103,
-                40,
-                240,
-                29,
-                23,
-                23,
-                135,
-                169,
-                79,
-                134,
-                214,
-                132,
-                139
-              ]
-            },
-            path: "m/84'/0'/0'/1/8"
-          }
-        ]
-      },
-      {
-        witnessUtxo: {
-          script: {
-            type: "Buffer",
-            data: [
-              0,
-              20,
-              202,
-              156,
-              52,
-              66,
-              24,
-              58,
-              108,
-              201,
-              93,
-              196,
-              142,
-              240,
-              64,
-              224,
-              24,
-              4,
-              194,
-              151,
-              168,
-              86
-            ]
-          },
-          value: 4370
-        },
-        bip32Derivation: [
-          {
-            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
-            pubkey: {
-              type: "Buffer",
-              data: [
-                3,
-                51,
-                63,
-                94,
-                96,
-                189,
-                226,
-                90,
-                143,
-                114,
-                95,
-                159,
-                193,
-                181,
-                54,
-                223,
-                113,
-                184,
-                197,
-                84,
-                139,
-                135,
-                48,
-                3,
-                188,
-                186,
-                158,
-                208,
-                210,
-                214,
-                247,
-                157,
-                245
-              ]
-            },
-            path: "m/84'/0'/0'/0/3"
-          }
-        ]
-      }
-    ],
-    outputs: [
-      {
-        bip32Derivation: [
-          {
-            masterFingerprint: { type: "Buffer", data: [113, 192, 113, 82] },
-            pubkey: {
-              type: "Buffer",
-              data: [
-                2,
-                59,
-                239,
-                98,
-                239,
-                231,
-                112,
-                48,
-                102,
-                130,
-                147,
-                53,
-                143,
-                201,
-                149,
-                195,
-                168,
-                75,
-                239,
-                45,
-                108,
-                146,
-                212,
-                128,
-                172,
-                22,
-                4,
-                24,
-                15,
-                91,
-                65,
-                89,
-                53
-              ]
-            },
-            path: "m/84'/0'/0'/1/13"
-          }
-        ]
-      },
-      {}
-    ],
-    globalMap: { unsignedTx: {} }
-  }
-};
