@@ -1,6 +1,6 @@
 {
   "name": "crypto-coin-kit",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "crypto coin kit for common coins",
   "main": "./dist/index.js",
   "scripts": {
