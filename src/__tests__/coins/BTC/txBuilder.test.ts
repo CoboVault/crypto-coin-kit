@@ -15,7 +15,12 @@ const utxoOne = {
     publicKey,
     script: "a914915892366a6cdf24afa6e1c480db2ad88c63378087",
     value: 3578100
-  }
+  },
+  bip32Derivation: [{
+    pubkey: Buffer.from(publicKeyOne, 'hex'),
+    masterFingerprint: Buffer.from('01010101', 'hex'),
+    path: `m/49'/0'/0'/0/0`,
+  }]
 };
 
 const utxoTwo = {
@@ -25,7 +30,12 @@ const utxoTwo = {
     publicKey: publicKeyOne,
     script: "a914745c56190d1fe8274e7ebe9dd4fe10ca3484959587",
     value: 2524291
-  }
+  },
+  bip32Derivation: [{
+    pubkey: Buffer.from(publicKeyOne, 'hex'),
+    masterFingerprint: Buffer.from('01010101', 'hex'),
+    path: `m/49'/0'/0'/0/0`,
+  }]
 };
 
 describe("BTC.TxBuilder", () => {
@@ -43,7 +53,7 @@ describe("BTC.TxBuilder", () => {
     const psbt = txb.addInputsForPsbt(txData).getPsbt();
     expect(psbt.data.inputs.length).toEqual(2);
     expect(psbt.toBase64()).toEqual(
-      "cHNidP8BAFwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8AAAAAAAABASD0mDYAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwEEFgAU6c+RMdnAKjoC0ka7Qpe1YGxssvkAAQEgg4QmAAAAAAAXqRR0XFYZDR/oJ05+vp3U/hDKNISVlYcBBBYAFDAHq9r+j4dcPTtxRCjndhSUpx9sAAA="
+      "cHNidP8BAFwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8AAAAAAAABASD0mDYAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwEEFgAU6c+RMdnAKjoC0ka7Qpe1YGxssvkiBgLzJahZAtJk28sMvhROmyRj+CUr0MUbwZZm9MgkYeS6ohgBAQEBMQAAgAAAAIAAAACAAAAAAAAAAAAAAQEgg4QmAAAAAAAXqRR0XFYZDR/oJ05+vp3U/hDKNISVlYcBBBYAFDAHq9r+j4dcPTtxRCjndhSUpx9sIgYC8yWoWQLSZNvLDL4UTpskY/glK9DFG8GWZvTIJGHkuqIYAQEBATEAAIAAAACAAAAAgAAAAAAAAAAAAAA="
     );
   });
 
@@ -85,7 +95,7 @@ describe("BTC.TxBuilder", () => {
       .getPsbt();
 
     expect(psbt.toBase64()).toEqual(
-      "cHNidP8BAJwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8C948BAAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIeYiVsAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwAAAAAAAQEg9Jg2AAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIcBBBYAFOnPkTHZwCo6AtJGu0KXtWBsbLL5AAEBIIOEJgAAAAAAF6kUdFxWGQ0f6CdOfr6d1P4QyjSElZWHAQQWABQwB6va/o+HXD07cUQo53YUlKcfbAAAAA=="
+      "cHNidP8BAJwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8C948BAAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIeYiVsAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwAAAAAAAQEg9Jg2AAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIcBBBYAFOnPkTHZwCo6AtJGu0KXtWBsbLL5IgYC8yWoWQLSZNvLDL4UTpskY/glK9DFG8GWZvTIJGHkuqIYAQEBATEAAIAAAACAAAAAgAAAAAAAAAAAAAEBIIOEJgAAAAAAF6kUdFxWGQ0f6CdOfr6d1P4QyjSElZWHAQQWABQwB6va/o+HXD07cUQo53YUlKcfbCIGAvMlqFkC0mTbywy+FE6bJGP4JSvQxRvBlmb0yCRh5LqiGAEBAQExAACAAAAAgAAAAIAAAAAAAAAAAAAAAA=="
     );
     expect(psbt.data.outputs.length).toEqual(2);
     const tx = bitcoin.Transaction.fromBuffer(psbt.data.getTransaction());

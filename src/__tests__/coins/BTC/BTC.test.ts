@@ -1,4 +1,4 @@
-import {BTC, NetWorkType} from "../../../BTC";
+import { BTC, NetWorkType } from "../../../BTC";
 import keyProvider from "../../../BTC/keyProvider";
 
 const privateKey =
@@ -19,12 +19,17 @@ const kp2 = keyProvider(privateKeyOne, publicKeyOne);
 const utxoOne = {
   hash: "d07ce19af4ff4088884dcee2cedba39c364e34f7cfd0b35bb2e07c8c15b07355",
   index: 1,
-  sequence:0xffffffff,
+  sequence: 0xffffffff,
   utxo: {
     publicKey,
     script: "a914915892366a6cdf24afa6e1c480db2ad88c63378087",
     value: 3578100
-  }
+  },
+  bip32Derivation: [{
+    pubkey: Buffer.from(publicKey, 'hex'),
+    masterFingerprint: Buffer.from('01010101', 'hex'),
+    path: `m/49'/0'/0'/0/0`,
+  }]
 };
 
 const utxoTwo = {
@@ -34,19 +39,24 @@ const utxoTwo = {
     publicKey: publicKeyOne,
     script: "a914745c56190d1fe8274e7ebe9dd4fe10ca3484959587",
     value: 2524291
-  }
+  },
+  bip32Derivation: [{
+    pubkey: Buffer.from(publicKeyOne, 'hex'),
+    masterFingerprint: Buffer.from('01010101', 'hex'),
+    path: `m/49'/0'/0'/0/0`,
+  }]
 };
 
 const multiSignUtxo = [
   {
-    hash: 'ef0323f679a2406165ab490d24b8fa5773b7721e7cd6e421098f00a9afdc7ee0',
+    hash: "ef0323f679a2406165ab490d24b8fa5773b7721e7cd6e421098f00a9afdc7ee0",
     index: 0,
     utxo: {
       publicKeys: [publicKey, publicKeyOne],
-      value: 11110,
+      value: 11110
     }
-  },
-]
+  }
+];
 
 describe("coin.BTC", () => {
   const btc = new BTC(NetWorkType.mainNet);
@@ -64,10 +74,9 @@ describe("coin.BTC", () => {
       "2N3rUzBBAMqkiSra2o6DCb6LZPReQVU3LVe"
     );
 
-    expect(xtn.generateMultiSignAddress([
-      publicKey,
-      publicKeyOne,
-    ], 2)).toBe('2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V');
+    expect(xtn.generateMultiSignAddress([publicKey, publicKeyOne], 2)).toBe(
+      "2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V"
+    );
   });
 
   it("should valid a address", () => {
@@ -79,9 +88,11 @@ describe("coin.BTC", () => {
     expect(failedResult).toBe(false);
     const validP2wpkhAddr = "bc1qcsfgcpf0nhcqg7psw2729a6cld7z4fsq4w7qtz";
     expect(btc.isAddressValid(validP2wpkhAddr)).toBe(true);
-    const validP2wshAddr = "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej";
+    const validP2wshAddr =
+      "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej";
     expect(btc.isAddressValid(validP2wshAddr)).toBe(true);
-    const invalidP2wshAddr = "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvze";
+    const invalidP2wshAddr =
+      "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvze";
     expect(btc.isAddressValid(invalidP2wshAddr)).toBe(false);
   });
 
@@ -95,7 +106,7 @@ describe("coin.BTC", () => {
         changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
       },
       version: 2,
-      locktime: 0,
+      locktime: 0
     };
 
     const result = await xtn.generateTransaction(txData, [kp1, kp2]);
@@ -117,15 +128,15 @@ describe("coin.BTC", () => {
         changeAddress: "2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4"
       },
       version: 1,
-      locktime: 628083,
+      locktime: 628083
     };
 
     const result = await xtn.generateTransaction(txData, [kp1, kp2]);
     expect(result.txId).toEqual(
-        "17eca42ddd5cb440636c333c79b6fee67dfe1368da3790b2022d5f61bd58fc62"
+      "17eca42ddd5cb440636c333c79b6fee67dfe1368da3790b2022d5f61bd58fc62"
     );
     expect(result.txHex).toEqual(
-        "010000000001025573b0158c7ce0b25bb3d0cff7344e369ca3dbcee2ce4d888840fff49ae17cd00100000017160014e9cf9131d9c02a3a02d246bb4297b5606c6cb2f9ffffffffe014dc2363486a66e337b802da70722a32065f7a9e4fd4daf0e067aa31f8e58900000000171600143007abdafe8f875c3d3b714428e7761494a71f6cffffffff02f78f01000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808798895b000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808702483045022100f5b55b77cc6379a73767e31f759b4f1dbb3ae9a544cfd5c78bf7a4ef4be339880220210ed1a9a60d75ce1fe9224618ffc9af331256d674dc497a8df1d3630b91f431012103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd72024730440220335114f2b9b3805eef2607c3b699d788187eab54c0279edb3d28a59c507ba1d2022007d32006272932820aaeb5d140469edeb62ba325fae5ad97ee9da376bf1c20e9012102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa273950900"
+      "010000000001025573b0158c7ce0b25bb3d0cff7344e369ca3dbcee2ce4d888840fff49ae17cd00100000017160014e9cf9131d9c02a3a02d246bb4297b5606c6cb2f9ffffffffe014dc2363486a66e337b802da70722a32065f7a9e4fd4daf0e067aa31f8e58900000000171600143007abdafe8f875c3d3b714428e7761494a71f6cffffffff02f78f01000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808798895b000000000017a914915892366a6cdf24afa6e1c480db2ad88c6337808702483045022100f5b55b77cc6379a73767e31f759b4f1dbb3ae9a544cfd5c78bf7a4ef4be339880220210ed1a9a60d75ce1fe9224618ffc9af331256d674dc497a8df1d3630b91f431012103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd72024730440220335114f2b9b3805eef2607c3b699d788187eab54c0279edb3d28a59c507ba1d2022007d32006272932820aaeb5d140469edeb62ba325fae5ad97ee9da376bf1c20e9012102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa273950900"
     );
   });
 
@@ -162,7 +173,7 @@ describe("coin.BTC", () => {
 
     const result = xtn.generatePsbt(txData);
     expect(result).toEqual(
-      "cHNidP8BAJwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8C948BAAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIeYiVsAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwAAAAAAAQEg9Jg2AAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIcBBBYAFOnPkTHZwCo6AtJGu0KXtWBsbLL5AAEBIIOEJgAAAAAAF6kUdFxWGQ0f6CdOfr6d1P4QyjSElZWHAQQWABQwB6va/o+HXD07cUQo53YUlKcfbAAAAA=="
+      "cHNidP8BAJwCAAAAAlVzsBWMfOCyW7PQz/c0Tjaco9vO4s5NiIhA//Sa4XzQAQAAAAD/////4BTcI2NIambjN7gC2nByKjIGX3qeT9Ta8OBnqjH45YkAAAAAAP////8C948BAAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIeYiVsAAAAAABepFJFYkjZqbN8kr6bhxIDbKtiMYzeAhwAAAAAAAQEg9Jg2AAAAAAAXqRSRWJI2amzfJK+m4cSA2yrYjGM3gIcBBBYAFOnPkTHZwCo6AtJGu0KXtWBsbLL5IgYD++AuFtNdPJxncsdbpdDROHVzckCCJm6mZ8U7nQDezXIYAQEBATEAAIAAAACAAAAAgAAAAAAAAAAAAAEBIIOEJgAAAAAAF6kUdFxWGQ0f6CdOfr6d1P4QyjSElZWHAQQWABQwB6va/o+HXD07cUQo53YUlKcfbCIGAvMlqFkC0mTbywy+FE6bJGP4JSvQxRvBlmb0yCRh5LqiGAEBAQExAACAAAAAgAAAAIAAAAAAAAAAAAAAAA=="
     );
   });
 
@@ -197,31 +208,42 @@ describe("coin.BTC", () => {
   });
 
   // https://btc.com/a7263645784c46f36a8200c06d349df82206f8b2b5f16f0ddd9adaf0b1a0f675
-  it('should generate omni tx',  async () => {
-    const privateKey = '0437d0a4ae601819365884a858da3f61074e7bedff30b7d716c406e1937092e1';
-    const publicKey = '02a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c382';
-    const keyPair = keyProvider(privateKey,publicKey);
+  it("should generate omni tx", async () => {
+    const privateKey =
+      "0437d0a4ae601819365884a858da3f61074e7bedff30b7d716c406e1937092e1";
+    const publicKey =
+      "02a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c382";
+    const keyPair = keyProvider(privateKey, publicKey);
 
     const utxo = {
-      hash: 'e6f3d78f3d9acf72329263e2c85206129c5c3c56519e21879325b01b0748e2b8',
-      index:0,
+      hash: "e6f3d78f3d9acf72329263e2c85206129c5c3c56519e21879325b01b0748e2b8",
+      index: 0,
       utxo: {
-        publicKey:publicKey,
-        value:40000
-      }
+        publicKey: publicKey,
+        value: 40000
+      },
+      bip32Derivation: [{
+        pubkey: Buffer.from(publicKey, 'hex'),
+        masterFingerprint: Buffer.from('01010101', 'hex'),
+        path: `m/49'/0'/0'/0/0`,
+      }]
     };
 
     const txData = {
-      inputs:[utxo],
-      to: '38c8FFS9W4QEW55WXgo2wX8HZJCutH89VT',
+      inputs: [utxo],
+      to: "38c8FFS9W4QEW55WXgo2wX8HZJCutH89VT",
       fee: 39454,
-      changeAddress: '3C5VmDeH3x6x9fPm4cft3qVhzvv8R4Ln7K',
-      omniAmount:66600000
+      changeAddress: "3C5VmDeH3x6x9fPm4cft3qVhzvv8R4Ln7K",
+      omniAmount: 66600000
     };
 
-    const tx = await btc.generateOmniTransaction(txData,[keyPair]);
-    expect(tx.txId).toBe('d556fa715e96c99b2ace29b2a57fa43a9acea239ae258b04a96c846ef78ad199');
-    expect(tx.txHex).toBe('02000000000101b8e248071bb0259387219e51563c5c9c120652c8e263923272cf9a3d8fd7f3e600000000171600141ea4ea0a12d7c2b07e9084d36abd03a2edd72798ffffffff02220200000000000017a9144bdc14152999fc8ad8c6df4c20946ba1e572c95e870000000000000000166a146f6d6e69000000000000001f0000000003f83c400247304402201e6dbbee8c909a91efc5954fc58112d74a7069deb1e4aebc3a8516b88d158f1c02203872389b0a7b425ab94e2931b7ceaec4054b1eaea9ca9e2a0955ddd5def571b9012102a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c38200000000')
+    const tx = await btc.generateOmniTransaction(txData, [keyPair]);
+    expect(tx.txId).toBe(
+      "d556fa715e96c99b2ace29b2a57fa43a9acea239ae258b04a96c846ef78ad199"
+    );
+    expect(tx.txHex).toBe(
+      "02000000000101b8e248071bb0259387219e51563c5c9c120652c8e263923272cf9a3d8fd7f3e600000000171600141ea4ea0a12d7c2b07e9084d36abd03a2edd72798ffffffff02220200000000000017a9144bdc14152999fc8ad8c6df4c20946ba1e572c95e870000000000000000166a146f6d6e69000000000000001f0000000003f83c400247304402201e6dbbee8c909a91efc5954fc58112d74a7069deb1e4aebc3a8516b88d158f1c02203872389b0a7b425ab94e2931b7ceaec4054b1eaea9ca9e2a0955ddd5def571b9012102a18c6e271a995b162348b4332b63f13bf031617192d6232e809210ad5d85c38200000000"
+    );
   });
 
   it("should generate the multiSign transaction", async () => {
@@ -235,12 +257,19 @@ describe("coin.BTC", () => {
       },
       version: 2,
       locktime: 0,
-      requires: 2,
+      requires: 2
     };
-    const {txId, txHex} = await xtn.generateMultiSignTransaction(txData, [kp1, kp2]);
+    const { txId, txHex } = await xtn.generateMultiSignTransaction(txData, [
+      kp1,
+      kp2
+    ]);
 
-    expect(txId).toBe('848f52e0ab465eac50f499d9b662b43d0914149995d856faedb82d43640af862');
-    expect(txHex).toBe('02000000000101e07edcafa9008f0921e4d67c1e72b77357fab8240d49ab656140a279f62303ef00000000232200207690f26b840a14f928d7182e348ef3b2faa484e4b34d49ecec1b3013faadb75affffffff027e2700000000000017a914915892366a6cdf24afa6e1c480db2ad88c63378087000000000000000017a914ab465b094d7aaad13cbdbdfebb32115690b36ad687040047304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301483045022100b2122f170e9eeb2d7e18126e804085af912e10d27925acf428329642a0e14aa2022079a9e1c602b7f1987cf12aa849314116fdb9dc57f3498195ca91a65075f4b2780147522103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd722102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa252ae00000000');
+    expect(txId).toBe(
+      "848f52e0ab465eac50f499d9b662b43d0914149995d856faedb82d43640af862"
+    );
+    expect(txHex).toBe(
+      "02000000000101e07edcafa9008f0921e4d67c1e72b77357fab8240d49ab656140a279f62303ef00000000232200207690f26b840a14f928d7182e348ef3b2faa484e4b34d49ecec1b3013faadb75affffffff027e2700000000000017a914915892366a6cdf24afa6e1c480db2ad88c63378087000000000000000017a914ab465b094d7aaad13cbdbdfebb32115690b36ad687040047304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301483045022100b2122f170e9eeb2d7e18126e804085af912e10d27925acf428329642a0e14aa2022079a9e1c602b7f1987cf12aa849314116fdb9dc57f3498195ca91a65075f4b2780147522103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd722102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa252ae00000000"
+    );
   });
 
   it("should generate the multiSign transaction signatures", async () => {
@@ -254,13 +283,29 @@ describe("coin.BTC", () => {
       },
       version: 2,
       locktime: 0,
-      requires: 2,
+      requires: 2
     };
-    const signatures = await xtn.getMultiSignTransactionSignature(txData, [kp1]);
+    const signatures = await xtn.getMultiSignTransactionSignature(txData, [
+      kp1
+    ]);
 
-    expect(signatures).toStrictEqual(['304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301'])
-  })
+    expect(signatures).toStrictEqual([
+      "304402207ef9eba6ce9bd55260b3e09587ad07aea39fe39859978ac72c72907ae3f348a0022055eeeb73697fdc8bea5a9ac8f49f46c5ddc0db60f0e624f331044d15f53f4b1301"
+    ]);
+  });
 
+  it("should sign a given psbt", async () => {
+    // txid: 8ff229d4c946c29750502d1cc105ca69a2a284bfbd2e560bd656cf18e3b78163
+    const psbtStr =
+        "cHNidP8BAHEBAAAAAfPQ5Rpeu5nH0TImK4Sbu9lxIOGEynRadywPxaPyhnTwAAAAAAD/////AkoRAAAAAAAAFgAUFCYoQzGSRmYVAuZNuXF0OrPg9jWIEwAAAAAAABYAFOZMlwM1sZGLivwOcOh77amAlvD5AAAAAAABAR+tKAAAAAAAABYAFM4u9V5WG+Fe9l3MefmYEX4ULWAWIgYDA+jO+oOuN37ABK67BA/+SuuR/57c7OkyfyR7hR34FDsYccBxUlQAAIAAAACAAAAAgAAAAAAFAAAAACICApJMZBvzWiavLN7nievKQoylwPoffLkXZUIgGHF4HgwaGHHAcVJUAACAAAAAgAAAAIABAAAACwAAAAAA";
+    const pubkey = '0303e8cefa83ae377ec004aebb040ffe4aeb91ff9edcece9327f247b851df8143b';
+    const prikey = '84f85bacd370966ba523222e6ea8c3bc2731b629e54c0362dd639d04f6fc3cbc';
+    const keyProviders = [
+      keyProvider(prikey, pubkey),
+    ];
+    const result = await btc.signPSBTBase64(psbtStr, keyProviders);
+    expect(result.psbtB64).toBe('cHNidP8BAHEBAAAAAfPQ5Rpeu5nH0TImK4Sbu9lxIOGEynRadywPxaPyhnTwAAAAAAD/////AkoRAAAAAAAAFgAUFCYoQzGSRmYVAuZNuXF0OrPg9jWIEwAAAAAAABYAFOZMlwM1sZGLivwOcOh77amAlvD5AAAAAAABAR+tKAAAAAAAABYAFM4u9V5WG+Fe9l3MefmYEX4ULWAWAQhsAkgwRQIhANSbkZmrxoUne1RIwEpJ7rq+r2tGnvhV5/dSZnE9NryTAiAKRQefqR1pTCMuF74bgP0tf39p8Wof5uLHORoPwuGxhAEhAwPozvqDrjd+wASuuwQP/krrkf+e3OzpMn8ke4Ud+BQ7ACICApJMZBvzWiavLN7nievKQoylwPoffLkXZUIgGHF4HgwaGHHAcVJUAACAAAAAgAAAAIABAAAACwAAAAAA');
+  });
 
   it("the multiSign transaction signer count cannot less than requires", async () => {
     const txData = {
@@ -273,12 +318,14 @@ describe("coin.BTC", () => {
       },
       version: 2,
       locktime: 0,
-      requires: 2,
+      requires: 2
     };
 
     const testFn = async () => {
       try {
-        const {txId, txHex} = await xtn.generateMultiSignTransaction(txData, [kp1])
+        const { txId, txHex } = await xtn.generateMultiSignTransaction(txData, [
+          kp1
+        ]);
       } catch (e) {
         throw new Error(e);
       }

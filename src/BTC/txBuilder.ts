@@ -1,18 +1,18 @@
-import {crypto} from "bitcoinjs-lib";
+import { crypto } from "bitcoinjs-lib";
 import * as bitcoin from "bitcoinjs-lib";
 // @ts-ignore
-import padstart from 'lodash.padstart';
+import padstart from "lodash.padstart";
 import {
   Destination,
   MultiSignTxData,
   MultiSignTxInputItem,
   MultiSignWitnessUtxo,
-  NonWitnessUtxo, 
+  NonWitnessUtxo,
   OmniTxData,
   TxData,
   TxInputItem,
   TxOutputItem,
-  WitnessUtxo,
+  WitnessUtxo
 } from "./index";
 
 const MAX_FEE = 1000000;
@@ -41,7 +41,10 @@ export default class PsbtBuilder {
   public addMultiSignInputsForPsbt = (txData: MultiSignTxData) => {
     if (this.verifyInput(txData)) {
       txData.inputs.forEach((eachInput: MultiSignTxInputItem) => {
-        const inputData = this.getMultiSignInputData(eachInput, txData.requires);
+        const inputData = this.getMultiSignInputData(
+          eachInput,
+          txData.requires
+        );
         return this.psbt.addInput(inputData);
       });
       return this;
@@ -57,7 +60,8 @@ export default class PsbtBuilder {
       });
       // @ts-ignore
       const totalInputs = txData.inputs.reduce(
-        (acc: number, cur: TxInputItem | MultiSignTxInputItem) => acc + cur.utxo.value,
+        (acc: number, cur: TxInputItem | MultiSignTxInputItem) =>
+          acc + cur.utxo.value,
         0
       );
       const changeAmount =
@@ -78,77 +82,85 @@ export default class PsbtBuilder {
 
   public calculateScript = (publicKey: string) => {
     const p2wpkh = bitcoin.payments.p2wpkh({
-      pubkey: Buffer.from(publicKey,'hex'),
+      pubkey: Buffer.from(publicKey, "hex"),
       network: this.network
     });
 
     const p2sh = bitcoin.payments.p2sh({
       redeem: p2wpkh,
-      network: this.network 
+      network: this.network
     }) as any;
-  
-    const script = this.compileScript(p2sh.redeem.output)
+
+    const script = this.compileScript(p2sh.redeem.output);
 
     return script;
   };
 
-  public verifyOmniInput = (txData:OmniTxData) => {
+  public verifyOmniInput = (txData: OmniTxData) => {
     const totalInputs = txData.inputs.reduce(
-        (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
-        0
+      (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
+      0
     );
     return totalInputs >= DUST_AMOUNT + txData.fee;
   };
 
-  public generateOmniPayload = (amount:number, propertyId:number):Buffer => {
-    const hexAmount = padstart(amount.toString(16), 16, '0').toUpperCase();
+  public generateOmniPayload = (amount: number, propertyId: number): Buffer => {
+    const hexAmount = padstart(amount.toString(16), 16, "0").toUpperCase();
     const simpleSend = [
-          '6f6d6e69', // omni
-          '0000', // version
-          padstart(propertyId.toString(16), 12, '0'),
-          hexAmount,
-      ].join('');
-      const data = [Buffer.from(simpleSend, 'hex')];
-      // @ts-ignore
-      return bitcoin.payments.embed({ data }).output;
+      "6f6d6e69", // omni
+      "0000", // version
+      padstart(propertyId.toString(16), 12, "0"),
+      hexAmount
+    ].join("");
+    const data = [Buffer.from(simpleSend, "hex")];
+    // @ts-ignore
+    return bitcoin.payments.embed({ data }).output;
   };
 
-  public buildOmniPsbt = (omniTxData:OmniTxData)=>{
+  public buildOmniPsbt = (omniTxData: OmniTxData) => {
     const totalInputs = omniTxData.inputs.reduce(
-        (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
-        0
+      (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
+      0
     );
-    if(totalInputs >= DUST_AMOUNT + omniTxData.fee) {
-        omniTxData.inputs.forEach(input => this.addInputForPsbt(input));
-        this.psbt.addOutput({
-            address: omniTxData.to,
-            value: DUST_AMOUNT,
-        });
+    if (totalInputs >= DUST_AMOUNT + omniTxData.fee) {
+      omniTxData.inputs.forEach(input => this.addInputForPsbt(input));
+      this.psbt.addOutput({
+        address: omniTxData.to,
+        value: DUST_AMOUNT
+      });
 
-        const usdtPropertyId = this.network === bitcoin.networks.bitcoin ?
-            USDT_PROPERTYID_MAINNET : USDT_PROPERTYID_TESTNET;
+      const usdtPropertyId =
+        this.network === bitcoin.networks.bitcoin
+          ? USDT_PROPERTYID_MAINNET
+          : USDT_PROPERTYID_TESTNET;
+      this.psbt.addOutput({
+        script: this.generateOmniPayload(
+          omniTxData.omniAmount,
+          omniTxData.propertyId || usdtPropertyId
+        ),
+        value: 0
+      });
+      const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
+      if (change > DUST_AMOUNT) {
         this.psbt.addOutput({
-            script: this.generateOmniPayload(omniTxData.omniAmount,
-                omniTxData.propertyId || usdtPropertyId),
-            value: 0
+          address: omniTxData.changeAddress,
+          value: change
         });
-        const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
-        if (change > DUST_AMOUNT) {
-            this.psbt.addOutput({
-                address: omniTxData.changeAddress,
-                value: change
-            })
-        }
-        return this;
+      }
+      return this;
     } else {
-        throw new Error("input value are invalid");
+      throw new Error("input value are invalid");
     }
   };
 
-  private verifyInput = (txData: TxData | MultiSignTxData, disableLargeFee: boolean = true) => {
+  private verifyInput = (
+    txData: TxData | MultiSignTxData,
+    disableLargeFee: boolean = true
+  ) => {
     // @ts-ignore
     const totalInputs = txData.inputs.reduce(
-      (acc: number, cur: TxInputItem | MultiSignTxInputItem) => acc + cur.utxo.value,
+      (acc: number, cur: TxInputItem | MultiSignTxInputItem) =>
+        acc + cur.utxo.value,
       0
     );
     if (this.isDestinationOutputs(txData.outputs)) {
@@ -168,46 +180,55 @@ export default class PsbtBuilder {
     return false;
   };
 
-  private addInputForPsbt(eachInput:TxInputItem) {
+  private addInputForPsbt(eachInput: TxInputItem) {
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
-        return this.psbt.addInput({
-            hash: eachInput.hash,
-            index: eachInput.index,
-            sequence: eachInput.sequence,
-            nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
-        });
+      return this.psbt
+        .addInput({
+          hash: eachInput.hash,
+          index: eachInput.index,
+          sequence: eachInput.sequence,
+          nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex"),
+          bip32Derivation: eachInput.bip32Derivation
+        })
     } else {
-        return this.psbt.addInput({
-            hash: eachInput.hash,
-            index: eachInput.index,
-            sequence: eachInput.sequence,
-            witnessUtxo: {
-                script: Buffer.from(eachInput.utxo.script ||
-                    this.calculateScript(eachInput.utxo.publicKey).toString('hex'),
-                    "hex"),
-                value: eachInput.utxo.value
-            },
-            redeemScript: bitcoin.payments.p2wpkh({
-                pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
-                network: this.network
-            }).output
-        });
+      return this.psbt
+        .addInput({
+          hash: eachInput.hash,
+          index: eachInput.index,
+          sequence: eachInput.sequence,
+          witnessUtxo: {
+            script: Buffer.from(
+              eachInput.utxo.script ||
+                this.calculateScript(eachInput.utxo.publicKey).toString("hex"),
+              "hex"
+            ),
+            value: eachInput.utxo.value
+          },
+          redeemScript: bitcoin.payments.p2wpkh({
+            pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
+            network: this.network
+          }).output,
+          bip32Derivation: eachInput.bip32Derivation
+        })
     }
   }
 
   private getMultiSignInputData(
     eachInput: MultiSignTxInputItem,
-    requires: number,
+    requires: number
   ) {
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
       return {
         hash: eachInput.hash,
         index: eachInput.index,
         nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex")
-      }
+      };
     }
 
-    const {payment} = this.createMultiSignPayment(requires, eachInput.utxo.publicKeys);
+    const { payment } = this.createMultiSignPayment(
+      requires,
+      eachInput.utxo.publicKeys
+    );
 
     const witnessUtxoScript = this.compileScript(payment.redeem.output);
 
@@ -215,32 +236,35 @@ export default class PsbtBuilder {
       hash: eachInput.hash,
       index: eachInput.index,
       witnessUtxo: {
-        script: Buffer.from(eachInput.utxo.script || witnessUtxoScript.toString('hex'), "hex"),
+        script: Buffer.from(
+          eachInput.utxo.script || witnessUtxoScript.toString("hex"),
+          "hex"
+        ),
         value: eachInput.utxo.value
       },
       witnessScript: payment.redeem.redeem.output,
-      redeemScript: payment.redeem.output,
-    }
+      redeemScript: payment.redeem.output
+    };
   }
 
   private createMultiSignPayment(requires: number, publicKeys: string[]): any {
     const network = this.network;
 
     if (publicKeys.length === 0) {
-      throw new Error('publicKeys length cannot be 0');
+      throw new Error("publicKeys length cannot be 0");
     }
-  
+
     const pubkeys = publicKeys.map(publicKey => {
-      return Buffer.from(publicKey, 'hex')
-    })
+      return Buffer.from(publicKey, "hex");
+    });
 
     const p2ms = bitcoin.payments.p2ms({ m: requires, pubkeys, network });
     const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network });
     const p2sh = bitcoin.payments.p2sh({ redeem: p2wsh, network });
-  
+
     return {
       payment: p2sh,
-      keys: pubkeys,
+      keys: pubkeys
     };
   }
 
@@ -249,7 +273,7 @@ export default class PsbtBuilder {
       bitcoin.script.OPS.OP_HASH160,
       // @ts-ignore
       crypto.hash160(script),
-      bitcoin.script.OPS.OP_EQUAL,
+      bitcoin.script.OPS.OP_EQUAL
     ]);
   }
 
