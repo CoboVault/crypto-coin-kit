@@ -1,16 +1,16 @@
-import { createHash } from "crypto";
+import {createHash} from 'crypto';
 // @ts-ignore
-import cryptoB from "crypto-browserify";
+import cryptoB from 'crypto-browserify';
 
 export const sha256 = (data: Buffer) => {
-  return createHash("sha256")
+  return createHash('sha256')
     .update(data)
     .digest();
 };
 
 export const blake256 = (data: Buffer) => {
   return cryptoB
-    .createHash("blake256")
+    .createHash('blake256')
     .update(data)
     .digest();
 };

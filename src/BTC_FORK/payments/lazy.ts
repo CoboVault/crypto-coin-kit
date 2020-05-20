@@ -24,7 +24,9 @@ export function value<T>(f: () => T): () => T {
   // tslint:disable-next-line:variable-name
   let _value: T;
   return (): T => {
-    if (_value !== undefined) { return _value; }
+    if (_value !== undefined) {
+      return _value;
+    }
     _value = f();
     return _value;
   };

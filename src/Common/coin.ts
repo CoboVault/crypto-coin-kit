@@ -1,5 +1,5 @@
-import Common, { SignProviderDeprecated } from "../Common";
-import { KeyProvider, KeyProviderSync } from "./sign";
+import Common, {SignProviderDeprecated} from '../Common';
+import {KeyProvider, KeyProviderSync} from './sign';
 
 export interface Result {
   r: string;
@@ -28,12 +28,12 @@ export interface Coin extends BaseCoin {
   generateTransaction: (
     txData: any,
     keyProvider: KeyProvider,
-    options?: any
+    options?: any,
   ) => Promise<GenerateTransactionResult>;
   generateTransactionSync: (
     txData: any,
     keyProvider: KeyProviderSync,
-    options?: any
+    options?: any,
   ) => GenerateTransactionResult;
   signMessage: (message: string, signProvider: KeyProvider) => Promise<string>;
   signMessageSync: (message: string, signProvider: KeyProviderSync) => string;
@@ -43,12 +43,12 @@ export interface UtxoCoin extends BaseCoin {
   generateTransaction: (
     txData: any,
     keyProviders: KeyProvider[],
-    options?: any
+    options?: any,
   ) => Promise<GenerateTransactionResult>;
   generateTransactionSync: (
     txData: any,
     keyProviders: KeyProviderSync[],
-    options?: any
+    options?: any,
   ) => GenerateTransactionResult;
   signMessage: (message: string, keyProvider: KeyProvider) => Promise<string>;
   signMessageSync: (message: string, KeyProvider: KeyProviderSync) => string;

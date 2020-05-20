@@ -1,12 +1,12 @@
 // @ts-ignore
-import { Address, PublicKey, Transaction } from "zcore-lib";
-import { SignProvider, SignProviderSync } from "../Common";
-import { Coin } from "../Common/coin";
-import {KeyProvider, KeyProviderSync} from "../Common/sign";
-import { hash256, numberToHex } from "../utils";
-import formatInput from "./formatInput";
-import processTransaction from "./processTransaction";
-import processTransactionSync from "./processTransactionSync";
+import {Address, PublicKey, Transaction} from 'zcore-lib';
+import {SignProvider, SignProviderSync} from '../Common';
+import {Coin} from '../Common/coin';
+import {KeyProvider, KeyProviderSync} from '../Common/sign';
+import {hash256, numberToHex} from '../utils';
+import formatInput from './formatInput';
+import processTransaction from './processTransaction';
+import processTransactionSync from './processTransactionSync';
 
 export interface Input {
   address: string;
@@ -34,7 +34,7 @@ interface TxData {
 export class XZC implements Coin {
   protected network: string;
   constructor(network?: string) {
-    this.network = network || "livenet";
+    this.network = network || 'livenet';
   }
   public generateAddress = (publicKey: string) => {
     const pubkey = new PublicKey(publicKey);
@@ -53,7 +53,7 @@ export class XZC implements Coin {
     txId: string;
     txHex: string;
   }> => {
-    const { inputs, changeAddress, to, fee, amount } = txData;
+    const {inputs, changeAddress, to, fee, amount} = txData;
     const transaction = new Transaction()
       .from(formatInput(inputs))
       .to(to, amount)
@@ -69,16 +69,13 @@ export class XZC implements Coin {
     txId: string;
     txHex: string;
   } => {
-    const { inputs, changeAddress, to, fee, amount } = txData;
+    const {inputs, changeAddress, to, fee, amount} = txData;
     const transaction = new Transaction()
       .from(formatInput(inputs))
       .to(to, amount)
       .fee(fee)
       .change(changeAddress);
-    return processTransactionSync(
-      transaction,
-      signer.sign, signer.publicKey
-    );
+    return processTransactionSync(transaction, signer.sign, signer.publicKey);
   };
 
   /**
@@ -100,11 +97,11 @@ export class XZC implements Coin {
   };
 
   private getSignMessageHex = (message: string) => {
-    const MAGIC_BYTES = Buffer.from("\x16Zcoin Signed Message:\n", "utf-8");
-    const messageBuffer = Buffer.from(message, "utf-8");
-    const messageLength = Buffer.from(numberToHex(messageBuffer.length), "hex");
+    const MAGIC_BYTES = Buffer.from('\x16Zcoin Signed Message:\n', 'utf-8');
+    const messageBuffer = Buffer.from(message, 'utf-8');
+    const messageLength = Buffer.from(numberToHex(messageBuffer.length), 'hex');
     const buffer = Buffer.concat([MAGIC_BYTES, messageLength, messageBuffer]);
 
-    return hash256(buffer).toString("hex");
+    return hash256(buffer).toString('hex');
   };
 }

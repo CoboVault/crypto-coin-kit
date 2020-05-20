@@ -1,5 +1,5 @@
-import { Psbt as PsbtBase } from "bip174";
-import * as varuint from "bip174/src/lib/converter/varint";
+import {Psbt as PsbtBase} from 'bip174';
+import * as varuint from 'bip174/src/lib/converter/varint';
 import {
   KeyValue,
   PartialSig,
@@ -10,10 +10,10 @@ import {
   PsbtOutputUpdate,
   Transaction as ITransaction,
   TransactionFromBuffer,
-  TransactionInput
-} from "bip174/src/lib/interfaces";
-import { checkForInput } from "bip174/src/lib/utils";
-import * as bitcoin from "bitcoinjs-lib";
+  TransactionInput,
+} from 'bip174/src/lib/interfaces';
+import {checkForInput} from 'bip174/src/lib/utils';
+import * as bitcoin from 'bitcoinjs-lib';
 
 import {
   address as bitcoinjsAddress,
@@ -25,15 +25,15 @@ import {
   SignerAsync,
   Transaction,
   TxInput,
-  TxOutput
-} from "bitcoinjs-lib";
+  TxOutput,
+} from 'bitcoinjs-lib';
 
-import { reverseBuffer } from "../utils";
+import {reverseBuffer} from '../utils';
 
-import { p2pkh } from "./payments/p2pkh";
+import {p2pkh} from './payments/p2pkh';
 
-import { bitcoin as btcNetwork, Network } from "./networks";
-import { decode, encode } from "./script_signature";
+import {bitcoin as btcNetwork, Network} from './networks';
+import {decode, encode} from './script_signature';
 
 /**
  * These are the default arguments for a Psbt instance.
@@ -49,7 +49,7 @@ const DEFAULT_OPTS: PsbtOpts = {
    * THIS IS NOT TO BE RELIED ON.
    * It is only here as a last ditch effort to prevent sending a 500 BTC fee etc.
    */
-  maximumFeeRate: 5000 // satoshi per byte
+  maximumFeeRate: 5000, // satoshi per byte
 };
 
 /**
@@ -87,20 +87,20 @@ const DEFAULT_OPTS: PsbtOpts = {
 export class HookPsbt {
   public static fromBase64(
     data: string,
-    opts: PsbtOptsOptional = {}
+    opts: PsbtOptsOptional = {},
   ): HookPsbt {
-    const buffer = Buffer.from(data, "base64");
+    const buffer = Buffer.from(data, 'base64');
     return this.fromBuffer(buffer, opts);
   }
 
   public static fromHex(data: string, opts: PsbtOptsOptional = {}): HookPsbt {
-    const buffer = Buffer.from(data, "hex");
+    const buffer = Buffer.from(data, 'hex');
     return this.fromBuffer(buffer, opts);
   }
 
   public static fromBuffer(
     buffer: Buffer,
-    opts: PsbtOptsOptional = {}
+    opts: PsbtOptsOptional = {},
   ): HookPsbt {
     const psbtBase = PsbtBase.fromBuffer(buffer, transactionFromBuffer);
     const psbt = new HookPsbt(opts, psbtBase);
@@ -114,7 +114,7 @@ export class HookPsbt {
 
   constructor(
     opts: PsbtOptsOptional = {},
-    readonly data: PsbtBase = new PsbtBase(new PsbtTransaction())
+    readonly data: PsbtBase = new PsbtBase(new PsbtTransaction()),
   ) {
     // set defaults
     this.ins = [];
@@ -123,7 +123,7 @@ export class HookPsbt {
       __NON_WITNESS_UTXO_TX_CACHE: [],
       __NON_WITNESS_UTXO_BUF_CACHE: [],
       __TX_IN_CACHE: {},
-      __TX: (this.data.globalMap.unsignedTx as PsbtTransaction).tx
+      __TX: (this.data.globalMap.unsignedTx as PsbtTransaction).tx,
     };
     if (this.data.inputs.length === 0) {
       this.setVersion(2);
@@ -134,14 +134,14 @@ export class HookPsbt {
       obj: any,
       attr: string,
       enumerable: boolean,
-      writable: boolean
+      writable: boolean,
     ): any =>
       Object.defineProperty(obj, attr, {
         enumerable,
-        writable
+        writable,
       });
-    dpew(this, "__CACHE", false, true);
-    dpew(this, "opts", false, true);
+    dpew(this, '__CACHE', false, true);
+    dpew(this, 'opts', false, true);
   }
 
   get inputCount(): number {
@@ -167,7 +167,7 @@ export class HookPsbt {
 
   public setVersion(version: number): this {
     check32Bit(version);
-    checkInputsForPartialSig(this.data.inputs, "setVersion");
+    checkInputsForPartialSig(this.data.inputs, 'setVersion');
     const c = this.__CACHE;
     c.__TX.version = version;
     c.__EXTRACTED_TX = undefined;
@@ -176,7 +176,7 @@ export class HookPsbt {
 
   public setLocktime(locktime: number): this {
     check32Bit(locktime);
-    checkInputsForPartialSig(this.data.inputs, "setLocktime");
+    checkInputsForPartialSig(this.data.inputs, 'setLocktime');
     const c = this.__CACHE;
     c.__TX.locktime = locktime;
     c.__EXTRACTED_TX = undefined;
@@ -185,10 +185,10 @@ export class HookPsbt {
 
   public setInputSequence(inputIndex: number, sequence: number): this {
     check32Bit(sequence);
-    checkInputsForPartialSig(this.data.inputs, "setInputSequence");
+    checkInputsForPartialSig(this.data.inputs, 'setInputSequence');
     const c = this.__CACHE;
     if (c.__TX.ins.length <= inputIndex) {
-      throw new Error("Input index too high");
+      throw new Error('Input index too high');
     }
     c.__TX.ins[inputIndex].sequence = sequence;
     c.__EXTRACTED_TX = undefined;
@@ -201,7 +201,7 @@ export class HookPsbt {
   }
 
   public addInput(inputData: PsbtInputExtended): this {
-    checkInputsForPartialSig(this.data.inputs, "addInput");
+    checkInputsForPartialSig(this.data.inputs, 'addInput');
     const c = this.__CACHE;
     this.data.addInput(inputData);
     const txIn = c.__TX.ins[c.__TX.ins.length - 1];
@@ -225,12 +225,12 @@ export class HookPsbt {
   }
 
   public addOutput(outputData: PsbtOutputExtended): this {
-    checkInputsForPartialSig(this.data.inputs, "addOutput");
-    const { address } = outputData as any;
-    if (typeof address === "string") {
-      const { network } = this.opts;
+    checkInputsForPartialSig(this.data.inputs, 'addOutput');
+    const {address} = outputData as any;
+    if (typeof address === 'string') {
+      const {network} = this.opts;
       const script = bitcoinjsAddress.toOutputScript(address, network);
-      outputData = Object.assign(outputData, { script });
+      outputData = Object.assign(outputData, {script});
     }
     const c = this.__CACHE;
     this.data.addOutput(outputData);
@@ -242,7 +242,7 @@ export class HookPsbt {
 
   public extractTransaction(disableFeeCheck?: boolean): Transaction {
     if (!this.data.inputs.every(isFinalized)) {
-      throw new Error("Not finalized");
+      throw new Error('Not finalized');
     }
     const c = this.__CACHE;
     if (!disableFeeCheck) {
@@ -258,21 +258,21 @@ export class HookPsbt {
 
   public getFeeRate(): number {
     return getTxCacheValue(
-      "__FEE_RATE",
-      "fee rate",
+      '__FEE_RATE',
+      'fee rate',
       this.data.inputs,
       this.__CACHE,
-      this.ins
+      this.ins,
     )!;
   }
 
   public getFee(): number {
     return getTxCacheValue(
-      "__FEE",
-      "fee",
+      '__FEE',
+      'fee',
       this.data.inputs,
       this.__CACHE,
-      this.ins
+      this.ins,
     )!;
   }
 
@@ -284,11 +284,11 @@ export class HookPsbt {
 
   public finalizeInput(inputIndex: number): this {
     const input = checkForInput(this.data.inputs, inputIndex);
-    const { script, isP2SH, isP2WSH, isSegwit } = getScriptFromInput(
+    const {script, isP2SH, isP2WSH, isSegwit} = getScriptFromInput(
       inputIndex,
       input,
       this.__CACHE,
-      this.ins
+      this.ins,
     );
     if (!script) {
       throw new Error(`No script found for input #${inputIndex}`);
@@ -301,20 +301,20 @@ export class HookPsbt {
 
     checkPartialSigSighashes(input);
 
-    const { finalScriptSig, finalScriptWitness } = getFinalScripts(
+    const {finalScriptSig, finalScriptWitness} = getFinalScripts(
       script,
       scriptType,
       input.partialSig!,
       isSegwit,
       isP2SH,
-      isP2WSH
+      isP2WSH,
     );
 
     if (finalScriptSig) {
-      this.data.updateInput(inputIndex, { finalScriptSig });
+      this.data.updateInput(inputIndex, {finalScriptSig});
     }
     if (finalScriptWitness) {
-      this.data.updateInput(inputIndex, { finalScriptWitness });
+      this.data.updateInput(inputIndex, {finalScriptWitness});
     }
     if (!finalScriptSig && !finalScriptWitness) {
       throw new Error(`Unknown error finalizing input #${inputIndex}`);
@@ -327,25 +327,25 @@ export class HookPsbt {
   public validateSignaturesOfAllInputs(): boolean {
     checkForInput(this.data.inputs, 0); // making sure we have at least one
     const results = range(this.data.inputs.length).map(idx =>
-      this.validateSignaturesOfInput(idx, this.ins[idx].pubkey)
+      this.validateSignaturesOfInput(idx, this.ins[idx].pubkey),
     );
     return results.reduce((final, res) => res === true && final, true);
   }
 
   public validateSignaturesOfInput(
     inputIndex: number,
-    pubkey?: Buffer
+    pubkey?: Buffer,
   ): boolean {
     const input = this.data.inputs[inputIndex];
     const partialSig = (input || {}).partialSig;
     if (!input || !partialSig || partialSig.length < 1) {
-      throw new Error("No signatures to validate");
+      throw new Error('No signatures to validate');
     }
     const mySigs = pubkey
       ? partialSig.filter(sig => sig.pubkey.equals(pubkey))
       : partialSig;
     if (mySigs.length < 1) {
-      throw new Error("No signatures for this pubkey");
+      throw new Error('No signatures for this pubkey');
     }
     const results: boolean[] = [];
     let hashCache: Buffer;
@@ -353,16 +353,16 @@ export class HookPsbt {
     let sighashCache: number;
     for (const pSig of mySigs) {
       const sig = decode(pSig.signature);
-      const { hash, script } =
+      const {hash, script} =
         sighashCache! !== sig.hashType
           ? this.getHashAndSignHashType(inputIndex)
-          : { hash: hashCache!, script: scriptCache! };
+          : {hash: hashCache!, script: scriptCache!};
       sighashCache = sig.hashType;
       hashCache = hash;
       // @ts-ignore
       scriptCache = script;
       // @ts-ignore
-      checkScriptForPubkey(pSig.pubkey, script, "verify");
+      checkScriptForPubkey(pSig.pubkey, script, 'verify');
       const keypair = ECPair.fromPublicKey(pSig.pubkey);
       results.push(keypair.verify(hash, sig.signature));
     }
@@ -371,10 +371,10 @@ export class HookPsbt {
 
   public signAllInputsHD(
     hdKeyPair: HDSigner,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): this {
     if (!hdKeyPair || !hdKeyPair.publicKey || !hdKeyPair.fingerprint) {
-      throw new Error("Need HDSigner to sign input");
+      throw new Error('Need HDSigner to sign input');
     }
 
     const results: boolean[] = [];
@@ -387,18 +387,18 @@ export class HookPsbt {
       }
     }
     if (results.every(v => v === false)) {
-      throw new Error("No inputs were signed");
+      throw new Error('No inputs were signed');
     }
     return this;
   }
 
   public signAllInputsHDAsync(
     hdKeyPair: HDSigner | HDSignerAsync,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): Promise<void> {
     return new Promise((resolve, reject): any => {
       if (!hdKeyPair || !hdKeyPair.publicKey || !hdKeyPair.fingerprint) {
-        return reject(new Error("Need HDSigner to sign input"));
+        return reject(new Error('Need HDSigner to sign input'));
       }
 
       const results: boolean[] = [];
@@ -411,13 +411,13 @@ export class HookPsbt {
             },
             () => {
               results.push(false);
-            }
-          )
+            },
+          ),
         );
       }
       return Promise.all(promises).then(() => {
         if (results.every(v => v === false)) {
-          return reject(new Error("No inputs were signed"));
+          return reject(new Error('No inputs were signed'));
         }
         resolve();
       });
@@ -427,15 +427,15 @@ export class HookPsbt {
   public signInputHD(
     inputIndex: number,
     hdKeyPair: HDSigner,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): this {
     if (!hdKeyPair || !hdKeyPair.publicKey || !hdKeyPair.fingerprint) {
-      throw new Error("Need HDSigner to sign input");
+      throw new Error('Need HDSigner to sign input');
     }
     const signers = getSignersFromHD(
       inputIndex,
       this.data.inputs,
-      hdKeyPair
+      hdKeyPair,
     ) as Signer[];
     signers.forEach(signer => this.signInput(inputIndex, signer, sighashTypes));
     return this;
@@ -444,15 +444,15 @@ export class HookPsbt {
   public signInputHDAsync(
     inputIndex: number,
     hdKeyPair: HDSigner | HDSignerAsync,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): Promise<void> {
     return new Promise((resolve, reject): any => {
       if (!hdKeyPair || !hdKeyPair.publicKey || !hdKeyPair.fingerprint) {
-        return reject(new Error("Need HDSigner to sign input"));
+        return reject(new Error('Need HDSigner to sign input'));
       }
       const signers = getSignersFromHD(inputIndex, this.data.inputs, hdKeyPair);
       const promises = signers.map(signer =>
-        this.signInputAsync(inputIndex, signer, sighashTypes)
+        this.signInputAsync(inputIndex, signer, sighashTypes),
       );
       return Promise.all(promises)
         .then(() => {
@@ -464,10 +464,10 @@ export class HookPsbt {
 
   public signAllInputs(
     keyPair: Signer,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): this {
     if (!keyPair || !keyPair.publicKey) {
-      throw new Error("Need Signer to sign input");
+      throw new Error('Need Signer to sign input');
     }
 
     // TODO: Add a pubkey/pubkeyhash cache to each input
@@ -483,18 +483,18 @@ export class HookPsbt {
       }
     }
     if (results.every(v => v === false)) {
-      throw new Error("No inputs were signed");
+      throw new Error('No inputs were signed');
     }
     return this;
   }
 
   public signAllInputsAsync(
     keyPair: Signer | SignerAsync,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): Promise<void> {
     return new Promise((resolve, reject): any => {
       if (!keyPair || !keyPair.publicKey) {
-        return reject(new Error("Need Signer to sign input"));
+        return reject(new Error('Need Signer to sign input'));
       }
 
       // TODO: Add a pubkey/pubkeyhash cache to each input
@@ -510,13 +510,13 @@ export class HookPsbt {
             },
             () => {
               results.push(false);
-            }
-          )
+            },
+          ),
         );
       }
       return Promise.all(promises).then(() => {
         if (results.every(v => v === false)) {
-          return reject(new Error("No inputs were signed"));
+          return reject(new Error('No inputs were signed'));
         }
         resolve();
       });
@@ -526,12 +526,12 @@ export class HookPsbt {
   public signInput(
     inputIndex: number,
     keyPair: Signer,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): this {
     if (!keyPair || !keyPair.publicKey) {
-      throw new Error("Need Signer to sign input");
+      throw new Error('Need Signer to sign input');
     }
-    const { hash, sighashType } = this.getHashAndSignHashType(inputIndex);
+    const {hash, sighashType} = this.getHashAndSignHashType(inputIndex);
 
     const partialSig = [
       {
@@ -539,36 +539,36 @@ export class HookPsbt {
         signature: encode(
           keyPair.sign(hash),
           sighashType,
-          this.opts.network.forkId
-        )
-      }
+          this.opts.network.forkId,
+        ),
+      },
     ];
 
-    this.data.updateInput(inputIndex, { partialSig });
+    this.data.updateInput(inputIndex, {partialSig});
     return this;
   }
 
   public signInputAsync(
     inputIndex: number,
     keyPair: Signer | SignerAsync,
-    sighashTypes: number[] = [Transaction.SIGHASH_ALL]
+    sighashTypes: number[] = [Transaction.SIGHASH_ALL],
   ): Promise<void> {
     return new Promise((resolve, reject): void => {
       if (!keyPair || !keyPair.publicKey) {
-        return reject(new Error("Need Signer to sign input"));
+        return reject(new Error('Need Signer to sign input'));
       }
 
-      const { hash, sighashType } = this.getHashAndSignHashType(inputIndex);
+      const {hash, sighashType} = this.getHashAndSignHashType(inputIndex);
 
       Promise.resolve(keyPair.sign(hash)).then(signature => {
         const partialSig = [
           {
             pubkey: keyPair.publicKey,
-            signature: encode(signature, sighashType, this.opts.network.forkId)
-          }
+            signature: encode(signature, sighashType, this.opts.network.forkId),
+          },
         ];
 
-        this.data.updateInput(inputIndex, { partialSig });
+        this.data.updateInput(inputIndex, {partialSig});
         resolve();
       });
     });
@@ -597,7 +597,7 @@ export class HookPsbt {
       addNonWitnessTxCache(
         this.__CACHE,
         this.data.inputs[inputIndex],
-        inputIndex
+        inputIndex,
       );
     }
     return this;
@@ -634,27 +634,27 @@ export class HookPsbt {
     const unsignedTx = this.__CACHE.__TX;
     const input = checkForInput(this.data.inputs, inputIndex);
     const sighashType = input.sighashType || Transaction.SIGHASH_ALL;
-    const script = p2pkh({ pubkey: this.ins[inputIndex].pubkey }).output;
-    if (typeof forkId !== "undefined" && forkId >= 0) {
+    const script = p2pkh({pubkey: this.ins[inputIndex].pubkey}).output;
+    if (typeof forkId !== 'undefined' && forkId >= 0) {
       hash = unsignedTx.hashForWitnessV0(
         inputIndex,
         // @ts-ignore
         script,
         this.ins[inputIndex].value,
-        sighashType
+        sighashType,
       );
     } else {
       // @ts-ignore
       hash = unsignedTx.hashForSignature(inputIndex, script, sighashType);
     }
-    return { hash, sighashType, script };
+    return {hash, sighashType, script};
   }
 }
 
 interface PsbtCache {
   __NON_WITNESS_UTXO_TX_CACHE: Transaction[];
   __NON_WITNESS_UTXO_BUF_CACHE: Buffer[];
-  __TX_IN_CACHE: { [index: string]: number };
+  __TX_IN_CACHE: {[index: string]: number};
   __TX: Transaction;
   __FEE_RATE?: number;
   __FEE?: number;
@@ -726,7 +726,7 @@ interface HDSignerAsync extends HDSignerBase {
  * Transaction (From the bip174 library) interface.
  */
 const transactionFromBuffer: TransactionFromBuffer = (
-  buffer: Buffer
+  buffer: Buffer,
 ): ITransaction => new PsbtTransaction(buffer);
 
 /**
@@ -739,9 +739,9 @@ class PsbtTransaction implements ITransaction {
   constructor(buffer: Buffer = Buffer.from([2, 0, 0, 0, 0, 0, 0, 0, 0, 0])) {
     this.tx = Transaction.fromBuffer(buffer);
     checkTxEmpty(this.tx);
-    Object.defineProperty(this, "tx", {
+    Object.defineProperty(this, 'tx', {
       enumerable: false,
-      writable: true
+      writable: true,
     });
   }
 
@@ -751,7 +751,7 @@ class PsbtTransaction implements ITransaction {
   } {
     return {
       inputCount: this.tx.ins.length,
-      outputCount: this.tx.outs.length
+      outputCount: this.tx.outs.length,
     };
   }
 
@@ -760,14 +760,14 @@ class PsbtTransaction implements ITransaction {
       (input as any).hash === undefined ||
       (input as any).index === undefined ||
       (!Buffer.isBuffer((input as any).hash) &&
-        typeof (input as any).hash !== "string") ||
-      typeof (input as any).index !== "number"
+        typeof (input as any).hash !== 'string') ||
+      typeof (input as any).index !== 'number'
     ) {
-      throw new Error("Error adding input.");
+      throw new Error('Error adding input.');
     }
     const hash =
-      typeof input.hash === "string"
-        ? reverseBuffer(Buffer.from(input.hash, "hex"))
+      typeof input.hash === 'string'
+        ? reverseBuffer(Buffer.from(input.hash, 'hex'))
         : input.hash;
     this.tx.addInput(hash, input.index, input.sequence);
   }
@@ -777,9 +777,9 @@ class PsbtTransaction implements ITransaction {
       (output as any).script === undefined ||
       (output as any).value === undefined ||
       !Buffer.isBuffer((output as any).script) ||
-      typeof (output as any).value !== "number"
+      typeof (output as any).value !== 'number'
     ) {
-      throw new Error("Error adding output.");
+      throw new Error('Error adding output.');
     }
     this.tx.addOutput(output.script, output.value);
   }
@@ -792,15 +792,15 @@ class PsbtTransaction implements ITransaction {
 function canFinalize(
   input: PsbtInput,
   script: Buffer,
-  scriptType: string
+  scriptType: string,
 ): boolean {
   switch (scriptType) {
-    case "pubkey":
-    case "pubkeyhash":
-    case "witnesspubkeyhash":
+    case 'pubkey':
+    case 'pubkeyhash':
+    case 'witnesspubkeyhash':
       return hasSigs(1, input.partialSig);
-    case "multisig": {
-      const p2ms = payments.p2ms({ output: script });
+    case 'multisig': {
+      const p2ms = payments.p2ms({output: script});
       return hasSigs(p2ms.m!, input.partialSig);
     }
     default:
@@ -813,7 +813,7 @@ function hasSigs(neededSigs: number, partialSig?: any[]): boolean {
     return false;
   }
   if (partialSig.length > neededSigs) {
-    throw new Error("Too many signatures");
+    throw new Error('Too many signatures');
   }
   return partialSig.length === neededSigs;
 }
@@ -825,7 +825,7 @@ function isFinalized(input: PsbtInput): boolean {
 function isPaymentFactory(payment: any): (script: Buffer) => boolean {
   return (script: Buffer): boolean => {
     try {
-      payment({ output: script });
+      payment({output: script});
       return true;
     } catch (err) {
       return false;
@@ -840,12 +840,12 @@ const isP2WSHScript = isPaymentFactory(payments.p2wsh);
 
 function check32Bit(num: number): void {
   if (
-    typeof num !== "number" ||
+    typeof num !== 'number' ||
     num !== Math.floor(num) ||
     num > 0xffffffff ||
     num < 0
   ) {
-    throw new Error("Invalid 32 bit integer");
+    throw new Error('Invalid 32 bit integer');
   }
 }
 
@@ -859,7 +859,7 @@ function checkFees(psbt: HookPsbt, cache: PsbtCache, opts: PsbtOpts): void {
         `fees, which is ${feeRate} satoshi per byte for a transaction ` +
         `with a VSize of ${vsize} bytes (segwit counted as 0.25 byte per ` +
         `byte). Use setMaximumFeeRate method to raise your threshold, or ` +
-        `pass true to the first arg of extractTransaction.`
+        `pass true to the first arg of extractTransaction.`,
     );
   }
 }
@@ -877,11 +877,11 @@ function checkInputsForPartialSig(inputs: PsbtInput[], action: string): void {
       pSigs = input.partialSig!;
     }
     pSigs.forEach(pSig => {
-      const { hashType } = decode(pSig.signature);
+      const {hashType} = decode(pSig.signature);
       const whitelist: string[] = [];
       const isAnyoneCanPay = hashType & Transaction.SIGHASH_ANYONECANPAY;
       if (isAnyoneCanPay) {
-        whitelist.push("addInput");
+        whitelist.push('addInput');
       }
       const hashMod = hashType & 0x1f;
       switch (hashMod) {
@@ -889,8 +889,8 @@ function checkInputsForPartialSig(inputs: PsbtInput[], action: string): void {
           break;
         case Transaction.SIGHASH_SINGLE:
         case Transaction.SIGHASH_NONE:
-          whitelist.push("addOutput");
-          whitelist.push("setInputSequence");
+          whitelist.push('addOutput');
+          whitelist.push('setInputSequence');
           break;
       }
       if (whitelist.indexOf(action) === -1) {
@@ -898,7 +898,7 @@ function checkInputsForPartialSig(inputs: PsbtInput[], action: string): void {
       }
     });
     if (throws) {
-      throw new Error("Can not modify transaction, signatures exist.");
+      throw new Error('Can not modify transaction, signatures exist.');
     }
   });
 }
@@ -907,11 +907,11 @@ function checkPartialSigSighashes(input: PsbtInput): void {
   if (!input.sighashType || !input.partialSig) {
     return;
   }
-  const { partialSig, sighashType } = input;
+  const {partialSig, sighashType} = input;
   partialSig.forEach(pSig => {
-    const { hashType } = decode(pSig.signature);
+    const {hashType} = decode(pSig.signature);
     if (sighashType !== hashType) {
-      throw new Error("Signature sighash does not match input sighash type");
+      throw new Error('Signature sighash does not match input sighash type');
     }
   });
 }
@@ -919,17 +919,17 @@ function checkPartialSigSighashes(input: PsbtInput): void {
 function checkScriptForPubkey(
   pubkey: Buffer,
   script: Buffer,
-  action: string
+  action: string,
 ): void {
   const pubkeyHash = crypto.hash160(pubkey);
 
   const decompiled = bitcoin.script.decompile(script);
   if (decompiled === null) {
-    throw new Error("Unknown script error");
+    throw new Error('Unknown script error');
   }
 
   const hasKey = decompiled.some(element => {
-    if (typeof element === "number") {
+    if (typeof element === 'number') {
       return false;
     }
     return element.equals(pubkey) || element.equals(pubkeyHash);
@@ -937,7 +937,7 @@ function checkScriptForPubkey(
 
   if (!hasKey) {
     throw new Error(
-      `Can not ${action} for this input with the key ${pubkey.toString("hex")}`
+      `Can not ${action} for this input with the key ${pubkey.toString('hex')}`,
     );
   }
 }
@@ -948,10 +948,10 @@ function checkTxEmpty(tx: Transaction): void {
       input.script &&
       input.script.length === 0 &&
       input.witness &&
-      input.witness.length === 0
+      input.witness.length === 0,
   );
   if (!isEmpty) {
-    throw new Error("Format Error: Transaction ScriptSigs are not empty");
+    throw new Error('Format Error: Transaction ScriptSigs are not empty');
   }
 }
 
@@ -963,57 +963,57 @@ function checkTxForDupeIns(tx: Transaction, cache: PsbtCache): void {
 
 function checkTxInputCache(
   cache: PsbtCache,
-  input: { hash: Buffer; index: number }
+  input: {hash: Buffer; index: number},
 ): void {
   const key =
-    reverseBuffer(Buffer.from(input.hash)).toString("hex") + ":" + input.index;
+    reverseBuffer(Buffer.from(input.hash)).toString('hex') + ':' + input.index;
   if (cache.__TX_IN_CACHE[key]) {
-    throw new Error("Duplicate input detected.");
+    throw new Error('Duplicate input detected.');
   }
   cache.__TX_IN_CACHE[key] = 1;
 }
 
 function scriptCheckerFactory(
   payment: any,
-  paymentScriptName: string
+  paymentScriptName: string,
 ): (idx: number, spk: Buffer, rs: Buffer) => void {
   return (
     inputIndex: number,
     scriptPubKey: Buffer,
-    redeemScript: Buffer
+    redeemScript: Buffer,
   ): void => {
     const redeemScriptOutput = payment({
-      redeem: { output: redeemScript }
+      redeem: {output: redeemScript},
     }).output as Buffer;
 
     if (!scriptPubKey.equals(redeemScriptOutput)) {
       throw new Error(
-        `${paymentScriptName} for input #${inputIndex} doesn't match the scriptPubKey in the prevout`
+        `${paymentScriptName} for input #${inputIndex} doesn't match the scriptPubKey in the prevout`,
       );
     }
   };
 }
-const checkRedeemScript = scriptCheckerFactory(payments.p2sh, "Redeem script");
+const checkRedeemScript = scriptCheckerFactory(payments.p2sh, 'Redeem script');
 const checkWitnessScript = scriptCheckerFactory(
   payments.p2wsh,
-  "Witness script"
+  'Witness script',
 );
 
-type TxCacheNumberKey = "__FEE_RATE" | "__FEE";
+type TxCacheNumberKey = '__FEE_RATE' | '__FEE';
 function getTxCacheValue(
   key: TxCacheNumberKey,
   name: string,
   inputs: PsbtInput[],
   c: PsbtCache,
-  psbtExtendInputs: PsbtInputExtended[]
+  psbtExtendInputs: PsbtInputExtended[],
 ): number | undefined {
   if (!inputs.every(isFinalized)) {
     throw new Error(`PSBT must be finalized to calculate ${name}`);
   }
-  if (key === "__FEE_RATE" && c.__FEE_RATE) {
+  if (key === '__FEE_RATE' && c.__FEE_RATE) {
     return c.__FEE_RATE;
   }
-  if (key === "__FEE" && c.__FEE) {
+  if (key === '__FEE' && c.__FEE) {
     return c.__FEE;
   }
   let tx: Transaction;
@@ -1025,9 +1025,9 @@ function getTxCacheValue(
     tx = c.__TX.clone();
   }
   inputFinalizeGetAmts(inputs, tx, c, mustFinalize, psbtExtendInputs);
-  if (key === "__FEE_RATE") {
+  if (key === '__FEE_RATE') {
     return c.__FEE_RATE!;
-  } else if (key === "__FEE") {
+  } else if (key === '__FEE') {
     return c.__FEE!;
   }
 }
@@ -1038,7 +1038,7 @@ function getFinalScripts(
   partialSig: PartialSig[],
   isSegwit: boolean,
   isP2SH: boolean,
-  isP2WSH: boolean
+  isP2WSH: boolean,
 ): {
   finalScriptSig: Buffer | undefined;
   finalScriptWitness: Buffer | undefined;
@@ -1048,8 +1048,8 @@ function getFinalScripts(
 
   // Wow, the payments API is very handy
   const payment: payments.Payment = getPayment(script, scriptType, partialSig);
-  const p2wsh = !isP2WSH ? null : payments.p2wsh({ redeem: payment });
-  const p2sh = !isP2SH ? null : payments.p2sh({ redeem: p2wsh || payment });
+  const p2wsh = !isP2WSH ? null : payments.p2wsh({redeem: payment});
+  const p2sh = !isP2SH ? null : payments.p2sh({redeem: p2wsh || payment});
 
   if (isSegwit) {
     if (p2wsh) {
@@ -1069,7 +1069,7 @@ function getFinalScripts(
   }
   return {
     finalScriptSig,
-    finalScriptWitness
+    finalScriptWitness,
   };
 }
 
@@ -1078,25 +1078,25 @@ function getHashAndSighashType(
   inputIndex: number,
   pubkey: Buffer,
   cache: PsbtCache,
-  sighashTypes: number[]
+  sighashTypes: number[],
 ): {
   hash: Buffer;
   sighashType: number;
 } {
   const input = checkForInput(inputs, inputIndex);
 
-  const { hash, sighashType, script } = getHashForSig(
+  const {hash, sighashType, script} = getHashForSig(
     inputIndex,
     input,
     cache,
     pubkey,
-    sighashTypes
+    sighashTypes,
   );
 
-  checkScriptForPubkey(pubkey, script, "sign");
+  checkScriptForPubkey(pubkey, script, 'sign');
   return {
     hash,
-    sighashType
+    sighashType,
   };
 }
 
@@ -1105,7 +1105,7 @@ function getHashForSig(
   input: PsbtInput,
   cache: PsbtCache,
   pubkey: Buffer,
-  sighashTypes?: number[]
+  sighashTypes?: number[],
 ): {
   script: Buffer;
   hash: Buffer;
@@ -1117,7 +1117,7 @@ function getHashForSig(
     const str = sighashTypeToString(sighashType);
     throw new Error(
       `Sighash type is not allowed. Retry the sign method passing the ` +
-        `sighashTypes array of whitelisted types. Sighash type: ${str}`
+        `sighashTypes array of whitelisted types. Sighash type: ${str}`,
     );
   }
   let hash: Buffer;
@@ -1127,7 +1127,7 @@ function getHashForSig(
     const nonWitnessUtxoTx = nonWitnessUtxoTxFromCache(
       cache,
       input,
-      inputIndex
+      inputIndex,
     );
 
     const prevoutHash = unsignedTx.ins[inputIndex].hash;
@@ -1136,7 +1136,7 @@ function getHashForSig(
     // If a non-witness UTXO is provided, its hash must match the hash specified in the prevout
     if (!prevoutHash.equals(utxoHash)) {
       throw new Error(
-        `Non-witness UTXO hash for input #${inputIndex} doesn't match the hash specified in the prevout`
+        `Non-witness UTXO hash for input #${inputIndex} doesn't match the hash specified in the prevout`,
       );
     }
 
@@ -1153,24 +1153,24 @@ function getHashForSig(
 
     if (isP2WSHScript(script)) {
       if (!input.witnessScript) {
-        throw new Error("Segwit input needs witnessScript if not P2WPKH");
+        throw new Error('Segwit input needs witnessScript if not P2WPKH');
       }
       checkWitnessScript(inputIndex, script, input.witnessScript);
       hash = unsignedTx.hashForWitnessV0(
         inputIndex,
         input.witnessScript,
         prevout.value,
-        sighashType
+        sighashType,
       );
       script = input.witnessScript;
     } else if (isP2WPKH(script)) {
       // P2WPKH uses the P2PKH template for prevoutScript when signing
-      const signingScript = payments.p2pkh({ hash: script.slice(2) }).output!;
+      const signingScript = payments.p2pkh({hash: script.slice(2)}).output!;
       hash = unsignedTx.hashForWitnessV0(
         inputIndex,
         signingScript,
         prevout.value,
-        sighashType
+        sighashType,
       );
     } else {
       hash = unsignedTx.hashForSignature(inputIndex, script, sighashType);
@@ -1183,7 +1183,7 @@ function getHashForSig(
       checkRedeemScript(
         inputIndex,
         input.witnessUtxo.script,
-        input.redeemScript
+        input.redeemScript,
       );
       _script = input.redeemScript;
     } else {
@@ -1191,76 +1191,76 @@ function getHashForSig(
     }
     if (isP2WPKH(_script)) {
       // P2WPKH uses the P2PKH template for prevoutScript when signing
-      const signingScript = payments.p2pkh({ hash: _script.slice(2) }).output!;
+      const signingScript = payments.p2pkh({hash: _script.slice(2)}).output!;
       hash = unsignedTx.hashForWitnessV0(
         inputIndex,
         signingScript,
         input.witnessUtxo.value,
-        sighashType
+        sighashType,
       );
       script = _script;
     } else if (isP2WSHScript(_script)) {
       if (!input.witnessScript) {
-        throw new Error("Segwit input needs witnessScript if not P2WPKH");
+        throw new Error('Segwit input needs witnessScript if not P2WPKH');
       }
       checkWitnessScript(inputIndex, _script, input.witnessScript);
       hash = unsignedTx.hashForWitnessV0(
         inputIndex,
         input.witnessScript,
         input.witnessUtxo.value,
-        sighashType
+        sighashType,
       );
       // want to make sure the script we return is the actual meaningful script
       script = input.witnessScript;
     } else {
       throw new Error(
         `Input #${inputIndex} has witnessUtxo but non-segwit script: ` +
-          `${_script.toString("hex")}`
+          `${_script.toString('hex')}`,
       );
     }
   } else {
-    throw new Error("Need a Utxo input item for signing");
+    throw new Error('Need a Utxo input item for signing');
   }
   return {
     script,
     sighashType,
-    hash
+    hash,
   };
 }
 
 function getPayment(
   script: Buffer,
   scriptType: string,
-  partialSig: PartialSig[]
+  partialSig: PartialSig[],
 ): payments.Payment {
   let payment: payments.Payment;
   switch (scriptType) {
-    case "multisig": {
+    case 'multisig': {
       const sigs = getSortedSigs(script, partialSig);
       payment = payments.p2ms({
         output: script,
-        signatures: sigs
+        signatures: sigs,
       });
       break;
     }
-    case "pubkey":
+    case 'pubkey':
       payment = payments.p2pk({
         output: script,
-        signature: partialSig[0].signature
+        signature: partialSig[0].signature,
       });
       break;
-    case "pubkeyhash":
+    case 'pubkeyhash':
       payment = p2pkh({
         output: script,
         pubkey: partialSig[0].pubkey,
-        signature: partialSig[0].signature
+        signature: partialSig[0].signature,
       });
       break;
-    case "witnesspubkeyhash":
+    case 'witnesspubkeyhash':
       payment = payments.p2wpkh({
         output: script,
         pubkey: partialSig[0].pubkey,
-        signature: partialSig[0].signature
+        signature: partialSig[0].signature,
       });
       break;
   }
@@ -1281,7 +1281,7 @@ function getPsigsFromInputFinalScripts(input: PsbtInput): PartialSig[] {
         Buffer.isBuffer(item) && bitcoin.script.isCanonicalScriptSignature(item)
       );
     })
-    .map(sig => ({ signature: sig })) as PartialSig[];
+    .map(sig => ({signature: sig})) as PartialSig[];
 }
 
 interface GetScriptReturn {
@@ -1294,14 +1294,14 @@ function getScriptFromInput(
   inputIndex: number,
   input: PsbtInput,
   cache: PsbtCache,
-  ins: PsbtInputExtended[]
+  ins: PsbtInputExtended[],
 ): GetScriptReturn {
   const unsignedTx = cache.__TX;
   const res: GetScriptReturn = {
     script: null,
     isSegwit: false,
     isP2SH: false,
-    isP2WSH: false
+    isP2WSH: false,
   };
   res.isP2SH = !!input.redeemScript;
   res.isP2WSH = !!input.witnessScript;
@@ -1312,12 +1312,12 @@ function getScriptFromInput(
   } else {
     if (ins[inputIndex].pubkey) {
       // @ts-ignore
-      res.script = p2pkh({ pubkey: ins[inputIndex].pubkey }).output;
+      res.script = p2pkh({pubkey: ins[inputIndex].pubkey}).output;
     } else if (input.nonWitnessUtxo) {
       const nonWitnessUtxoTx = nonWitnessUtxoTxFromCache(
         cache,
         input,
-        inputIndex
+        inputIndex,
       );
       const prevoutIndex = unsignedTx.ins[inputIndex].index;
       res.script = nonWitnessUtxoTx.outs[prevoutIndex].script;
@@ -1334,11 +1334,11 @@ function getScriptFromInput(
 function getSignersFromHD(
   inputIndex: number,
   inputs: PsbtInput[],
-  hdKeyPair: HDSigner | HDSignerAsync
+  hdKeyPair: HDSigner | HDSignerAsync,
 ): Array<Signer | SignerAsync> {
   const input = checkForInput(inputs, inputIndex);
   if (!input.bip32Derivation || input.bip32Derivation.length === 0) {
-    throw new Error("Need bip32Derivation to sign with HD");
+    throw new Error('Need bip32Derivation to sign with HD');
   }
   const myDerivations = input.bip32Derivation
     .map(bipDv => {
@@ -1351,13 +1351,13 @@ function getSignersFromHD(
     .filter(v => !!v);
   if (myDerivations.length === 0) {
     throw new Error(
-      "Need one bip32Derivation masterFingerprint to match the HDSigner fingerprint"
+      'Need one bip32Derivation masterFingerprint to match the HDSigner fingerprint',
     );
   }
   const signers: Array<Signer | SignerAsync> = myDerivations.map(bipDv => {
     const node = hdKeyPair.derivePath(bipDv!.path);
     if (!bipDv!.pubkey.equals(node.publicKey)) {
-      throw new Error("pubkey did not match bip32Derivation");
+      throw new Error('pubkey did not match bip32Derivation');
     }
     return node;
   });
@@ -1365,7 +1365,7 @@ function getSignersFromHD(
 }
 
 function getSortedSigs(script: Buffer, partialSig: PartialSig[]): Buffer[] {
-  const p2ms = payments.p2ms({ output: script });
+  const p2ms = payments.p2ms({output: script});
   // for each pubkey in order of p2ms script
   return p2ms
     .pubkeys!.map(pk => {
@@ -1414,18 +1414,18 @@ function scriptWitnessToWitnessStack(buffer: Buffer): Buffer[] {
 function sighashTypeToString(sighashType: number): string {
   let text =
     sighashType & Transaction.SIGHASH_ANYONECANPAY
-      ? "SIGHASH_ANYONECANPAY | "
-      : "";
+      ? 'SIGHASH_ANYONECANPAY | '
+      : '';
   const sigMod = sighashType & 0x1f;
   switch (sigMod) {
     case Transaction.SIGHASH_ALL:
-      text += "SIGHASH_ALL";
+      text += 'SIGHASH_ALL';
       break;
     case Transaction.SIGHASH_SINGLE:
-      text += "SIGHASH_SINGLE";
+      text += 'SIGHASH_SINGLE';
       break;
     case Transaction.SIGHASH_NONE:
-      text += "SIGHASH_NONE";
+      text += 'SIGHASH_NONE';
       break;
   }
   return text;
@@ -1464,7 +1464,7 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
 function addNonWitnessTxCache(
   cache: PsbtCache,
   input: PsbtInput,
-  inputIndex: number
+  inputIndex: number,
 ): void {
   cache.__NON_WITNESS_UTXO_BUF_CACHE[inputIndex] = input.nonWitnessUtxo!;
 
@@ -1474,7 +1474,7 @@ function addNonWitnessTxCache(
   const self = cache;
   const selfIndex = inputIndex;
   delete input.nonWitnessUtxo;
-  Object.defineProperty(input, "nonWitnessUtxo", {
+  Object.defineProperty(input, 'nonWitnessUtxo', {
     enumerable: true,
     get(): Buffer {
       const buf = self.__NON_WITNESS_UTXO_BUF_CACHE[selfIndex];
@@ -1489,7 +1489,7 @@ function addNonWitnessTxCache(
     },
     set(data: Buffer): void {
       self.__NON_WITNESS_UTXO_BUF_CACHE[selfIndex] = data;
-    }
+    },
   });
 }
 
@@ -1498,7 +1498,7 @@ function inputFinalizeGetAmts(
   tx: Transaction,
   cache: PsbtCache,
   mustFinalize: boolean,
-  psbtExtendInputs: PsbtInputExtended[]
+  psbtExtendInputs: PsbtInputExtended[],
 ): void {
   let inputAmount = 0;
   inputs.forEach((input, idx) => {
@@ -1507,7 +1507,7 @@ function inputFinalizeGetAmts(
     }
     if (mustFinalize && input.finalScriptWitness) {
       tx.ins[idx].witness = scriptWitnessToWitnessStack(
-        input.finalScriptWitness
+        input.finalScriptWitness,
       );
     }
     if (input.witnessUtxo) {
@@ -1523,11 +1523,11 @@ function inputFinalizeGetAmts(
   });
   const outputAmount = (tx.outs as TxOutput[]).reduce(
     (total, o) => total + o.value,
-    0
+    0,
   );
   const fee = inputAmount - outputAmount;
   if (fee < 0) {
-    throw new Error("Outputs are spending more than Inputs");
+    throw new Error('Outputs are spending more than Inputs');
   }
   const bytes = tx.virtualSize();
   cache.__FEE = fee;
@@ -1538,7 +1538,7 @@ function inputFinalizeGetAmts(
 function nonWitnessUtxoTxFromCache(
   cache: PsbtCache,
   input: PsbtInput,
-  inputIndex: number
+  inputIndex: number,
 ): Transaction {
   const c = cache.__NON_WITNESS_UTXO_TX_CACHE;
   if (!c[inputIndex]) {
@@ -1549,18 +1549,18 @@ function nonWitnessUtxoTxFromCache(
 
 function classifyScript(script: Buffer): string {
   if (isP2WPKH(script)) {
-    return "witnesspubkeyhash";
+    return 'witnesspubkeyhash';
   }
   if (isP2PKH(script)) {
-    return "pubkeyhash";
+    return 'pubkeyhash';
   }
   if (isP2MS(script)) {
-    return "multisig";
+    return 'multisig';
   }
   if (isP2PK(script)) {
-    return "pubkey";
+    return 'pubkey';
   }
-  return "nonstandard";
+  return 'nonstandard';
 }
 
 function range(n: number): number[] {

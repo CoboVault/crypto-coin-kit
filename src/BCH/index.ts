@@ -1,12 +1,12 @@
-import bchaddr from "bchaddrjs";
-import { AddressType, NetWorkType } from "../BTC";
-import { BTCFORK } from "../BTC_FORK/BTCFORK";
-import { bitcoincash, bitcoincash_testnet } from "../BTC_FORK/networks";
+import bchaddr from 'bchaddrjs';
+import {AddressType, NetWorkType} from '../BTC';
+import {BTCFORK} from '../BTC_FORK/BTCFORK';
+import {bitcoincash, bitcoincash_testnet} from '../BTC_FORK/networks';
 
 export enum AddressFormat {
   LEGACY,
   CASH,
-  BITPAY
+  BITPAY,
 }
 
 export class BCH extends BTCFORK {
@@ -18,7 +18,7 @@ export class BCH extends BTCFORK {
   public generateAddress(
     publicKey: string,
     addressType: AddressType = AddressType.P2PKH,
-    format?: AddressFormat
+    format?: AddressFormat,
   ) {
     const address = super.generateAddress(publicKey, addressType);
     return this.convertAddrFormat(address, format || AddressFormat.LEGACY);

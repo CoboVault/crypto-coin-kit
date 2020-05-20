@@ -1,22 +1,22 @@
-import { BigNumber } from 'bignumber.js'
-import { Transaction } from "ethereumjs-tx";
+import {BigNumber} from 'bignumber.js';
+import {Transaction} from 'ethereumjs-tx';
 import {
   addHexPrefix,
   hashPersonalMessage,
   isValidAddress,
   pubToAddress,
   toBuffer,
-  toChecksumAddress
-} from "ethereumjs-util";
+  toChecksumAddress,
+} from 'ethereumjs-util';
 // @ts-ignore
 import abi from 'human-standard-token-abi';
-import { Buffer } from "safe-buffer";
+import {Buffer} from 'safe-buffer';
 // @ts-ignore
 import Web3 from 'web3';
 
-import { Coin, GenerateTransactionResult } from "../Common/coin";
-import { Result, SignProvider, SignProviderSync } from "../Common/sign";
-import numberToHex from "../utils/numberToHex";
+import {Coin, GenerateTransactionResult} from '../Common/coin';
+import {Result, SignProvider, SignProviderSync} from '../Common/sign';
+import numberToHex from '../utils/numberToHex';
 
 export interface TxData {
   nonce: number;
@@ -38,7 +38,7 @@ export class ETH implements Coin {
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
     const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
-    const sig = signer.sign(hash.toString("hex"));
+    const sig = signer.sign(hash.toString('hex'));
     const signedTx = this.buildSignedTx(tx, sig);
     return this.extractSignedResult(signedTx);
   };
@@ -46,25 +46,25 @@ export class ETH implements Coin {
   public generateTransaction = async (data: TxData, signer: SignProvider) => {
     const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
-    const sig = await signer.sign(hash.toString("hex"));
+    const sig = await signer.sign(hash.toString('hex'));
     const signedTx = this.buildSignedTx(tx, sig);
     return this.extractSignedResult(signedTx);
   };
 
   public signMessageSync = (message: string, signer: SignProviderSync) => {
-    const hash = hashPersonalMessage(Buffer.from(message, "utf8"));
-    const sig = signer.sign(hash.toString("hex"));
+    const hash = hashPersonalMessage(Buffer.from(message, 'utf8'));
+    const sig = signer.sign(hash.toString('hex'));
     return this.buildSignedMessage(sig);
   };
 
   public signMessage = async (message: string, signer: SignProvider) => {
-    const hash = hashPersonalMessage(Buffer.from(message, "utf8"));
-    const sig = await signer.sign(hash.toString("hex"));
+    const hash = hashPersonalMessage(Buffer.from(message, 'utf8'));
+    const sig = await signer.sign(hash.toString('hex'));
     return this.buildSignedMessage(sig);
   };
 
   public generateAddress = (publicKey: string) => {
-    const address = pubToAddress(toBuffer(publicKey), true).toString("hex");
+    const address = pubToAddress(toBuffer(publicKey), true).toString('hex');
     return toChecksumAddress(address);
   };
 
@@ -75,39 +75,48 @@ export class ETH implements Coin {
     return isValidAddress(address);
   };
 
-  public generateTokenTransferData = (to: string,
-                                      value: string,
-                                      contractAddress: string) => {
+  public generateTokenTransferData = (
+    to: string,
+    value: string,
+    contractAddress: string,
+  ) => {
     const token = new Web3().eth.contract(abi).at(contractAddress);
     return token.transfer.getData(to, this.toHexString(value));
   };
 
   public decodeTokenTransferData = (data: string) => {
-    const dataBuf = Buffer.from(data,'hex');
+    const dataBuf = Buffer.from(data, 'hex');
     if (dataBuf.length === 68) {
-        const transferTo = '0x' + dataBuf.slice(-52, -32).toString('hex')
-        const tokenAmount = new BigNumber(dataBuf.slice(-32).toString('hex'), 16).toString(10)
-        return {
-          transferTo,
-          tokenAmount,
-        }
+      const transferTo = '0x' + dataBuf.slice(-52, -32).toString('hex');
+      const tokenAmount = new BigNumber(
+        dataBuf.slice(-32).toString('hex'),
+        16,
+      ).toString(10);
+      return {
+        transferTo,
+        tokenAmount,
+      };
     }
   };
 
   protected constructTransaction = (data: TxData) => {
-    return new Transaction(this.formatTxData(data),{chain:this.chainId});
+    return new Transaction(this.formatTxData(data), {chain: this.chainId});
   };
 
   protected formatTxData = (tx: TxData) => {
     let memo = '0x';
     if (tx.memo) {
-      memo = addHexPrefix(Buffer.from(tx.memo,'utf-8').toString('hex'));
+      memo = addHexPrefix(Buffer.from(tx.memo, 'utf-8').toString('hex'));
     }
     let inputData = memo;
     let toAddress = tx.to;
     let transferValue = this.toHexString(tx.value);
     if (tx.contractAddress) {
-      inputData  = this.generateTokenTransferData(tx.to, tx.value, tx.contractAddress);
+      inputData = this.generateTokenTransferData(
+        tx.to,
+        tx.value,
+        tx.contractAddress,
+      );
       toAddress = tx.contractAddress;
       transferValue = '0x';
     }
@@ -120,28 +129,28 @@ export class ETH implements Coin {
       to: toAddress,
       value: transferValue,
       data: inputData,
-    }
+    };
   };
 
   private buildSignedTx = (tx: Transaction, sigResult: Result): Transaction => {
-    const r = Buffer.from(sigResult.r, "hex");
-    const s = Buffer.from(sigResult.s, "hex");
+    const r = Buffer.from(sigResult.r, 'hex');
+    const s = Buffer.from(sigResult.s, 'hex');
     let v = 27 + sigResult.recId;
     if (this.chainId > 0) {
       v += this.chainId * 2 + 8;
     }
 
-    const sig = { r, s, v: Buffer.alloc(1, v) };
+    const sig = {r, s, v: Buffer.alloc(1, v)};
 
     return Object.assign(tx, sig);
   };
 
   private extractSignedResult = (
-    tx: Transaction
+    tx: Transaction,
   ): GenerateTransactionResult => {
     return {
-      txId: addHexPrefix(tx.hash().toString("hex")),
-      txHex: addHexPrefix(tx.serialize().toString("hex"))
+      txId: addHexPrefix(tx.hash().toString('hex')),
+      txHex: addHexPrefix(tx.serialize().toString('hex')),
     };
   };
 
@@ -153,6 +162,6 @@ export class ETH implements Coin {
   };
 
   private toHexString = (str: string) => {
-    return addHexPrefix(new BigNumber(str,10).toString(16))
-  }
+    return addHexPrefix(new BigNumber(str, 10).toString(16));
+  };
 }

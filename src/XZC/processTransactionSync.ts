@@ -1,22 +1,22 @@
 // @ts-ignore
-import { Transaction } from "zcore-lib";
-import { Result } from "../Common/sign";
-import { fromSignResultToDER, reverseBuffer } from "../utils";
+import {Transaction} from 'zcore-lib';
+import {Result} from '../Common/sign';
+import {fromSignResultToDER, reverseBuffer} from '../utils';
 
 const signScript = (
   transaction: any,
   sigType: number,
   index: number,
   script: any,
-  sign: (rawTx: string) => Result
+  sign: (rawTx: string) => Result,
 ) => {
   const sighash = Transaction.Sighash.sighash(
     transaction,
     sigType,
     index,
-    script
+    script,
   );
-  const hex = reverseBuffer(sighash).toString("hex");
+  const hex = reverseBuffer(sighash).toString('hex');
   const signResult = sign(hex);
   return fromSignResultToDER(signResult);
 };
@@ -31,7 +31,7 @@ const getSignatureForInput = (
   transaction: any,
   sigType: number,
   publicKey: string,
-  sign: (rawTx: string) => Result
+  sign: (rawTx: string) => Result,
 ) => {
   return new Transaction.Signature({
     publicKey,
@@ -43,16 +43,16 @@ const getSignatureForInput = (
       sigType,
       index,
       input.output.script,
-      sign
+      sign,
     ),
-    sigtype: sigType
+    sigtype: sigType,
   });
 };
 
 export default (
   transaction: any,
   sign: (rawTx: string) => Result,
-  publicKey: string
+  publicKey: string,
 ): {
   txId: string;
   txHex: string;
@@ -66,7 +66,7 @@ export default (
       transaction,
       sigType,
       publicKey,
-      sign
+      sign,
     );
   });
   actions.forEach((value: any[]) => {
@@ -77,6 +77,6 @@ export default (
   const txObj = transaction.toObject();
   return {
     txHex,
-    txId: txObj.hash
+    txId: txObj.hash,
   };
 };
