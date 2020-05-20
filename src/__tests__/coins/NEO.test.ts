@@ -97,17 +97,6 @@ describe("coin.NEO", () => {
       "ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3"
     );
   });
-
-  it("should sign message and return expected result", () => {
-    const neo = new NEO();
-    const pKSignProviderSync = SignProviderWithPrivateKeySync(
-      "2181be39a81f8fd84a785455bf44ff2f44582c5c03cd9e92a63cf026469f835e"
-    );
-    const result = neo.signMessageSync("hello", pKSignProviderSync);
-    expect(result).toEqual(
-      "ce8c78067b377821be22e383ba81752f0f9436361c1fa8de1fe3d93a67e641e19eac5fb7a724a3de5901b08ce4adc58439185b040fbafe46f8464d2d31c7a0c3"
-    );
-  });
 });
 
 describe("neo.utilis", () => {

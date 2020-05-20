@@ -1,0 +1,24 @@
+# don't ever lint node_modules
+node_modules
+# don't lint nyc coverage output
+coverage
+
+dist
+
+publish.js
+
+hook.js
+
+hookFetch.js
+
+jest.config.js
+
+babel.config.js
+
+webpack.config.js
+
+webpack.config.eos.js
+
+.eslintrc.js
+
+src/app/services/CryptoModules/Vault/protocols/static-proto/proto.d.ts

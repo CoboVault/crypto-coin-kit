@@ -155,7 +155,7 @@ export default class PsbtBuilder {
 
   private verifyInput = (
     txData: TxData | MultiSignTxData,
-    disableLargeFee: boolean = true
+    disableLargeFee = true
   ) => {
     // @ts-ignore
     const totalInputs = txData.inputs.reduce(
@@ -182,34 +182,32 @@ export default class PsbtBuilder {
 
   private addInputForPsbt(eachInput: TxInputItem) {
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
-      return this.psbt
-        .addInput({
-          hash: eachInput.hash,
-          index: eachInput.index,
-          sequence: eachInput.sequence,
-          nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex"),
-          bip32Derivation: eachInput.bip32Derivation
-        })
+      return this.psbt.addInput({
+        hash: eachInput.hash,
+        index: eachInput.index,
+        sequence: eachInput.sequence,
+        nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, "hex"),
+        bip32Derivation: eachInput.bip32Derivation
+      });
     } else {
-      return this.psbt
-        .addInput({
-          hash: eachInput.hash,
-          index: eachInput.index,
-          sequence: eachInput.sequence,
-          witnessUtxo: {
-            script: Buffer.from(
-              eachInput.utxo.script ||
-                this.calculateScript(eachInput.utxo.publicKey).toString("hex"),
-              "hex"
-            ),
-            value: eachInput.utxo.value
-          },
-          redeemScript: bitcoin.payments.p2wpkh({
-            pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
-            network: this.network
-          }).output,
-          bip32Derivation: eachInput.bip32Derivation
-        })
+      return this.psbt.addInput({
+        hash: eachInput.hash,
+        index: eachInput.index,
+        sequence: eachInput.sequence,
+        witnessUtxo: {
+          script: Buffer.from(
+            eachInput.utxo.script ||
+              this.calculateScript(eachInput.utxo.publicKey).toString("hex"),
+            "hex"
+          ),
+          value: eachInput.utxo.value
+        },
+        redeemScript: bitcoin.payments.p2wpkh({
+          pubkey: Buffer.from(eachInput.utxo.publicKey, "hex"),
+          network: this.network
+        }).output,
+        bip32Derivation: eachInput.bip32Derivation
+      });
     }
   }
 
