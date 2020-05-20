@@ -304,7 +304,7 @@ describe("coin.BTC", () => {
       keyProvider(prikey, pubkey),
     ];
     const result = await btc.signPSBTBase64(psbtStr, keyProviders);
-    expect(result).toBe('cHNidP8BAHEBAAAAAfPQ5Rpeu5nH0TImK4Sbu9lxIOGEynRadywPxaPyhnTwAAAAAAD/////AkoRAAAAAAAAFgAUFCYoQzGSRmYVAuZNuXF0OrPg9jWIEwAAAAAAABYAFOZMlwM1sZGLivwOcOh77amAlvD5AAAAAAABAR+tKAAAAAAAABYAFM4u9V5WG+Fe9l3MefmYEX4ULWAWAQhsAkgwRQIhANSbkZmrxoUne1RIwEpJ7rq+r2tGnvhV5/dSZnE9NryTAiAKRQefqR1pTCMuF74bgP0tf39p8Wof5uLHORoPwuGxhAEhAwPozvqDrjd+wASuuwQP/krrkf+e3OzpMn8ke4Ud+BQ7ACICApJMZBvzWiavLN7nievKQoylwPoffLkXZUIgGHF4HgwaGHHAcVJUAACAAAAAgAAAAIABAAAACwAAAAAA');
+    expect(result.psbtB64).toBe('cHNidP8BAHEBAAAAAfPQ5Rpeu5nH0TImK4Sbu9lxIOGEynRadywPxaPyhnTwAAAAAAD/////AkoRAAAAAAAAFgAUFCYoQzGSRmYVAuZNuXF0OrPg9jWIEwAAAAAAABYAFOZMlwM1sZGLivwOcOh77amAlvD5AAAAAAABAR+tKAAAAAAAABYAFM4u9V5WG+Fe9l3MefmYEX4ULWAWAQhsAkgwRQIhANSbkZmrxoUne1RIwEpJ7rq+r2tGnvhV5/dSZnE9NryTAiAKRQefqR1pTCMuF74bgP0tf39p8Wof5uLHORoPwuGxhAEhAwPozvqDrjd+wASuuwQP/krrkf+e3OzpMn8ke4Ud+BQ7ACICApJMZBvzWiavLN7nievKQoylwPoffLkXZUIgGHF4HgwaGHHAcVJUAACAAAAAgAAAAIABAAAACwAAAAAA');
   });
 
   it("the multiSign transaction signer count cannot less than requires", async () => {
