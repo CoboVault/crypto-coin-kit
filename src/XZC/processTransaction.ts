@@ -1,22 +1,22 @@
 // @ts-ignore
-import { Transaction } from "zcore-lib";
-import { Result } from "../Common/sign";
-import { fromSignResultToDER, reverseBuffer } from "../utils";
+import {Transaction} from 'zcore-lib';
+import {Result} from '../Common/sign';
+import {fromSignResultToDER, reverseBuffer} from '../utils';
 
 const signScript = async (
   transaction: any,
   sigType: number,
   index: number,
   script: any,
-  sign: (rawTx: string) => Promise<Result>
+  sign: (rawTx: string) => Promise<Result>,
 ) => {
   const sighash = Transaction.Sighash.sighash(
     transaction,
     sigType,
     index,
-    script
+    script,
   );
-  const hex = reverseBuffer(sighash).toString("hex");
+  const hex = reverseBuffer(sighash).toString('hex');
   const signResult = await sign(hex);
   return fromSignResultToDER(signResult);
 };
@@ -31,7 +31,7 @@ const getSignatureForInput = async (
   transaction: any,
   sigType: number,
   publicKey: string,
-  sign: (rawTx: string) => Promise<Result>
+  sign: (rawTx: string) => Promise<Result>,
 ) => {
   return new Transaction.Signature({
     publicKey,
@@ -43,16 +43,16 @@ const getSignatureForInput = async (
       sigType,
       index,
       input.output.script,
-      sign
+      sign,
     ),
-    sigtype: sigType
+    sigtype: sigType,
   });
 };
 
 export default async (
   transaction: any,
   sign: (rawTx: string) => Promise<Result>,
-  publicKey: string
+  publicKey: string,
 ): Promise<{
   txId: string;
   txHex: string;
@@ -66,7 +66,7 @@ export default async (
       transaction,
       sigType,
       publicKey,
-      sign
+      sign,
     );
   });
   await Promise.all(actions).then((values: any[]) => {
@@ -79,6 +79,6 @@ export default async (
   const txObj = transaction.toObject();
   return {
     txHex,
-    txId: txObj.hash
+    txId: txObj.hash,
   };
 };

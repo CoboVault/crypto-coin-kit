@@ -1,26 +1,26 @@
-import HDKey from "hdkey";
+import HDKey from 'hdkey';
 
 enum SupportedCurves {
-  secp256k1 = "secp256k1",
-  secp256r1 = "secp256r1",
-  ed25519 = "ed25519"
+  secp256k1 = 'secp256k1',
+  secp256r1 = 'secp256r1',
+  ed25519 = 'ed25519',
 }
 
 export default (
   xpub: string,
   indexArr: number[] = [],
-  curve: SupportedCurves = SupportedCurves.secp256k1
+  curve: SupportedCurves = SupportedCurves.secp256k1,
 ): Buffer => {
   switch (curve) {
     case SupportedCurves.secp256k1: {
       const childIndex: string = indexArr.reduce((acc: string, cur: number) => {
         return acc + `/${cur}`;
-      }, "m");
+      }, 'm');
 
       const hdkey = HDKey.fromExtendedKey(xpub);
       return hdkey.derive(childIndex).publicKey;
     }
     default:
-      throw new Error("curve not support yet");
+      throw new Error('curve not support yet');
   }
 };

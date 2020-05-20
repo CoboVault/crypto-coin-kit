@@ -1,11 +1,11 @@
-import { tx, wallet } from "@cityofzion/neon-core";
-import hexEncoding from "crypto-js/enc-hex";
-import sha256 from "crypto-js/sha256";
-import { ec as EC } from "elliptic";
-import { SignProvider } from "../Common";
-import { Result, SignProviderSync } from "../Common/sign";
+import {tx, wallet} from '@cityofzion/neon-core';
+import hexEncoding from 'crypto-js/enc-hex';
+import sha256 from 'crypto-js/sha256';
+import {ec as EC} from 'elliptic';
+import {SignProvider} from '../Common';
+import {Result, SignProviderSync} from '../Common/sign';
 
-const curve = new EC("p256");
+const curve = new EC('p256');
 
 export interface ExternalNeoBalance {
   address: string;
@@ -38,45 +38,45 @@ export interface ClaimLike {
   end_height?: number;
 }
 
-function signHex(hex: string, privateKey: string): { r: string; s: string } {
+function signHex(hex: string, privateKey: string): {r: string; s: string} {
   const msgHash = sha256(hexEncoding.parse(hex)).toString();
-  const msgHashHex = Buffer.from(msgHash, "hex");
-  const privateKeyBuffer = Buffer.from(privateKey, "hex");
+  const msgHashHex = Buffer.from(msgHash, 'hex');
+  const privateKeyBuffer = Buffer.from(privateKey, 'hex');
 
   const sig = curve.sign(msgHashHex, privateKeyBuffer);
   return {
-    r: sig.r.toString("hex", 32),
-    s: sig.s.toString("hex", 32)
+    r: sig.r.toString('hex', 32),
+    s: sig.s.toString('hex', 32),
   };
 }
 
 export const SignProviderWithPrivateKey = (
-  privateKey: string
+  privateKey: string,
 ): SignProvider => {
   return {
     sign: async (hex: string): Promise<Result> => {
-      const { r, s } = signHex(hex, privateKey);
+      const {r, s} = signHex(hex, privateKey);
       return {
         r,
         s,
-        recId: 0
+        recId: 0,
       };
-    }
+    },
   };
 };
 
 export const SignProviderWithPrivateKeySync = (
-  privateKey: string
+  privateKey: string,
 ): SignProviderSync => {
   return {
     sign: (hex: string): Result => {
-      const { r, s } = signHex(hex, privateKey);
+      const {r, s} = signHex(hex, privateKey);
       return {
         r,
         s,
-        recId: 0
+        recId: 0,
       };
-    }
+    },
   };
 };
 
@@ -115,8 +115,8 @@ export const buildNeoBalance = (externalNeoBalance: ExternalNeoBalance) => {
         unspent: each.unspent.map(eachUnspent => ({
           value: eachUnspent.value,
           txid: eachUnspent.txid,
-          index: eachUnspent.n
-        }))
+          index: eachUnspent.n,
+        })),
       };
     } else {
       tokenSymbols.push(each.asset_symbol);
@@ -130,14 +130,14 @@ export const buildNeoBalance = (externalNeoBalance: ExternalNeoBalance) => {
     assetSymbols,
     assets,
     tokens,
-    tokenSymbols
+    tokenSymbols,
   });
 };
 
 export const buildNeoClaims = (
   address: string,
   net: string,
-  externalClaims: ClaimLike[]
+  externalClaims: ClaimLike[],
 ) => {
   const claims: wallet.ClaimItemLike[] = externalClaims.map(each => ({
     claim: each.unclaimed,
@@ -145,11 +145,11 @@ export const buildNeoClaims = (
     index: each.n,
     value: each.value,
     start: each.start_height,
-    end: each.end_height
+    end: each.end_height,
   }));
   return new wallet.Claims({
     address,
     net,
-    claims
+    claims,
   });
 };

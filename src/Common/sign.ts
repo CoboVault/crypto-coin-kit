@@ -12,7 +12,7 @@ export interface SignProviderDeprecated {
 
 export const sign = async (
   rawTx: string,
-  signProvider: SignProviderDeprecated
+  signProvider: SignProviderDeprecated,
 ): Promise<any> => {
   return await signProvider.sign(rawTx);
 };

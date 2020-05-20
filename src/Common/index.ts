@@ -1,6 +1,6 @@
-import { sign } from "./sign";
-export { SignProviderDeprecated, SignProvider, SignProviderSync } from "./sign";
+import {sign} from './sign';
+export {SignProviderDeprecated, SignProvider, SignProviderSync} from './sign';
 
 export default {
-  sign
+  sign,
 };

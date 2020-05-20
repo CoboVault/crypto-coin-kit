@@ -1,7 +1,7 @@
-import { DCR } from "./index";
+import {DCR} from './index';
 export class TDCR extends DCR {
   constructor() {
     super();
-    this.network = "dcrdtestnet";
+    this.network = 'dcrdtestnet';
   }
 }

@@ -3,20 +3,28 @@ import bip66 from 'bip66';
 // import * as types from './types';
 
 // @ts-ignore
-import typeforce from "typeforce";
+import typeforce from 'typeforce';
 
 const ZERO = Buffer.alloc(1, 0);
 function toDER(x: Buffer): Buffer {
   let i = 0;
-  while (x[i] === 0) { ++i; }
-  if (i === x.length) { return ZERO; }
+  while (x[i] === 0) {
+    ++i;
+  }
+  if (i === x.length) {
+    return ZERO;
+  }
   x = x.slice(i);
-  if (x[0] & 0x80) { return Buffer.concat([ZERO, x], 1 + x.length); }
+  if (x[0] & 0x80) {
+    return Buffer.concat([ZERO, x], 1 + x.length);
+  }
   return x;
 }
 
 function fromDER(x: Buffer): Buffer {
-  if (x[0] === 0x00) { x = x.slice(1); }
+  if (x[0] === 0x00) {
+    x = x.slice(1);
+  }
   const buffer = Buffer.alloc(32, 0);
   const bstart = Math.max(0, 32 - x.length);
   x.copy(buffer, bstart);
@@ -45,27 +53,31 @@ export function decode(buffer: Buffer): ScriptSignature {
   const s = fromDER(decoded.s);
   const signature = Buffer.concat([r, s], 64);
 
-  return { signature, hashType };
+  return {signature, hashType};
 }
 
-export function encode(signature: Buffer, hashType: number,forkId?:number): Buffer {
+export function encode(
+  signature: Buffer,
+  hashType: number,
+  forkId?: number,
+): Buffer {
   typeforce(
     {
       signature: typeforce.BufferN(64),
       hashType: typeforce.UInt8,
     },
-    { signature, hashType },
+    {signature, hashType},
   );
   let hashTypeMod = hashType & ~0x80;
 
   if (typeof forkId !== 'undefined') {
     hashType |= 0x40;
     hashType |= forkId << 8;
-    hashTypeMod = hashType & ~0xc0
+    hashTypeMod = hashType & ~0xc0;
   }
 
   if (hashTypeMod <= 0 || hashTypeMod >= 4) {
-    throw new Error('Invalid hashType ' + hashType)
+    throw new Error('Invalid hashType ' + hashType);
   }
 
   const hashTypeBuffer = Buffer.allocUnsafe(1);
