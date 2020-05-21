@@ -280,6 +280,10 @@ export class BTC implements UtxoCoin {
     return this.extractMultiSignSignatures(psbt);
   }
 
+  public parseTxHex = (txHex: string) => {
+    return bitcoin.Transaction.fromHex(txHex);
+  };
+
   public signMessage = async (message: string, signer: KeyProvider) => {
     const hashHex = this.constructMessageHash(message);
     const {r, s} = await signer.sign(hashHex);
