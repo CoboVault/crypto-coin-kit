@@ -201,7 +201,7 @@ export class TRON implements Coin {
       .decode(to)
       .toString('hex')
       .replace(/^(41)/, '0x');
-    const values = [toAddress, value];
+    const values = [toAddress, value.toString()];
     const abiCoder = new Ethers.utils.AbiCoder();
     const parameters = abiCoder.encode(types, values).replace(/^(0x)/, '');
     const selectorStr = sha3
