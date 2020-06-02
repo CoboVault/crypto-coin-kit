@@ -62,6 +62,17 @@ const multiSignUtxo = [
   },
 ];
 
+const omniMultiSignUtxo = [
+  {
+    hash: 'db25cb991f7f5cbb2260b8c8fd9acf0e30fa6e59cf0529c63ae77566289f5292',
+    index: 0,
+    utxo: {
+      publicKeys: [publicKey, publicKeyOne],
+      value: 1388941,
+    },
+  },
+];
+
 describe('coin.BTC', () => {
   const btc = new BTC(NetWorkType.mainNet);
   const xtn = new BTC(NetWorkType.testNet);
@@ -276,6 +287,46 @@ describe('coin.BTC', () => {
     expect(txHex).toBe(
       '02000000000101e07edcafa9008f0921e4d67c1e72b77357fab8240d49ab656140a279f62303ef00000000232200207690f26b840a14f928d7182e348ef3b2faa484e4b34d49ecec1b3013faadb75affffffff017e2700000000000017a914915892366a6cdf24afa6e1c480db2ad88c633780870400483045022100d53c71ff3e2a6014f0389a53cdda8cb5f378e0a9b1ed9f85fc31a80197ea5fe502200c27b2539f6b040feda85760b9c790730def70073e210e837c90620913768d4601473044022007297cc9f35c171b8a044492fb49f5a5c762de0fbfff3ea42896c99ec854cb500220361e9e497f811102547202eafc4340ff9c11403ee43ec10bd5563315b027dce00147522103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd722102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa252ae00000000',
     );
+  });
+
+  it('should generate the omni multiSign transaction', async () => {
+    const txData = {
+      inputs: omniMultiSignUtxo,
+      to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
+      omniAmount: 10110,
+      fee: 1000,
+      changeAddress: '2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V',
+      requires: 2,
+    };
+    const {txId, txHex} = await xtn.generateOmniMultiSignTransaction(txData, [
+      kp1,
+      kp2,
+    ]);
+
+    expect(txId).toBe(
+      '8f9d918938b479156927fb601a67f25fced8ed11d32f12c4089282cf1c2d3e5d',
+    );
+    expect(txHex).toBe(
+      '0200000000010192529f286675e73ac62905cf596efa300ecf9afdc8b86022bb5c7f1f99cb25db00000000232200207690f26b840a14f928d7182e348ef3b2faa484e4b34d49ecec1b3013faadb75affffffff03220200000000000017a914915892366a6cdf24afa6e1c480db2ad88c633780870000000000000000166a146f6d6e690000000000000001000000000000277e832b15000000000017a914ab465b094d7aaad13cbdbdfebb32115690b36ad68704004730440220399bf32d896710472d32d4e09cf2cdfbce8fd27e86c938723469fe9b5d4d55b102202019b7a9e7d95511ee496b08e5cc9ac79604075474c89934e7234953273175f601483045022100955e5a7e5bf231d9d4f70a3e07e65322959cbff9876ab34ee2b0fd2f4f89fe7c02201bf8bc3fa53857314739257786dcba92b1f5317815490a8aad3579cdc20d35aa0147522103fbe02e16d35d3c9c6772c75ba5d0d1387573724082266ea667c53b9d00decd722102f325a85902d264dbcb0cbe144e9b2463f8252bd0c51bc19666f4c82461e4baa252ae00000000',
+    );
+  });
+
+  it('should generate the omni multiSign transaction signatures', async () => {
+    const txData = {
+      inputs: omniMultiSignUtxo,
+      to: '2N6Vk58WRh7gQYrRUBZAZ6j1bb81vR8G7F4',
+      omniAmount: 10110,
+      fee: 1000,
+      changeAddress: '2N8rqpUpbyJMtSXK6obH5GVufZ5rwE9fi5V',
+      requires: 2,
+    };
+    const signatures = await xtn.getOmniMultiSignTransactionSignature(txData, [
+      kp1,
+    ]);
+
+    expect(signatures).toStrictEqual([
+      '30440220399bf32d896710472d32d4e09cf2cdfbce8fd27e86c938723469fe9b5d4d55b102202019b7a9e7d95511ee496b08e5cc9ac79604075474c89934e7234953273175f601',
+    ]);
   });
 
   it('should generate the multiSign transaction signatures', async () => {

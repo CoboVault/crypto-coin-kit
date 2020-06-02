@@ -83,6 +83,16 @@ export interface MultiSignTxData {
   locktime?: number;
 }
 
+export interface MultiSignOmniTxData {
+  requires: number;
+  inputs: MultiSignTxInputItem[];
+  to: string;
+  fee: number;
+  changeAddress: string;
+  omniAmount: number; // sat unit
+  propertyId?: number;
+}
+
 export interface OmniTxData {
   inputs: TxInputItem[];
   to: string;
@@ -217,7 +227,10 @@ export class BTC implements UtxoCoin {
     signers: KeyProvider[],
   ) => {
     const psbtBuilder = new PsbtBuilder(this.network);
-    const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+    const psbt = psbtBuilder
+      .addOmniInputsForPsbt(omniTxData)
+      .addOmniOutputsForPsbt(omniTxData)
+      .getPsbt();
     await this.signAllInputsAsync(signers, psbt);
     return this.extractTx(psbt);
   };
@@ -243,7 +256,10 @@ export class BTC implements UtxoCoin {
     signers: KeyProviderSync[],
   ) => {
     const psbtBuilder = new PsbtBuilder(this.network);
-    const psbt = psbtBuilder.buildOmniPsbt(omniTxData).getPsbt();
+    const psbt = psbtBuilder
+      .addOmniInputsForPsbt(omniTxData)
+      .addOmniOutputsForPsbt(omniTxData)
+      .getPsbt();
     this.signAllInputsSync(signers, psbt);
     return this.extractTx(psbt);
   };
@@ -264,6 +280,22 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   }
 
+  public async generateOmniMultiSignTransaction(
+    txData: MultiSignOmniTxData,
+    signers: KeyProvider[],
+  ) {
+    const psbt = await this.psbtSignOmniMultiSignTx(txData, signers);
+    return this.extractTx(psbt);
+  }
+
+  public generateOmniMultiSignTransactionSync(
+    txData: MultiSignOmniTxData,
+    signers: KeyProviderSync[],
+  ) {
+    const psbt = this.psbtSignOmniMultiSignTxSync(txData, signers);
+    return this.extractTx(psbt);
+  }
+
   public async getMultiSignTransactionSignature(
     txData: MultiSignTxData,
     signers: KeyProvider[],
@@ -277,6 +309,22 @@ export class BTC implements UtxoCoin {
     signers: KeyProviderSync[],
   ) {
     const psbt = this.psbtSignMultiSignTxSync(txData, signers);
+    return this.extractMultiSignSignatures(psbt);
+  }
+
+  public async getOmniMultiSignTransactionSignature(
+    txData: MultiSignOmniTxData,
+    signers: KeyProvider[],
+  ) {
+    const psbt = await this.psbtSignOmniMultiSignTx(txData, signers);
+    return this.extractMultiSignSignatures(psbt);
+  }
+
+  public getOmniMultiSignTransactionSignatureSync(
+    txData: MultiSignOmniTxData,
+    signers: KeyProviderSync[],
+  ) {
+    const psbt = this.psbtSignOmniMultiSignTxSync(txData, signers);
     return this.extractMultiSignSignatures(psbt);
   }
 
@@ -472,6 +520,33 @@ export class BTC implements UtxoCoin {
     const psbt = psbtBuilder
       .addMultiSignInputsForPsbt(txData)
       .addOutputForPsbt(txData)
+      .getPsbt();
+
+    this.signAllInputsSync(signers, psbt);
+    return psbt;
+  }
+
+  private async psbtSignOmniMultiSignTx(
+    txData: MultiSignOmniTxData,
+    signers: KeyProvider[],
+  ) {
+    const psbtBuilder = new PsbtBuilder(this.network);
+    const psbt = psbtBuilder
+      .addOmniMultiSignInputsForPsbt(txData)
+      .addOmniOutputsForPsbt(txData)
+      .getPsbt();
+    await this.signAllInputsAsync(signers, psbt);
+    return psbt;
+  }
+
+  private psbtSignOmniMultiSignTxSync(
+    txData: MultiSignOmniTxData,
+    signers: KeyProviderSync[],
+  ) {
+    const psbtBuilder = new PsbtBuilder(this.network);
+    const psbt = psbtBuilder
+      .addOmniMultiSignInputsForPsbt(txData)
+      .addOmniOutputsForPsbt(txData)
       .getPsbt();
 
     this.signAllInputsSync(signers, psbt);

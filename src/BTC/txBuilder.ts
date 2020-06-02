@@ -4,6 +4,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import padstart from 'lodash.padstart';
 import {
   Destination,
+  MultiSignOmniTxData,
   MultiSignTxData,
   MultiSignTxInputItem,
   MultiSignWitnessUtxo,
@@ -38,8 +39,33 @@ export default class PsbtBuilder {
     throw new Error('input value are invaild');
   };
 
+  public addOmniInputsForPsbt = (omniTxData: OmniTxData) => {
+    if (this.verifyOmniInput(omniTxData)) {
+      omniTxData.inputs.forEach(eachInput => {
+        return this.addInputForPsbt(eachInput);
+      });
+      return this;
+    } else {
+      throw new Error('input value are invaild');
+    }
+  };
+
   public addMultiSignInputsForPsbt = (txData: MultiSignTxData) => {
     if (this.verifyInput(txData)) {
+      txData.inputs.forEach((eachInput: MultiSignTxInputItem) => {
+        const inputData = this.getMultiSignInputData(
+          eachInput,
+          txData.requires,
+        );
+        return this.psbt.addInput(inputData);
+      });
+      return this;
+    }
+    throw new Error('input value are invaild');
+  };
+
+  public addOmniMultiSignInputsForPsbt = (txData: MultiSignOmniTxData) => {
+    if (this.verifyOmniInput(txData)) {
       txData.inputs.forEach((eachInput: MultiSignTxInputItem) => {
         const inputData = this.getMultiSignInputData(
           eachInput,
@@ -58,12 +84,7 @@ export default class PsbtBuilder {
         address: txData.outputs.to,
         value: txData.outputs.amount,
       });
-      // @ts-ignore
-      const totalInputs = txData.inputs.reduce(
-        (acc: number, cur: TxInputItem | MultiSignTxInputItem) =>
-          acc + cur.utxo.value,
-        0,
-      );
+      const totalInputs = this.calculateTotalInputs(txData);
       const changeAmount =
         totalInputs - txData.outputs.amount - txData.outputs.fee;
       if (changeAmount > 0) {
@@ -75,6 +96,37 @@ export default class PsbtBuilder {
     } else {
       this.psbt.addOutputs(txData.outputs);
     }
+    return this;
+  };
+
+  public addOmniOutputsForPsbt = (
+    omniTxData: OmniTxData | MultiSignOmniTxData,
+  ) => {
+    const totalInputs = this.calculateTotalInputs(omniTxData);
+    this.psbt.addOutput({
+      address: omniTxData.to,
+      value: DUST_AMOUNT,
+    });
+
+    const usdtPropertyId =
+      this.network === bitcoin.networks.bitcoin
+        ? USDT_PROPERTYID_MAINNET
+        : USDT_PROPERTYID_TESTNET;
+    this.psbt.addOutput({
+      script: this.generateOmniPayload(
+        omniTxData.omniAmount,
+        omniTxData.propertyId || usdtPropertyId,
+      ),
+      value: 0,
+    });
+    const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
+    if (change > DUST_AMOUNT) {
+      this.psbt.addOutput({
+        address: omniTxData.changeAddress,
+        value: change,
+      });
+    }
+
     return this;
   };
 
@@ -98,14 +150,6 @@ export default class PsbtBuilder {
     return script;
   };
 
-  public verifyOmniInput = (txData: OmniTxData) => {
-    const totalInputs = txData.inputs.reduce(
-      (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
-      0,
-    );
-    return totalInputs >= DUST_AMOUNT + txData.fee;
-  };
-
   public generateOmniPayload = (amount: number, propertyId: number): Buffer => {
     const hexAmount = padstart(amount.toString(16), 16, '0').toUpperCase();
     const simpleSend = [
@@ -119,52 +163,11 @@ export default class PsbtBuilder {
     return bitcoin.payments.embed({data}).output;
   };
 
-  public buildOmniPsbt = (omniTxData: OmniTxData) => {
-    const totalInputs = omniTxData.inputs.reduce(
-      (acc: number, cur: TxInputItem) => acc + cur.utxo.value,
-      0,
-    );
-    if (totalInputs >= DUST_AMOUNT + omniTxData.fee) {
-      omniTxData.inputs.forEach(input => this.addInputForPsbt(input));
-      this.psbt.addOutput({
-        address: omniTxData.to,
-        value: DUST_AMOUNT,
-      });
-
-      const usdtPropertyId =
-        this.network === bitcoin.networks.bitcoin
-          ? USDT_PROPERTYID_MAINNET
-          : USDT_PROPERTYID_TESTNET;
-      this.psbt.addOutput({
-        script: this.generateOmniPayload(
-          omniTxData.omniAmount,
-          omniTxData.propertyId || usdtPropertyId,
-        ),
-        value: 0,
-      });
-      const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
-      if (change > DUST_AMOUNT) {
-        this.psbt.addOutput({
-          address: omniTxData.changeAddress,
-          value: change,
-        });
-      }
-      return this;
-    } else {
-      throw new Error('input value are invalid');
-    }
-  };
-
   private verifyInput = (
     txData: TxData | MultiSignTxData,
     disableLargeFee = true,
   ) => {
-    // @ts-ignore
-    const totalInputs = txData.inputs.reduce(
-      (acc: number, cur: TxInputItem | MultiSignTxInputItem) =>
-        acc + cur.utxo.value,
-      0,
-    );
+    const totalInputs = this.calculateTotalInputs(txData);
     if (this.isDestinationOutputs(txData.outputs)) {
       if (totalInputs >= txData.outputs.fee + txData.outputs.amount) {
         return true;
@@ -180,6 +183,22 @@ export default class PsbtBuilder {
       }
     }
     return false;
+  };
+
+  private verifyOmniInput = (txData: OmniTxData | MultiSignOmniTxData) => {
+    const totalInputs = this.calculateTotalInputs(txData);
+    return totalInputs >= DUST_AMOUNT + txData.fee;
+  };
+
+  private calculateTotalInputs = (txData: any) => {
+    const totalInputs =
+      txData.inputs &&
+      txData.inputs.reduce(
+        (acc: number, cur: TxInputItem | MultiSignTxInputItem) =>
+          acc + cur.utxo.value,
+        0,
+      );
+    return totalInputs;
   };
 
   private addInputForPsbt(eachInput: TxInputItem) {
