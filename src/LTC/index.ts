@@ -1,6 +1,7 @@
 import * as bitcoin from 'bitcoinjs-lib';
 // @ts-ignore
 import bs58check from 'bs58check';
+import {cloneDeep} from 'lodash';
 import {BTC, Destination, TxData, TxOutputItem} from '../BTC';
 import {bitcoin as bitcoinNetwork, litecoin} from '../BTC_FORK/networks';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
@@ -70,7 +71,7 @@ export class LTC extends BTC {
   }
 
   private processTxData = (txData: TxData): TxData => {
-    const processedTxData = txData;
+    const processedTxData = cloneDeep(txData);
     if (this.isDestinationOutputs(processedTxData.outputs)) {
       processedTxData.outputs.to = this.convertLegacyAddress(
         processedTxData.outputs.to,
