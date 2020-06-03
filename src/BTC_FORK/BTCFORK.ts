@@ -14,10 +14,7 @@ export abstract class BTCFORK extends BTC {
     this.network = this.initNetwork(networkType);
   }
   // @ts-ignore
-  public generateTransactionSync = (
-    txData: TxData,
-    signers: KeyProviderSync[],
-  ) => {
+  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[]) {
     const uniqueSigners = this.filterUniqueSigner(signers);
     const psbt = new HookPsbt({network: this.network});
     this.addInputs(txData, psbt, signers);
@@ -34,13 +31,10 @@ export abstract class BTCFORK extends BTC {
       psbt.signAllInputs(keyPair, [this.getSighashType()]);
     }
     return this.buildTx(psbt);
-  };
+  }
 
   // @ts-ignore
-  public generateTransaction = async (
-    txData: TxData,
-    signers: KeyProvider[],
-  ) => {
+  public async generateTransaction(txData: TxData, signers: KeyProvider[]) {
     const uniqueSigners = this.filterUniqueSigner(signers);
     const psbt = new HookPsbt({network: this.network});
     this.addInputs(txData, psbt, signers);
@@ -57,7 +51,7 @@ export abstract class BTCFORK extends BTC {
       await psbt.signAllInputsAsync(keyPair, [this.getSighashType()]);
     }
     return this.buildTx(psbt);
-  };
+  }
 
   public abstract isAddressValid(address: string): boolean;
 

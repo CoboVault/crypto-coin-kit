@@ -1,7 +1,10 @@
-import bchaddr from 'bchaddrjs';
+import bchaddr, {detectAddressFormat} from 'bchaddrjs';
+import {cloneDeep} from 'lodash';
 import {AddressType, NetWorkType} from '../BTC';
+import {TxData} from '../BTC_FORK';
 import {BTCFORK} from '../BTC_FORK/BTCFORK';
 import {bitcoincash, bitcoincash_testnet} from '../BTC_FORK/networks';
+import {KeyProvider, KeyProviderSync} from '../Common/sign';
 
 export enum AddressFormat {
   LEGACY,
@@ -13,6 +16,14 @@ export class BCH extends BTCFORK {
   constructor(networkType: NetWorkType = NetWorkType.mainNet) {
     super();
     this.network = this.initNetwork(networkType);
+  }
+
+  public async generateTransaction(txData: TxData, signers: KeyProvider[]) {
+    return super.generateTransaction(this.processTxData(txData), signers);
+  }
+
+  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[]) {
+    return super.generateTransactionSync(this.processTxData(txData), signers);
   }
 
   public generateAddress(
@@ -47,4 +58,16 @@ export class BCH extends BTCFORK {
       return bitcoincash_testnet;
     }
   };
+
+  private processTxData(txData: TxData) {
+    const processedTxData = cloneDeep(txData);
+    processedTxData.outputs.forEach(out => {
+      const address = out.address;
+      const addressFormat = detectAddressFormat(address);
+      if (addressFormat !== 'legacy') {
+        out.address = this.convertAddrFormat(address, AddressFormat.LEGACY);
+      }
+    });
+    return processedTxData;
+  }
 }
