@@ -103,10 +103,13 @@ export default class PsbtBuilder {
     omniTxData: OmniTxData | MultiSignOmniTxData,
   ) => {
     const totalInputs = this.calculateTotalInputs(omniTxData);
-    this.psbt.addOutput({
-      address: omniTxData.to,
-      value: DUST_AMOUNT,
-    });
+    const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
+    if (change > DUST_AMOUNT) {
+      this.psbt.addOutput({
+        address: omniTxData.changeAddress,
+        value: change,
+      });
+    }
 
     const usdtPropertyId =
       this.network === bitcoin.networks.bitcoin
@@ -119,13 +122,11 @@ export default class PsbtBuilder {
       ),
       value: 0,
     });
-    const change = totalInputs - DUST_AMOUNT - omniTxData.fee;
-    if (change > DUST_AMOUNT) {
-      this.psbt.addOutput({
-        address: omniTxData.changeAddress,
-        value: change,
-      });
-    }
+
+    this.psbt.addOutput({
+      address: omniTxData.to,
+      value: DUST_AMOUNT,
+    });
 
     return this;
   };
