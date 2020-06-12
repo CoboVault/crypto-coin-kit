@@ -379,16 +379,26 @@ export class BTC implements UtxoCoin {
         }),
       };
     });
-    const outputs = tx.outs.map(each => {
+    const outputs = tx.outs.map((each, index) => {
       const address = bitcoin.address.fromOutputScript(
         each.script,
         this.network,
       );
+      const bip32Derivation = psbt.data.outputs[index].bip32Derivation;
       const eachOutput = each as bitcoin.TxOutput;
       const value = eachOutput.value;
       return {
         address,
         value,
+        hdPath:
+          bip32Derivation &&
+          bip32Derivation.map(item => {
+            return {
+              masterFingerprint: item.masterFingerprint.toString('hex'),
+              path: item.path,
+              pubkey: item.pubkey.toString('hex'),
+            };
+          }),
       };
     });
     return {
