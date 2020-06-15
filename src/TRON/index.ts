@@ -47,6 +47,12 @@ export interface TxData {
   fee: number;
 }
 
+export interface VoteData {
+  address: string;
+  votes: {[key: string]: number};
+  latestBlock: LatestBlock;
+}
+
 export class TRON implements Coin {
   public generateAddress = (publicKey: string) => {
     let pubBytes = Buffer.from(publicKey, 'hex');
@@ -117,12 +123,8 @@ export class TRON implements Coin {
     return sig.r.concat(sig.s).concat(numberToHex(sig.recId));
   };
 
-  public vote = async (
-    address: string,
-    votes: {[key: string]: number},
-    latestBlock: LatestBlock,
-    signProvider: SignProvider,
-  ) => {
+  public vote = async (voteData: VoteData, signProvider: SignProvider) => {
+    const {address, votes, latestBlock} = voteData;
     const tx = this.refWithLatestBlock(buildVote(address, votes), latestBlock);
     const raw = tx.getRawData();
     const rawBytes = raw.serializeBinary();

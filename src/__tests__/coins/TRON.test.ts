@@ -148,9 +148,11 @@ describe('coin.TRON', () => {
         '87a88aff2fd0ea09f9d63c379a821f317c0e170d9a557296807d1922f81a2850',
     };
     const tx = await tron.vote(
-      params.address,
-      params.votes,
-      params.latestBlock,
+      {
+        address: params.address,
+        votes: params.votes,
+        latestBlock: params.latestBlock,
+      },
       signWithPrivateKey(params.privateKey),
     );
     expect(tx.txHex).toBe(
