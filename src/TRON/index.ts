@@ -4,6 +4,7 @@ import {
   buildTransferTransaction,
   buildTriggerSmartContract,
   buildVote,
+  buildWithdrawBalance,
   // @ts-ignore
 } from '@tronscan/client/src/utils/transactionBuilder';
 import assert from 'assert';
@@ -84,11 +85,7 @@ export class TRON implements Coin {
     } else {
       tx = this.buildTransferTx(txData);
     }
-    const raw = tx.getRawData();
-    const rawBytes = raw.serializeBinary();
-    const hash = sha256(rawBytes);
-    const sig = await signProvider.sign(hash.toString('hex'));
-    return this.buildSignTxResult(sig, tx);
+    return this.signTxRawData(tx, signProvider);
   };
 
   public generateTransactionSync = (
@@ -126,11 +123,18 @@ export class TRON implements Coin {
   public vote = async (voteData: VoteData, signProvider: SignProvider) => {
     const {address, votes, latestBlock} = voteData;
     const tx = this.refWithLatestBlock(buildVote(address, votes), latestBlock);
-    const raw = tx.getRawData();
-    const rawBytes = raw.serializeBinary();
-    const hash = sha256(rawBytes);
-    const sig = await signProvider.sign(hash.toString('hex'));
-    return this.buildSignTxResult(sig, tx);
+    return this.signTxRawData(tx, signProvider);
+  };
+
+  public withdrawReward = async (
+    {address, latestBlock}: {address: string; latestBlock: LatestBlock},
+    signProvider: SignProvider,
+  ) => {
+    const tx = this.refWithLatestBlock(
+      buildWithdrawBalance(address),
+      latestBlock,
+    );
+    return this.signTxRawData(tx, signProvider);
   };
 
   private buildTransferTx = (txData: TxData) => {
@@ -225,5 +229,16 @@ export class TRON implements Coin {
       .keccak_256(Buffer.from(functionSelector))
       .slice(0, 8);
     return selectorStr + parameters;
+  };
+
+  private signTxRawData = async (
+    tx: Transaction,
+    signProvider: SignProvider,
+  ) => {
+    const raw = tx.getRawData();
+    const rawBytes = raw.serializeBinary();
+    const hash = sha256(rawBytes);
+    const sig = await signProvider.sign(hash.toString('hex'));
+    return this.buildSignTxResult(sig, tx);
   };
 }
