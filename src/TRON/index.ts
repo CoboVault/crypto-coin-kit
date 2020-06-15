@@ -3,6 +3,7 @@ import {Transaction} from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
   buildTransferTransaction,
   buildTriggerSmartContract,
+  buildVote,
   // @ts-ignore
 } from '@tronscan/client/src/utils/transactionBuilder';
 import assert from 'assert';
@@ -114,6 +115,20 @@ export class TRON implements Coin {
     const hash = sha256(Buffer.from(message, 'utf-8'));
     const sig = signProvider.sign(hash.toString('hex'));
     return sig.r.concat(sig.s).concat(numberToHex(sig.recId));
+  };
+
+  public vote = async (
+    address: string,
+    votes: {[key: string]: number},
+    latestBlock: LatestBlock,
+    signProvider: SignProvider,
+  ) => {
+    const tx = this.refWithLatestBlock(buildVote(address, votes), latestBlock);
+    const raw = tx.getRawData();
+    const rawBytes = raw.serializeBinary();
+    const hash = sha256(rawBytes);
+    const sig = await signProvider.sign(hash.toString('hex'));
+    return this.buildSignTxResult(sig, tx);
   };
 
   private buildTransferTx = (txData: TxData) => {
