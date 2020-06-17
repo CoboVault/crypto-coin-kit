@@ -75,6 +75,10 @@ export class TRON implements Coin {
     return false;
   };
 
+  public convertAddress = (address: string) => {
+    return bs58check.decode(address).toString('hex');
+  };
+
   public generateTransaction = async (
     txData: TxData,
     signProvider: SignProvider,

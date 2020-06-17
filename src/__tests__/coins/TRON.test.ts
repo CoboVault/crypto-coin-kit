@@ -186,4 +186,12 @@ describe('coin.TRON', () => {
       '0a6a0a0234df22089f02fd52839049064098e9a8c6ab2e5a53080d124f0a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e576974686472617742616c616e6365436f6e747261637412170a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf61241e14a9cc04f3313d09ca585f85df90f98818c7c6e98d5bb9580327fe118db321a5867fd3adf53cbb60fcf33eee455bb906dd1950b3f25663727459ff2ce32957a00',
     );
   });
+
+  it('should convert correct address', async () => {
+    const address = 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3';
+
+    const TRONAddress = tron.convertAddress(address);
+
+    expect(TRONAddress).toBe('41056b1d26c3422e391a50b497f6d1f5aa0efd7cf6');
+  });
 });
