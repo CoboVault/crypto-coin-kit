@@ -1,3 +1,4 @@
+import {ResourceType} from './../../TRON/index';
 import {signWithPrivateKey} from '../../ETH/signProvider';
 import {TRON, TxData} from '../../TRON';
 
@@ -193,5 +194,59 @@ describe('coin.TRON', () => {
     const TRONAddress = tron.convertAddress(address);
 
     expect(TRONAddress).toBe('41056b1d26c3422e391a50b497f6d1f5aa0efd7cf6');
+  });
+
+  it('should build correct freeze balance tx', async () => {
+    const params = {
+      address: 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3',
+      amount: 1,
+      resourceType: ResourceType.ENERGY,
+      latestBlock: {
+        hash:
+          'd3049042bed284589f02fd528390490656d43acb33f1bb8e0d27e537d4808f70',
+        number: 20657375,
+        timestamp: 1592237859000,
+      },
+      privateKey:
+        '87a88aff2fd0ea09f9d63c379a821f317c0e170d9a557296807d1922f81a2850',
+    };
+
+    const {txHex, txId} = await tron.freezeBalance(
+      params,
+      signWithPrivateKey(params.privateKey),
+    );
+
+    expect(txHex).toBe(
+      '0a6e0a0234df22089f02fd52839049064098e9a8c6ab2e5a57080b12530a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e467265657a6542616c616e6365436f6e7472616374121d0a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf610011803500112417c358b35af4bbd8f8715f024601ff50d3f45473bddbd14ddb87676e23f5f20e7e731ef8d8794d127c328da507fb30497f4d3636832d6e2c0bf27ba9b9f97d0e700',
+    );
+    expect(txId).toBe(
+      'b3afd576552b4353a97ef6689236447944546cce2270723bc01bed5f1de814a9',
+    );
+  });
+
+  it('should build correct unfreeze balance tx', async () => {
+    const params = {
+      address: 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3',
+      resourceType: ResourceType.ENERGY,
+      latestBlock: {
+        hash:
+          'd3049042bed284589f02fd528390490656d43acb33f1bb8e0d27e537d4808f70',
+        number: 20657375,
+        timestamp: 1592237859000,
+      },
+      privateKey:
+        '87a88aff2fd0ea09f9d63c379a821f317c0e170d9a557296807d1922f81a2850',
+    };
+
+    const {txHex, txId} = await tron.unFreezeBalance(
+      params,
+      signWithPrivateKey(params.privateKey),
+    );
+    expect(txHex).toBe(
+      '0a6c0a0234df22089f02fd52839049064098e9a8c6ab2e5a55080c12510a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e556e667265657a6542616c616e6365436f6e747261637412190a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf650011240eff2285fe8cc70fd72df81e494301ab747918302681b1449c9b1f3f7f5b538194cd69981a38ccaec7160bb27a4fbb64b17d72f93ddad7ed2b25977bd4163a360',
+    );
+    expect(txId).toBe(
+      'a3b36025847b46082e470b029bec53e2440b0849cde8ed9c027bc85b865ff43d',
+    );
   });
 });
