@@ -1,8 +1,10 @@
 // @ts-ignore
 import {Transaction} from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
+  buildFreezeBalance,
   buildTransferTransaction,
   buildTriggerSmartContract,
+  buildUnfreezeBalance,
   buildVote,
   buildWithdrawBalance,
   // @ts-ignore
@@ -23,6 +25,11 @@ import {numberToHex} from '../utils';
 import {sha256} from '../utils/hash256';
 
 import * as Ethers from 'ethers';
+
+export enum ResourceType {
+  'NET' = 'BANDWIDTH',
+  'ENERGY' = 'ENERGY',
+}
 
 interface LatestBlock {
   hash: string;
@@ -73,6 +80,10 @@ export class TRON implements Coin {
       }
     }
     return false;
+  };
+
+  public convertAddress = (address: string) => {
+    return bs58check.decode(address).toString('hex');
   };
 
   public generateTransaction = async (
@@ -132,6 +143,48 @@ export class TRON implements Coin {
   ) => {
     const tx = this.refWithLatestBlock(
       buildWithdrawBalance(address),
+      latestBlock,
+    );
+    return this.signTxRawData(tx, signProvider);
+  };
+
+  public freezeBalance = async (
+    {
+      address,
+      amount,
+      duration = 3,
+      latestBlock,
+      resourceType,
+    }: {
+      address: string;
+      amount: number;
+      duration?: number;
+      latestBlock: LatestBlock;
+      resourceType: ResourceType;
+    },
+    signProvider: SignProvider,
+  ) => {
+    const tx = this.refWithLatestBlock(
+      buildFreezeBalance(address, amount, duration, resourceType),
+      latestBlock,
+    );
+    return this.signTxRawData(tx, signProvider);
+  };
+
+  public unFreezeBalance = async (
+    {
+      address,
+      latestBlock,
+      resourceType,
+    }: {
+      address: string;
+      latestBlock: LatestBlock;
+      resourceType: ResourceType;
+    },
+    signProvider: SignProvider,
+  ) => {
+    const tx = this.refWithLatestBlock(
+      buildUnfreezeBalance(address, resourceType),
       latestBlock,
     );
     return this.signTxRawData(tx, signProvider);

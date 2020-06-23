@@ -1,3 +1,4 @@
+import {ResourceType} from './../../TRON/index';
 import {signWithPrivateKey} from '../../ETH/signProvider';
 import {TRON, TxData} from '../../TRON';
 
@@ -184,6 +185,74 @@ describe('coin.TRON', () => {
     );
     expect(tx.txHex).toBe(
       '0a6a0a0234df22089f02fd52839049064098e9a8c6ab2e5a53080d124f0a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e576974686472617742616c616e6365436f6e747261637412170a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf61241e14a9cc04f3313d09ca585f85df90f98818c7c6e98d5bb9580327fe118db321a5867fd3adf53cbb60fcf33eee455bb906dd1950b3f25663727459ff2ce32957a00',
+    );
+  });
+
+  it('should convert correct address', async () => {
+    const address = 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3';
+
+    const TRONAddress = tron.convertAddress(address);
+
+    expect(TRONAddress).toBe('41056b1d26c3422e391a50b497f6d1f5aa0efd7cf6');
+  });
+
+  // curl -X POST --data '{"transaction":"0a700a0278d322083472ea616cd95e8a4088abcbf8ad2e5a59080b12550a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e467265657a6542616c616e6365436f6e7472616374121f0a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf610c0843d180350011241349a22334eab0c1dcd2494747288240038181b2f5985fec91884bd9ffad79c052c0b000ca45c5b1ffaa73a21b612fa9c965ad48859db39029a242b201449f2c701"}' https://apilist.tronscan.org/api/broadcast
+  // {"code":"SUCCESS","success":true,"message":"","transaction":""}
+  // https://tronscan.org/#/transaction/635542ecb1fe92066496b63e0f91874ea027103e6bfbf027d695cb2ae7fb63f0
+  it('should build correct freeze balance tx', async () => {
+    const params = {
+      address: 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3',
+      amount: 1000000,
+      resourceType: ResourceType.ENERGY,
+      latestBlock: {
+        hash:
+          '3b8251ef62eba0c93472ea616cd95e8ae5aff66309cf1954a91dec9dea4a0386',
+        number: 20871379,
+        timestamp: 1592880153000,
+      },
+      privateKey:
+        '87a88aff2fd0ea09f9d63c379a821f317c0e170d9a557296807d1922f81a2850',
+    };
+
+    const {txHex, txId} = await tron.freezeBalance(
+      params,
+      signWithPrivateKey(params.privateKey),
+    );
+
+    expect(txHex).toBe(
+      '0a700a0278d322083472ea616cd95e8a4088abcbf8ad2e5a59080b12550a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e467265657a6542616c616e6365436f6e7472616374121f0a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf610c0843d180350011241349a22334eab0c1dcd2494747288240038181b2f5985fec91884bd9ffad79c052c0b000ca45c5b1ffaa73a21b612fa9c965ad48859db39029a242b201449f2c701',
+    );
+    expect(txId).toBe(
+      '635542ecb1fe92066496b63e0f91874ea027103e6bfbf027d695cb2ae7fb63f0',
+    );
+  });
+
+  // curl -X POST --data '{"transaction":"0a6a0a027884220830f1f771f610c93a40c0efbcf8ad2e5a53080c124f0a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e556e667265657a6542616c616e6365436f6e747261637412170a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf61241f2ccc71660008ec73cbf9427a1e988622f004a71a50d813ff7f106f878c1a070e9552991528636af6dc3f54fed14987ef79a9cc5b83be0ba89747d869e6bc4a701"}' https://apilist.tronscan.org/api/broadcast
+  // {"code":"SUCCESS","success":true,"message":"","transaction":""}
+  // https://tronscan.org/#/transaction/87048448cfa69ebb20ddb131df60d62c2b5e67bac4861f1b14b1d3017ca2cfb7
+  it('should build correct unfreeze balance tx', async () => {
+    const params = {
+      address: 'TATrhRLpi65bMe8WwKCYAPjRAAoc3QWgR3',
+      resourceType: ResourceType.NET,
+      latestBlock: {
+        hash:
+          '8d1724e391d4825230f1f771f610c93aacf9dc5624480c128138ca3b56293c83',
+        number: 20871300,
+        timestamp: 1592879916000,
+      },
+      privateKey:
+        '87a88aff2fd0ea09f9d63c379a821f317c0e170d9a557296807d1922f81a2850',
+    };
+
+    const {txHex, txId} = await tron.unFreezeBalance(
+      params,
+      signWithPrivateKey(params.privateKey),
+    );
+    expect(txHex).toBe(
+      '0a6a0a027884220830f1f771f610c93a40c0efbcf8ad2e5a53080c124f0a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e556e667265657a6542616c616e6365436f6e747261637412170a1541056b1d26c3422e391a50b497f6d1f5aa0efd7cf61241f2ccc71660008ec73cbf9427a1e988622f004a71a50d813ff7f106f878c1a070e9552991528636af6dc3f54fed14987ef79a9cc5b83be0ba89747d869e6bc4a701',
+    );
+    expect(txId).toBe(
+      '87048448cfa69ebb20ddb131df60d62c2b5e67bac4861f1b14b1d3017ca2cfb7',
     );
   });
 });
