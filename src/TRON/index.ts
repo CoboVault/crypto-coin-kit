@@ -1,12 +1,12 @@
 // @ts-ignore
 import {Transaction} from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
+  buildFreezeBalance,
   buildTransferTransaction,
   buildTriggerSmartContract,
+  buildUnfreezeBalance,
   buildVote,
   buildWithdrawBalance,
-  buildFreezeBalance,
-  buildUnfreezeBalance,
   // @ts-ignore
 } from '@tronscan/client/src/utils/transactionBuilder';
 import assert from 'assert';
@@ -152,18 +152,20 @@ export class TRON implements Coin {
     {
       address,
       amount,
+      duration = 3,
       latestBlock,
       resourceType,
     }: {
       address: string;
       amount: number;
+      duration?: number;
       latestBlock: LatestBlock;
       resourceType: ResourceType;
     },
     signProvider: SignProvider,
   ) => {
     const tx = this.refWithLatestBlock(
-      buildFreezeBalance(address, amount, 3, resourceType),
+      buildFreezeBalance(address, amount, duration, resourceType),
       latestBlock,
     );
     return this.signTxRawData(tx, signProvider);
