@@ -220,6 +220,10 @@ describe('coin.BTC', () => {
     );
     expect(tx.outputs[0].value).toEqual(102391);
     expect(tx.outputs[1].value).toEqual(5999000);
+    expect(tx.inputs[0].isFinalized).toBe(false);
+    expect(tx.inputs[0].signStatus).toBe('0-1');
+    expect(tx.inputs[1].isFinalized).toBe(false);
+    expect(tx.inputs[1].signStatus).toBe('0-1');
   });
 
   // https://btc.com/a7263645784c46f36a8200c06d349df82206f8b2b5f16f0ddd9adaf0b1a0f675
