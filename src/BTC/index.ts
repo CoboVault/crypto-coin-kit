@@ -1,6 +1,7 @@
 import {decode as bech32Decode} from 'bech32';
 import * as bitcoin from 'bitcoinjs-lib';
-import {Psbt} from 'bitcoinjs-lib';
+import {Psbt, script} from 'bitcoinjs-lib';
+import {Output} from 'bitcoinjs-lib/types/transaction';
 // @ts-ignore
 import bs58check from 'bs58check';
 import {Buffer as SafeBuffer} from 'safe-buffer';
@@ -8,7 +9,6 @@ import {UtxoCoin} from '../Common/coin';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
 import {hash256, numberToHex} from '../utils';
 import PsbtBuilder from './txBuilder';
-import {Output} from 'bitcoinjs-lib/types/transaction';
 
 export enum AddressType {
   P2PKH = 'P2PKH',
@@ -367,6 +367,8 @@ export class BTC implements UtxoCoin {
         finalScriptSig,
         bip32Derivation,
         partialSig,
+        redeemScript,
+        witnessScript,
       } = psbtInput;
       if (!bip32Derivation) {
         throw new Error('invalid psbt, no bip32Derivation found');
@@ -375,13 +377,36 @@ export class BTC implements UtxoCoin {
         throw new Error('invalid psbt, no utxo found');
       }
       let value = 0;
+      let inputScript = null;
+      let p2ms = null;
+      if (redeemScript) {
+        inputScript = redeemScript;
+      }
+      if (witnessScript) {
+        inputScript = witnessScript;
+      }
       if (nonWitnessUtxo) {
         const transaction = bitcoin.Transaction.fromBuffer(nonWitnessUtxo);
-        value = (transaction.outs[each.index] as Output).value;
+        const out = transaction.outs[each.index] as Output;
+        value = out.value;
+        if (!inputScript) {
+          inputScript = out.script;
+        }
       }
       if (witnessUtxo) {
         value = witnessUtxo.value;
+        if (!inputScript) {
+          inputScript = witnessUtxo.script;
+        }
       }
+
+      try {
+        // @ts-ignore
+        p2ms = bitcoin.payments.p2ms({output: inputScript});
+      } catch (e) {
+        // @ts-ignore
+      }
+
       return {
         txId: each.hash.reverse().toString('hex'),
         index: each.index,
@@ -393,9 +418,9 @@ export class BTC implements UtxoCoin {
             pubkey: item.pubkey.toString('hex'),
           };
         }),
-        signStatus: `${partialSig ? partialSig.length : 0}-${
-          bip32Derivation.length
-        }`,
+        signStatus: p2ms
+          ? `${partialSig ? partialSig.length : 0}-${p2ms.m}-${p2ms.n}`
+          : undefined,
         isFinalized: !!finalScriptSig || !!finalScriptWitness,
       };
     });
