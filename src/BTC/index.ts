@@ -8,6 +8,7 @@ import {UtxoCoin} from '../Common/coin';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
 import {hash256, numberToHex} from '../utils';
 import PsbtBuilder from './txBuilder';
+import {Output} from 'bitcoinjs-lib/types/transaction';
 
 export enum AddressType {
   P2PKH = 'P2PKH',
@@ -368,18 +369,23 @@ export class BTC implements UtxoCoin {
         partialSig,
       } = psbtInput;
       if (!bip32Derivation) {
-        throw new Error('invalid psbt');
+        throw new Error('invalid psbt, no bip32Derivation found');
       }
+      if (!nonWitnessUtxo && !witnessUtxo) {
+        throw new Error('invalid psbt, no utxo found');
+      }
+      let value = 0;
       if (nonWitnessUtxo) {
-        throw new Error('Non-witness UTXO is not supported');
+        const transaction = bitcoin.Transaction.fromBuffer(nonWitnessUtxo);
+        value = (transaction.outs[each.index] as Output).value;
       }
-      if (!witnessUtxo) {
-        throw new Error('invalid psbt');
+      if (witnessUtxo) {
+        value = witnessUtxo.value;
       }
       return {
         txId: each.hash.reverse().toString('hex'),
         index: each.index,
-        value: witnessUtxo.value,
+        value,
         hdPath: bip32Derivation.map(item => {
           return {
             masterFingerprint: item.masterFingerprint.toString('hex'),
