@@ -371,6 +371,127 @@ describe('coin.BTC', () => {
     );
   });
 
+  it('should parse psbt', () => {
+    const str =
+      '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';
+    const result = btc.parsePsbt(str);
+    expect(result).toStrictEqual({
+      inputs: [
+        {
+          txId:
+            '087acb49d178649040c0b0f6350b9a0383822640368adffd1e857afe1c2d9ced',
+          index: 0,
+          value: 2060,
+          hdPath: [
+            {
+              masterFingerprint: '5ad8322d',
+              path: 'm/0/0',
+              pubkey:
+                '0279fff697c2bb79da2f992fbcc20ed97a12ceb8fb192ac7794d4acb72fd4c4408',
+            },
+            {
+              masterFingerprint: 'bea8e3be',
+              path: 'm/0/0',
+              pubkey:
+                '02b08a7c189abff50860cf5531bae6fc53e5838a51b1227402fd9fcfd7fa39a3ab',
+            },
+            {
+              masterFingerprint: 'b064c0bd',
+              path: 'm/0/0',
+              pubkey:
+                '034bf251d4b8b9a984db35cc0aee3eca989cfccdcb1f7d00df869aab7d694ac107',
+            },
+          ],
+          signStatus: '0-3',
+          isFinalized: false,
+        },
+        {
+          txId:
+            '6270c33870da6770547e910e27888744d2c4e343406b126069293cb7895ad5f1',
+          index: 0,
+          value: 7824,
+          hdPath: [
+            {
+              masterFingerprint: 'b064c0bd',
+              path: 'm/0/2',
+              pubkey:
+                '023f8c271c9b4eb7374adbe101bc04b5baa8e29c2ead722e9d45ad09669ea1f9e3',
+            },
+            {
+              masterFingerprint: '5ad8322d',
+              path: 'm/0/2',
+              pubkey:
+                '038ba8057d663eb6ad08fc2e17f0987932f1ff37586a42bfc3b3545c8139b96283',
+            },
+            {
+              masterFingerprint: 'bea8e3be',
+              path: 'm/0/2',
+              pubkey:
+                '03d164afb23de5d7a484cea8af78b270209c1c339e11a370d83c788da699f0f703',
+            },
+          ],
+          signStatus: '0-3',
+          isFinalized: false,
+        },
+        {
+          txId:
+            '65a455a2e1c489f4e3304d8e455f4e82158d6c8a70d6fa2872ad3d2cbd9c0770',
+          index: 0,
+          value: 59557,
+          hdPath: [
+            {
+              masterFingerprint: '5ad8322d',
+              path: 'm/0/0',
+              pubkey:
+                '0279fff697c2bb79da2f992fbcc20ed97a12ceb8fb192ac7794d4acb72fd4c4408',
+            },
+            {
+              masterFingerprint: 'bea8e3be',
+              path: 'm/0/0',
+              pubkey:
+                '02b08a7c189abff50860cf5531bae6fc53e5838a51b1227402fd9fcfd7fa39a3ab',
+            },
+            {
+              masterFingerprint: 'b064c0bd',
+              path: 'm/0/0',
+              pubkey:
+                '034bf251d4b8b9a984db35cc0aee3eca989cfccdcb1f7d00df869aab7d694ac107',
+            },
+          ],
+          signStatus: '0-3',
+          isFinalized: false,
+        },
+      ],
+      outputs: [
+        {
+          address:
+            'bc1q6uk9x0202nvrt27ne28njljyt25cuta26f6g2wju7y8at88x43cqg9n98j',
+          value: 44558,
+          hdPath: [
+            {
+              masterFingerprint: 'b064c0bd',
+              path: 'm/0/1',
+              pubkey:
+                '02fb2b75edac997f118de060985ad36231fa99d9b92bc9718de1baaa2a05cc3cbf',
+            },
+            {
+              masterFingerprint: '5ad8322d',
+              path: 'm/0/1',
+              pubkey:
+                '02fb645ad0ddc0e212206783cb6841a67ad6efe4f539a6cd8703978301bc69c5b9',
+            },
+            {
+              masterFingerprint: 'bea8e3be',
+              path: 'm/0/1',
+              pubkey:
+                '03e83be4bb531d0710d632f1130453a3fce8c58444b74ff69d2b6bcf38df05ceeb',
+            },
+          ],
+        },
+      ],
+    });
+  });
+
   it('the multiSign transaction signer count cannot less than requires', async () => {
     const txData = {
       inputs: multiSignUtxo,
