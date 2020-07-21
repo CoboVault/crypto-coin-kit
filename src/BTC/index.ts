@@ -358,13 +358,23 @@ export class BTC implements UtxoCoin {
     const txBuffer = psbt.data.getTransaction();
     const tx = bitcoin.Transaction.fromBuffer(txBuffer);
     const inputs = tx.ins.map((each, index) => {
-      const bip32Derivation = psbt.data.inputs[index].bip32Derivation;
+      const psbtInput = psbt.data.inputs[index];
+      const {
+        witnessUtxo,
+        nonWitnessUtxo,
+        finalScriptWitness,
+        finalScriptSig,
+        bip32Derivation,
+        partialSig,
+      } = psbtInput;
       if (!bip32Derivation) {
         throw new Error('invalid psbt');
       }
-      const witnessUtxo = psbt.data.inputs[index].witnessUtxo;
+      if (nonWitnessUtxo) {
+        throw new Error('Non-witness UTXO is not supported');
+      }
       if (!witnessUtxo) {
-        throw new Error('invalid witnessUtxo');
+        throw new Error('invalid psbt');
       }
       return {
         txId: each.hash.reverse().toString('hex'),
@@ -377,6 +387,10 @@ export class BTC implements UtxoCoin {
             pubkey: item.pubkey.toString('hex'),
           };
         }),
+        signStatus: `${partialSig ? partialSig.length : 0}-${
+          bip32Derivation.length
+        }`,
+        isFinalized: !!finalScriptSig || !!finalScriptWitness,
       };
     });
     const outputs = tx.outs.map((each, index) => {
