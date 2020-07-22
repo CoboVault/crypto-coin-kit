@@ -1,5 +1,6 @@
 import {BTC, NetWorkType} from '../../../BTC';
 import keyProvider from '../../../BTC/keyProvider';
+import * as bitcoin from 'bitcoinjs-lib';
 
 const privateKey =
   '06a523eede06e72a472056be31429bb4016fe85f10389be898dbe283233131d0';
