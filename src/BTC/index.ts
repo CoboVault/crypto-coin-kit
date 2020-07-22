@@ -471,7 +471,8 @@ export class BTC implements UtxoCoin {
       psbt.finalizeAllInputs();
     }
     return {
-      txId: psbt.extractTransaction().getId(),
+      // @ts-ignore
+      txId: psbt.data.globalMap.unsignedTx.tx.getHash(true),
       psbtB64: psbt.toBase64(),
     };
   };
@@ -485,7 +486,8 @@ export class BTC implements UtxoCoin {
       psbt.finalizeAllInputs();
     }
     return {
-      txId: psbt.extractTransaction().getId(),
+      // @ts-ignore
+      txId: psbt.data.globalMap.unsignedTx.tx.getHash(true),
       psbtB64: psbt.toBase64(),
     };
   };
