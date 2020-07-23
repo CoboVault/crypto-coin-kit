@@ -418,6 +418,7 @@ export class BTC implements UtxoCoin {
             pubkey: item.pubkey.toString('hex'),
           };
         }),
+        isMultiSign: !!p2ms,
         signStatus: p2ms
           ? `${partialSig ? partialSig.length : 0}-${p2ms.m}-${p2ms.n}`
           : undefined,
