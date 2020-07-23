@@ -466,9 +466,10 @@ export class BTC implements UtxoCoin {
   public signPSBTBase64 = async (
     psbtString: string,
     signers: KeyProvider[],
+    shouldFinalize = true,
   ) => {
     const psbt = await this.getSignedPSBT(psbtString, signers);
-    if (psbt.validateSignaturesOfAllInputs()) {
+    if (shouldFinalize && psbt.validateSignaturesOfAllInputs()) {
       psbt.finalizeAllInputs();
     }
     return {
@@ -483,9 +484,10 @@ export class BTC implements UtxoCoin {
   public signPSBTBase64Sync = (
     psbtString: string,
     signers: KeyProviderSync[],
+    shouldFinalize = true,
   ) => {
     const psbt = this.getSignedPSBTSync(psbtString, signers);
-    if (psbt.validateSignaturesOfAllInputs()) {
+    if (shouldFinalize && psbt.validateSignaturesOfAllInputs()) {
       psbt.finalizeAllInputs();
     }
     return {
