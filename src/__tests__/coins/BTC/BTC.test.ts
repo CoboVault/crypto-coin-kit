@@ -402,6 +402,7 @@ describe('coin.BTC', () => {
             },
           ],
           signStatus: '0-2-3',
+          isMultiSign: true,
           isFinalized: false,
         },
         {
@@ -430,6 +431,7 @@ describe('coin.BTC', () => {
             },
           ],
           signStatus: '0-2-3',
+          isMultiSign: true,
           isFinalized: false,
         },
         {
@@ -458,6 +460,7 @@ describe('coin.BTC', () => {
             },
           ],
           signStatus: '0-2-3',
+          isMultiSign: true,
           isFinalized: false,
         },
       ],
