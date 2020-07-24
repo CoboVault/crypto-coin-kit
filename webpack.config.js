@@ -4,7 +4,6 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
-
 module.exports = {
   entry: {
     BTC: './src/BTC/index.ts',
@@ -15,10 +14,11 @@ module.exports = {
     XRP: './src/XRP/index.ts',
     XZC: './src/XZC/index.ts',
     BCH: './src/BCH/index.ts',
-    DASH:'./src/DASH/index.ts',
-    LTC:'./src/LTC/index.ts',
-    IOST:'./src/IOST/index.ts',
-    TRON:'./src/TRON/index.ts',
+    DASH: './src/DASH/index.ts',
+    LTC: './src/LTC/index.ts',
+    IOST: './src/IOST/index.ts',
+    TRON: './src/TRON/index.ts',
+    HNS: './src/HNS/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
@@ -27,33 +27,35 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
     filename: '[name].bundle_[hash].js',
     libraryTarget: 'umd',
     // library: ['cryptoCoinKit', '[name]'],
-    path: path.resolve(__dirname, 'dist/subBundle')
+    path: path.resolve(__dirname, 'dist/subBundle'),
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin({
-      extractComments: true,
-      cache: true,
-      parallel: true,
-      sourceMap: false, // Must be set to true if using source-maps in production
-      terserOptions: {
-        // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-        extractComments: 'all',
-        compress: {
-          drop_console: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: true,
+        cache: true,
+        parallel: true,
+        sourceMap: false, // Must be set to true if using source-maps in production
+        terserOptions: {
+          // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+          extractComments: 'all',
+          compress: {
+            drop_console: true,
+          },
         },
-      }
-    })],
+      }),
+    ],
   },
 };

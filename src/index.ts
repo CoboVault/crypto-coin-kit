@@ -5,6 +5,7 @@ import {DCR} from './DCR';
 import {EOS} from './EOS';
 import {ETC} from './ETC';
 import {ETH} from './ETH';
+import {HNS} from './HNS';
 import {IOST} from './IOST';
 import KeyProvider from './keyProvider';
 import {LTC} from './LTC';
@@ -29,6 +30,7 @@ export default {
     TRON,
     IOST,
     EOS,
+    HNS,
   },
   KeyProvider,
   utils,
