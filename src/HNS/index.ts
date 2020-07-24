@@ -1,3 +1,5 @@
+// @ts-ignore
+import blake2b from 'bcrypto/lib/blake2b';
 import * as bitcoin from 'bitcoinjs-lib';
 // @ts-ignore
 import hsd from 'hsd';
@@ -5,18 +7,25 @@ import {TxData} from '../BTC_FORK';
 import {GenerateTransactionResult, UtxoCoin} from '../Common/coin';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
 
+const MAGIC_STRING = 'handshake signed message:\n';
+
 export class HNS implements UtxoCoin {
-  public signMessage(
+  public async signMessage(
     message: string,
-    keyProvider: KeyProvider,
+    signer: KeyProvider,
   ): Promise<string> {
-    throw new Error('not implemented');
+    const msg = Buffer.from(MAGIC_STRING + message, 'utf8');
+    const hash = blake2b.digest(msg);
+    const {r, s} = await signer.sign(hash.toString('hex'));
+    const sig = Buffer.from(r + s, 'hex');
+    return sig.toString('base64');
   }
-  public signMessageSync(
-    message: string,
-    keyProvider: KeyProviderSync,
-  ): string {
-    throw new Error('not implemented');
+  public signMessageSync(message: string, signer: KeyProviderSync): string {
+    const msg = Buffer.from(MAGIC_STRING + message, 'utf8');
+    const hash = blake2b.digest(msg);
+    const {r, s} = signer.sign(hash.toString('hex'));
+    const sig = Buffer.from(r + s, 'hex');
+    return sig.toString('base64');
   }
   public generateAddress(publicKey: string, network = 'main'): string {
     return hsd.Address.fromPubkey(Buffer.from(publicKey, 'hex')).toString(
