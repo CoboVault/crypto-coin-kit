@@ -1,6 +1,6 @@
 import {decode as bech32Decode} from 'bech32';
 import * as bitcoin from 'bitcoinjs-lib';
-import {Psbt, script} from 'bitcoinjs-lib';
+import {Psbt} from 'bitcoinjs-lib';
 import {Output} from 'bitcoinjs-lib/types/transaction';
 // @ts-ignore
 import bs58check from 'bs58check';
@@ -104,6 +104,28 @@ export interface OmniTxData {
 }
 
 export class BTC implements UtxoCoin {
+  public static getPsbtTxId = (psbt: Psbt) => {
+    let hasP2sh = false;
+    psbt.data.inputs.forEach((each, index) => {
+      const {witnessScript, redeemScript} = each;
+      if (witnessScript && redeemScript) {
+        // @ts-ignore
+        psbt.data.globalMap.unsignedTx.tx.ins[
+          index
+        ].script = bitcoin.script.fromASM(redeemScript.toString('hex'));
+      } else if (redeemScript) {
+        hasP2sh = true;
+      }
+    });
+    return !hasP2sh
+      ? // @ts-ignore
+        // @ts-ignore
+        psbt.data.globalMap.unsignedTx.tx
+          .getHash(true)
+          .reverse()
+          .toString('hex')
+      : '';
+  };
   protected network: bitcoin.Network;
   constructor(networkType: NetWorkType = NetWorkType.mainNet) {
     if (networkType === NetWorkType.mainNet) {
@@ -473,10 +495,7 @@ export class BTC implements UtxoCoin {
       psbt.finalizeAllInputs();
     }
     return {
-      // @ts-ignore
-      txId: (psbt.data.globalMap.unsignedTx.tx.getHash(true) || new Buffer())
-        .reverse()
-        .toString('hex'),
+      txId: BTC.getPsbtTxId(psbt),
       psbtB64: psbt.toBase64(),
     };
   };
@@ -491,10 +510,7 @@ export class BTC implements UtxoCoin {
       psbt.finalizeAllInputs();
     }
     return {
-      // @ts-ignore
-      txId: (psbt.data.globalMap.unsignedTx.tx.getHash(true) || new Buffer())
-        .reverse()
-        .toString('hex'),
+      txId: BTC.getPsbtTxId(psbt),
       psbtB64: psbt.toBase64(),
     };
   };
