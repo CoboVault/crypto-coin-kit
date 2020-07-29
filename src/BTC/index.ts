@@ -104,7 +104,8 @@ export interface OmniTxData {
 }
 
 export class BTC implements UtxoCoin {
-  public static getPsbtTxId = (psbt: Psbt) => {
+  public static getPsbtTxId = (thatPsbt: Psbt) => {
+    const psbt = thatPsbt.clone();
     let hasP2sh = false;
     psbt.data.inputs.forEach((each, index) => {
       const {witnessScript, redeemScript} = each;
