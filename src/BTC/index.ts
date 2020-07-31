@@ -105,49 +105,53 @@ export interface OmniTxData {
 
 export class BTC implements UtxoCoin {
   public static getPsbtTxId = (thatPsbt: Psbt): string => {
-    let canGetFromUnsignedPsbt = true;
-    const psbt = thatPsbt.clone();
-    psbt.data.inputs.forEach((each, index) => {
-      const {witnessScript, redeemScript} = each;
-      if (witnessScript && redeemScript) {
-        // @ts-ignore
-        psbt.data.globalMap.unsignedTx.tx.ins[
-          index
-        ].script = bitcoin.script.fromASM(redeemScript.toString('hex'));
-      } else if (redeemScript) {
-        let isP2wpkh = false;
-        let isP2wsh = false;
-        try {
-          bitcoin.payments.p2wpkh({output: redeemScript});
-          isP2wpkh = true;
-        } catch (e) {}
-        try {
-          bitcoin.payments.p2wsh({output: redeemScript});
-          isP2wsh = true;
-        } catch (e) {}
-        if (isP2wpkh || isP2wsh) {
+    try {
+      let canGetFromUnsignedPsbt = true;
+      const psbt = thatPsbt.clone();
+      psbt.data.inputs.forEach((each, index) => {
+        const {witnessScript, redeemScript} = each;
+        if (witnessScript && redeemScript) {
           // @ts-ignore
           psbt.data.globalMap.unsignedTx.tx.ins[
             index
           ].script = bitcoin.script.fromASM(redeemScript.toString('hex'));
+        } else if (redeemScript) {
+          let isP2wpkh = false;
+          let isP2wsh = false;
+          try {
+            bitcoin.payments.p2wpkh({output: redeemScript});
+            isP2wpkh = true;
+          } catch (e) {}
+          try {
+            bitcoin.payments.p2wsh({output: redeemScript});
+            isP2wsh = true;
+          } catch (e) {}
+          if (isP2wpkh || isP2wsh) {
+            // @ts-ignore
+            psbt.data.globalMap.unsignedTx.tx.ins[
+              index
+            ].script = bitcoin.script.fromASM(redeemScript.toString('hex'));
+          } else {
+            canGetFromUnsignedPsbt = false;
+          }
+        }
+      });
+      if (canGetFromUnsignedPsbt) {
+        // @ts-ignore
+        return psbt.data.globalMap.unsignedTx.tx
+          .getHash(true)
+          .reverse()
+          .toString('hex');
+      } else {
+        if (psbt.validateSignaturesOfAllInputs()) {
+          psbt.finalizeAllInputs();
+          return psbt.extractTransaction().getId();
         } else {
-          canGetFromUnsignedPsbt = false;
+          return '';
         }
       }
-    });
-    if (canGetFromUnsignedPsbt) {
-      // @ts-ignore
-      return psbt.data.globalMap.unsignedTx.tx
-        .getHash(true)
-        .reverse()
-        .toString('hex');
-    } else {
-      if (psbt.validateSignaturesOfAllInputs()) {
-        psbt.finalizeAllInputs();
-        return psbt.extractTransaction().getId();
-      } else {
-        return '';
-      }
+    } catch (e) {
+      return '';
     }
   };
   protected network: bitcoin.Network;
