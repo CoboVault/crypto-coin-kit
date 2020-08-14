@@ -5,10 +5,13 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
   ],
+  parserOptions: {
+    ecmaVersion: 6,
+    sourceType: 'module',
+  },
   rules: {
     camelcase: 'off',
     '@typescript-eslint/camelcase': 'off',
@@ -23,5 +26,6 @@ module.exports = {
     'no-async-promise-executor': 'off',
     'no-unexpected-multiline': 'off',
     'no-prototype-builtins': 'off',
+    'no-unused-vars': 'off',
   },
 };
