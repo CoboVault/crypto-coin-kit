@@ -203,13 +203,69 @@ export class DOT implements Coin {
     return isValid;
   };
 
-  generateTransaction(
-    txData: any,
-    keyProvider: KeyProvider,
-    options: any,
-  ): Promise<GenerateTransactionResult> {
+  public generateTransaction = async (
+    data: TxData,
+    signer: KeyProvider,
+  ): Promise<GenerateTransactionResult> => {
     throw new Error('not implemented');
-  }
+    // const registry = new TypeRegistry();
+    // // Register types specific to chain/runtimeVersion
+    // registry.register(
+    //     // @ts-ignore
+    //     getSpecTypes(
+    //         // @ts-ignore
+    //         registry,
+    //         this.chain.chainName,
+    //         this.chain.specName,
+    //         data.specVersion,
+    //     ),
+    // );
+    // // Register the chain properties for this registry
+    // registry.setChainProperties(
+    //     registry.createType(
+    //         'ChainProperties',
+    //         defaultChainProperties[this.chain.chainName],
+    //     ),
+    // );
+    // // @ts-ignore
+    // const decorated = new Decorated(registry, this.chain.metadata);
+    // const tx = new GenericExtrinsic(
+    //     registry,
+    //     // @ts-ignore
+    //     decorated.tx.balances.transfer(data.dest, data.value),
+    //     {version: 4},
+    // );
+    // const signed = tx.sign(
+    //     {
+    //       address: this.generateAddress(signer.publicKey),
+    //       publicKey: hexToU8a(signer.publicKey),
+    //       sign: async (data, options?) => {
+    //         const {r, s} = await signer.sign(u8aToHex(data));
+    //         return u8aConcat(SIG_TYPE_SR25519, hexToU8a('0x' + r + s));
+    //       },
+    //     },
+    //     {
+    //       blockHash: data.blockHash,
+    //       genesisHash: data.genesisHash,
+    //       nonce: data.nonce,
+    //       runtimeVersion: {
+    //         apis: [],
+    //         authoringVersion: new BN(data.authoringVersion),
+    //         implName: this.chain.implName,
+    //         implVersion: new BN(data.implVersion),
+    //         specName: this.chain.specName,
+    //         specVersion: new BN(data.specVersion),
+    //         transactionVersion: new BN(data.transactionVersion),
+    //       },
+    //     },
+    // );
+    // const signedTx = signed.toHex();
+    // const txHash = blake2AsHex(signedTx, 256);
+    // return {
+    //   txId: txHash,
+    //   txHex: signedTx,
+    // };
+  };
 
   signMessage(message: string, signProvider: KeyProvider): Promise<string> {
     throw new Error('not implemented');

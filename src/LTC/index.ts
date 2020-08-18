@@ -12,19 +12,13 @@ export class LTC extends BTC {
     this.network = litecoin;
   }
 
-  public generateTransaction = async (
-    txData: TxData,
-    signers: KeyProvider[],
-  ) => {
+  public async generateTransaction(txData: TxData, signers: KeyProvider[]) {
     return super.generateTransaction(this.processTxData(txData), signers);
-  };
+  }
 
-  public generateTransactionSync = (
-    txData: TxData,
-    signers: KeyProviderSync[],
-  ) => {
+  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[]) {
     return super.generateTransactionSync(this.processTxData(txData), signers);
-  };
+  }
 
   public isAddressValid(address: string): boolean {
     try {
