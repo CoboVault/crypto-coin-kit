@@ -19,7 +19,6 @@ module.exports = {
     IOST: './src/IOST/index.ts',
     TRON: './src/TRON/index.ts',
     HNS: './src/HNS/index.ts',
-    DOT: './src/DOT/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
@@ -27,7 +26,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: ['babel-loader', 'ts-loader'],
+        use: ['ts-loader'],
         exclude: /node_modules/,
       },
     ],

@@ -1,28 +1,41 @@
 /**
  * @file webpack build for j2v8 call this lib, Multi entry for each coin and utils
- * this is the eos config webpack file for hook noneused file
  */
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
-    EOS: './src/EOS/index.ts',
+    DOT: './src/DOT/index.ts',
   },
   mode: 'production',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.ts$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: 'tsconfig.dot.json',
+            },
+          },
+        ],
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
     alias: {
-      randombytes: path.resolve(__dirname, './moduleHooks/hook.js'),
-      'isomorphic-fetch': path.resolve(__dirname, './moduleHooks/hookFetch.js'),
+      bip39: path.resolve(__dirname, './moduleHooks/bip39.js'),
+      '@polkadot/wasm-crypto/crypto-polyfill': path.resolve(
+        __dirname,
+        './moduleHooks/crypto-polyfill',
+      ),
+      '@polkadot/wasm-crypto': path.resolve(
+        __dirname,
+        './moduleHooks/wasm-crypto.js',
+      ),
     },
     extensions: ['.tsx', '.ts', '.js'],
   },
