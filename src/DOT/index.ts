@@ -1,13 +1,13 @@
 import {checkAddress, encodeAddress, blake2AsHex} from '@polkadot/util-crypto';
-import {u8aToHex} from '@polkadot/util';
-import {TypeRegistry} from '@polkadot/types';
+import u8aToHex from '@polkadot/util/u8a/toHex';
+import hexToU8a from '@polkadot/util/hex/toU8a';
+import u8aConcat from '@polkadot/util/u8a/concat';
+import {TypeRegistry} from '@polkadot/types/create/registry';
 import {getSpecTypes} from '@polkadot/types-known';
 import {Coin, GenerateTransactionResult} from '../Common/coin';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
-import {hexToU8a, u8aConcat} from '@polkadot/util/index';
-import {kusama, westend, polkadot} from './metas';
 import Decorated from '@polkadot/metadata/Decorated';
-import {GenericExtrinsic} from '@polkadot/types/extrinsic';
+import GenericExtrinsic from '@polkadot/types/extrinsic/Extrinsic';
 import BN from 'bn.js';
 
 export interface ChainProperties {
@@ -52,6 +52,7 @@ export interface TxData {
   validityPeriod?: number;
   implVersion: number;
   authoringVersion: number;
+  metaData: string;
 }
 
 enum SS58Prefix {
@@ -86,7 +87,6 @@ type Chain = {
   chainName: 'Polkadot' | 'Kusama' | 'Westend' | 'Polkadot CC1';
   specName: 'kusama' | 'polkadot' | 'westend';
   implName: 'parity-kusama' | 'parity-polkadot' | 'parity-westend';
-  metadata: string;
 };
 
 const chains: {
@@ -98,14 +98,12 @@ const chains: {
     chainName: 'Polkadot',
     implName: 'parity-polkadot',
     specName: 'polkadot',
-    metadata: polkadot,
   },
   Kusama: {
     prefix: SS58Prefix.KUSAMA,
     chainCode: chainCodes.KUSAMA,
     chainName: 'Kusama',
     specName: 'kusama',
-    metadata: kusama,
     implName: 'parity-kusama',
   },
   Westend: {
@@ -113,7 +111,6 @@ const chains: {
     chainCode: chainCodes.WESTEND,
     chainName: 'Westend',
     specName: 'westend',
-    metadata: westend,
     implName: 'parity-westend',
   },
 };
@@ -151,7 +148,7 @@ export class DOT implements Coin {
       ),
     );
     // @ts-ignore
-    const decorated = new Decorated(registry, this.chain.metadata);
+    const decorated = new Decorated(registry, data.metaData);
     const tx = new GenericExtrinsic(
       registry,
       // @ts-ignore
@@ -203,13 +200,12 @@ export class DOT implements Coin {
     return isValid;
   };
 
-  generateTransaction(
-    txData: any,
-    keyProvider: KeyProvider,
-    options: any,
-  ): Promise<GenerateTransactionResult> {
+  public generateTransaction = async (
+    data: TxData,
+    signer: KeyProvider,
+  ): Promise<GenerateTransactionResult> => {
     throw new Error('not implemented');
-  }
+  };
 
   signMessage(message: string, signProvider: KeyProvider): Promise<string> {
     throw new Error('not implemented');

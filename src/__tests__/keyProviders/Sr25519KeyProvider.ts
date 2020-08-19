@@ -1,4 +1,4 @@
-import {Result} from '../Common/sign';
+import {Result} from '../../Common/sign';
 import schnorrkelKeypairFromU8a from '@polkadot/util-crypto/schnorrkel/keypair/fromU8a';
 import {schnorrkelSign} from '@polkadot/util-crypto';
 import {bufferToU8a, u8aToHex} from '@polkadot/util/index';

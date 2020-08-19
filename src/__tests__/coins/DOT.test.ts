@@ -1,9 +1,10 @@
 import {DOT} from '../../DOT';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
-import {sr25519KeyProviderSync} from '../../DOT/Sr25519KeyProvider';
+import {sr25519KeyProviderSync} from '../keyProviders/Sr25519KeyProvider';
 import {schnorrkelDeriveHard} from '@polkadot/util-crypto/index';
 import schnorrkelKeypairFromU8a from '@polkadot/util-crypto/schnorrkel/keypair/fromU8a';
 import {bufferToU8a, u8aToHex} from '@polkadot/util/index';
+import {westend} from './metas';
 jest.setTimeout(20000);
 
 describe('coins.DOT', () => {
@@ -84,6 +85,7 @@ describe('coins.DOT', () => {
       authoringVersion: 2,
       specVersion: 41,
       transactionVersion: 2,
+      metaData: westend,
     };
     const result = wnd.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
