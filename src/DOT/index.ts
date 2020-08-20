@@ -278,11 +278,20 @@ export class DOT implements Coin {
     };
   };
 
-  signMessage(message: string, signProvider: KeyProvider): Promise<string> {
-    throw new Error('not implemented');
+  async signMessage(
+    message: string,
+    signProvider: KeyProvider,
+  ): Promise<string> {
+    const {r, s} = await signProvider.sign(
+      Buffer.from(message, 'utf8').toString('hex'),
+    );
+    return `${r}${s}`;
   }
 
   signMessageSync(message: string, signProvider: KeyProviderSync): string {
-    throw new Error('not implemented');
+    const {r, s} = signProvider.sign(
+      Buffer.from(message, 'utf8').toString('hex'),
+    );
+    return `${r}${s}`;
   }
 }
