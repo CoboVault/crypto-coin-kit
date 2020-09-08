@@ -14,6 +14,7 @@ import {TRON} from './TRON';
 import * as utils from './utils';
 import {XRP} from './XRP';
 import {XZC} from './XZC';
+import {DOT} from './DOT';
 
 export default {
   coins: {
@@ -31,6 +32,7 @@ export default {
     IOST,
     EOS,
     HNS,
+    DOT,
   },
   KeyProvider,
   utils,
