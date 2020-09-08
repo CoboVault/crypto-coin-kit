@@ -1,4 +1,4 @@
-# crypto-coin-kit [![Build Status](https://travis-ci.org/cobowallet/crypto-coin-kit.svg?branch=master)](https://travis-ci.org/cobowallet/crypto-coin-kit)
+# crypto-coin-kit [![Build Status](https://travis-ci.org/cobovault/crypto-coin-kit.svg?branch=master)](https://travis-ci.org/cobowallet/crypto-coin-kit)
 
 crypto-coin-kit is the common library for crypto coins like BTC, ETH, NEO, XZC, etc.
 
@@ -27,11 +27,9 @@ yarn test
 
 ```
 
-
 ## Versioning
 
-We use Github releases for versioning. For the versions available, see the [releases on this repository](https://github.com/cobowallet/crypto-coin-kit/releases). 
-
+We use Github releases for versioning. For the versions available, see the [releases on this repository](https://github.com/cobowallet/crypto-coin-kit/releases).
 
 ## License
 
