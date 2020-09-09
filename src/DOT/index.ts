@@ -46,6 +46,7 @@ export interface TxData {
   value: number | string;
   dest: string;
   blockHash: string;
+  blockNumber: number;
   eraPeriod?: number;
   genesisHash: string;
   nonce: number;
@@ -169,6 +170,12 @@ export class DOT implements Coin {
       decorated.tx.balances.transfer(data.dest, data.value),
       {version: 4},
     );
+    const era = data.eraPeriod
+      ? registry.createType('ExtrinsicEra', {
+          current: data.blockNumber,
+          period: data.eraPeriod,
+        })
+      : undefined;
     const publicKeyHex = signer.publicKey.startsWith('0x')
       ? signer.publicKey
       : '0x' + signer.publicKey;
@@ -187,6 +194,7 @@ export class DOT implements Coin {
         blockHash: data.blockHash,
         genesisHash: data.genesisHash,
         nonce: data.nonce,
+        era,
         runtimeVersion: {
           apis: [],
           authoringVersion: new BN(data.authoringVersion),
