@@ -6,32 +6,37 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
-    BTC: './src/BTC/index.ts',
-    DCR: './src/DCR/index.ts',
-    ETC: './src/ETC/index.ts',
-    ETH: './src/ETH/index.ts',
-    NEO: './src/NEO/index.ts',
-    XRP: './src/XRP/index.ts',
-    XZC: './src/XZC/index.ts',
-    BCH: './src/BCH/index.ts',
-    DASH: './src/DASH/index.ts',
-    LTC: './src/LTC/index.ts',
-    IOST: './src/IOST/index.ts',
-    TRON: './src/TRON/index.ts',
-    HNS: './src/HNS/index.ts',
-    utils: './src/utils/index.ts',
+    DOT: './src/DOT/index.ts',
   },
   mode: 'production',
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: ['ts-loader'],
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: 'tsconfig.dot.json',
+            },
+          },
+        ],
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
+    alias: {
+      bip39: path.resolve(__dirname, './moduleHooks/bip39.js'),
+      '@polkadot/wasm-crypto/crypto-polyfill': path.resolve(
+        __dirname,
+        './moduleHooks/crypto-polyfill',
+      ),
+      '@polkadot/wasm-crypto': path.resolve(
+        __dirname,
+        './moduleHooks/wasm-crypto.js',
+      ),
+    },
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {

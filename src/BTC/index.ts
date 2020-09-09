@@ -107,9 +107,15 @@ export class BTC implements UtxoCoin {
   public static getPsbtTxId = (thatPsbt: Psbt): string => {
     try {
       let canGetFromUnsignedPsbt = true;
+      let isFinalized = true;
       const psbt = thatPsbt.clone();
       psbt.data.inputs.forEach((each, index) => {
-        const {witnessScript, redeemScript} = each;
+        const {
+          witnessScript,
+          redeemScript,
+          finalScriptSig,
+          finalScriptWitness,
+        } = each;
         if (witnessScript && redeemScript) {
           // @ts-ignore
           psbt.data.globalMap.unsignedTx.tx.ins[
@@ -134,6 +140,9 @@ export class BTC implements UtxoCoin {
           } else {
             canGetFromUnsignedPsbt = false;
           }
+        } else if (finalScriptSig || finalScriptWitness) {
+          isFinalized = isFinalized && true;
+          canGetFromUnsignedPsbt = false;
         }
       });
       if (canGetFromUnsignedPsbt) {
@@ -143,6 +152,9 @@ export class BTC implements UtxoCoin {
           .reverse()
           .toString('hex');
       } else {
+        if (isFinalized) {
+          return psbt.extractTransaction().getId();
+        }
         if (psbt.validateSignaturesOfAllInputs()) {
           psbt.finalizeAllInputs();
           return psbt.extractTransaction().getId();
@@ -159,7 +171,7 @@ export class BTC implements UtxoCoin {
     if (networkType === NetWorkType.mainNet) {
       this.network = bitcoin.networks.bitcoin;
     } else {
-      this.network = bitcoin.networks.regtest;
+      this.network = bitcoin.networks.testnet;
     }
   }
 
@@ -243,7 +255,7 @@ export class BTC implements UtxoCoin {
       } catch (e) {
         return false;
       }
-    } else if (address.startsWith('bc')) {
+    } else if (address.startsWith('bc') || address.startsWith('tb')) {
       try {
         bech32Decode(address);
         return true;

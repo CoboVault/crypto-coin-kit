@@ -224,7 +224,7 @@ export class TRON implements Coin {
       rawData.setFeeLimit(1000000000);
       rawData.setTimestamp(latestBlock.timestamp);
     }
-    rawData.setExpiration(Number(timestamp) + 60 * 5 * 1000);
+    rawData.setExpiration(Number(timestamp) + 600 * 5 * 1000);
     tx.setRawData(rawData);
     return tx;
   };
