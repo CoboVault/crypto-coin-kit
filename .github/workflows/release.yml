@@ -13,7 +13,7 @@ jobs:
       - name: Dump context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+        run: git branch --contains ${{github.sha}} | grep master
       # - name: Checkout code
       #   uses: actions/checkout@v2
       #   with:
