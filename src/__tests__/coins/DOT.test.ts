@@ -90,6 +90,7 @@ describe('coins.DOT', () => {
       specVersion: 41,
       transactionVersion: 2,
       metaData: westend,
+      blockNumber: 0,
     };
     const result = wnd.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
@@ -114,12 +115,41 @@ describe('coins.DOT', () => {
       authoringVersion: 1,
       specVersion: 18,
       transactionVersion: 4,
+      blockNumber: 0,
     };
     const result = dot.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
       '0x350284' +
         publicKey.slice(2) +
         '01([a-f0-9]+)0008000500fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc216550700e40b5402',
+    );
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
+  it('should generate dot transaction 2', () => {
+    // https://polkascan.io/polkadot/transaction/0x7f00de556623f70f10164a028e5a7e1612b1bb1b6f5e3cc44ccf9750e93515c2
+    const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
+    const txData = {
+      value: 18000000000,
+      dest: '16iM7BVPSvuJnjMW5T7rGWv4PTvgybD5sUS1zZyQkEf7DMHY',
+      blockHash:
+        '0x241c7db46d169fa643d38351b52bd183b6b250b2c5f1a20324406fee79f3b180',
+      genesisHash:
+        '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+      tip: 0,
+      nonce: 3,
+      implVersion: 0,
+      authoringVersion: 1,
+      specVersion: 18,
+      transactionVersion: 4,
+      blockNumber: 1517092,
+      eraPeriod: 4096,
+    };
+    const result = dot.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+      '0x390284' +
+        publicKey.slice(2) +
+        '01([a-f0-9]+)4b620c000500fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc21655070034e23004',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -140,12 +170,41 @@ describe('coins.DOT', () => {
       authoringVersion: 2,
       specVersion: 2023,
       transactionVersion: 3,
+      blockNumber: 0,
     };
     const result = ksm.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
       '0x350284' +
         publicKey.slice(2) +
         '01([a-f0-9]+)0000000400ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a10700d0ed902e',
+    );
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
+  it('should generate ksm transaction 2', () => {
+    // https://polkascan.io/kusama/transaction/0xb2db30ca1e7dbf8ae295c0649735e3979cd51fd224d21736dbbc720210aff058
+    const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
+    const txData = {
+      value: 1000000000,
+      dest: 'HzLd5m7Sj3Hac88Stgyz8wWYbRc2B7r74fMsJENgdyLfNTo',
+      blockHash:
+        '0xe177365bd86c2033883c8967e0e7f07961679dddd8195ee534071adfee8bee3e',
+      genesisHash:
+        '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+      tip: 0,
+      nonce: 4,
+      implVersion: 0,
+      authoringVersion: 2,
+      specVersion: 2023,
+      transactionVersion: 3,
+      blockNumber: 3971249,
+      eraPeriod: 4096,
+    };
+    const result = ksm.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+      '0x310284' +
+        publicKey.slice(2) +
+        '01([a-f0-9]+)0000400ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a102286bee',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -173,6 +232,7 @@ describe('coins.DOT', () => {
       specVersion: 41,
       transactionVersion: 2,
       metaData: westend,
+      blockNumber: 0,
     };
     const result = wnd.generateTransactionSync(
       txData,
@@ -197,6 +257,7 @@ describe('coins.DOT', () => {
       // westend: 0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e
       blockHash:
         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
+      blockNumber: 0,
       genesisHash:
         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
       tip: 0,
