@@ -16,7 +16,7 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-        if: git branch --contains ${{github.sha}} | grep master
+        if: ${{ 1 == 2}}
         with:
           ref: master
       # - name: Use Node.js 10.x
