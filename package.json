@@ -62,7 +62,7 @@
     "buffer": "^5.2.1",
     "crypto-browserify": "https://github.com/cobowallet/crypto-browserify.git#master-legacy",
     "dcr-core": "https://github.com/cobowallet/dcr-core.git#4f0504472be3de5924ec403b3ae647d213dc06bd",
-    "elliptic": "^6.5.1",
+    "elliptic": "^6.5.3",
     "eosjs": "^16.0.6",
     "eosjs-ecc": "^4.0.4",
     "ethereumjs-tx": "^2.1.1",
