@@ -1,8 +1,6 @@
 name: crypto-coinlkit Release
 
-on:
-  create:
-
+on: create
 jobs:
   build:
     name: Upload Release Asset
