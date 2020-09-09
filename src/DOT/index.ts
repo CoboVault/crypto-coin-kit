@@ -181,7 +181,6 @@ export class DOT implements Coin {
       : '0x' + signer.publicKey;
     const signed = tx.sign(
       {
-        addressRaw: hexToU8a(publicKeyHex),
         address: this.generateAddress(publicKeyHex),
         publicKey: hexToU8a(publicKeyHex),
         sign: (data, options?) => {
