@@ -19,7 +19,7 @@ jobs:
         with:
           ref: ${{github.ref}}
       - name: Set
-        run: echo ::set-env name=HAVE_TAG::$(echo $(git branch --contains ${{github.sha}} | grep test | cut -c 3-))
+        run: echo ::set-env name=HAVE_TAG::$(git branch --contains ${{github.sha}} | grep test | cut -c 3-)
       - name: Test
         run: echo ${{env.HAVE_TAG}}
       # - name: Use Node.js 10.x
