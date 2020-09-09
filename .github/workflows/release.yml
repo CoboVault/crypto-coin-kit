@@ -16,9 +16,12 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-        if: ${{ 1 == 2}}
         with:
-          ref: master
+          ref: ${{github.ref}}
+      - name: Set
+        run: echo ::set-env name=HAVE_TAG::$(echo git branch --contanins ${{github.ref}} | grep test-co)
+      - name: Test
+        run: echo $HAVE_TAG
       # - name: Use Node.js 10.x
       #   uses: actions/setup-node@v1
       #   with:
