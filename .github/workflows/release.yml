@@ -1,6 +1,8 @@
 name: crypto-coinlkit Release
 
-on: create
+on:
+  create:
+    ref_type: tag
 jobs:
   build:
     name: Upload Release Asset
@@ -8,6 +10,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: master
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
