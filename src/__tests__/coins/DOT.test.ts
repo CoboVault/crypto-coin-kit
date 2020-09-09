@@ -4,7 +4,7 @@ import {sr25519KeyProviderSync} from '../keyProviders/Sr25519KeyProvider';
 import {schnorrkelDeriveHard} from '@polkadot/util-crypto/index';
 import schnorrkelKeypairFromU8a from '@polkadot/util-crypto/schnorrkel/keypair/fromU8a';
 import {bufferToU8a, u8aToHex} from '@polkadot/util/index';
-import {westend} from './metas';
+import {westend} from '../../DOT/metas';
 import {
   ed25519KeyProvider,
   ed25519KeyProviderSync,
@@ -97,6 +97,59 @@ describe('coins.DOT', () => {
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
+
+  it('should generate dot transaction', () => {
+    //https://polkascan.io/polkadot/event/1515777-2
+    const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
+    const txData = {
+      value: 10000000000,
+      dest: '16iM7BVPSvuJnjMW5T7rGWv4PTvgybD5sUS1zZyQkEf7DMHY',
+      blockHash:
+        '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+      genesisHash:
+        '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+      tip: 0,
+      nonce: 2,
+      implVersion: 0,
+      authoringVersion: 1,
+      specVersion: 18,
+      transactionVersion: 4,
+    };
+    const result = dot.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+      '0x350284' +
+        publicKey.slice(2) +
+        '01([a-f0-9]+)0008000500fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc216550700e40b5402',
+    );
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
+  it('should generate ksm transaction', () => {
+    //https://polkascan.io/kusama/event/3970546-4
+    const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
+    const txData = {
+      value: 200000000000,
+      dest: 'HzLd5m7Sj3Hac88Stgyz8wWYbRc2B7r74fMsJENgdyLfNTo',
+      blockHash:
+        '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+      genesisHash:
+        '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+      tip: 0,
+      nonce: 0,
+      implVersion: 0,
+      authoringVersion: 2,
+      specVersion: 2023,
+      transactionVersion: 3,
+    };
+    const result = ksm.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+      '0x350284' +
+        publicKey.slice(2) +
+        '01([a-f0-9]+)0000000400ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a10700d0ed902e',
+    );
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
   it('should generate tx with ed25519 key sync', () => {
     const edPrivateKey =
       '0xe19ae328d40d0b40ae117413eb17a97df31ef967f19a44350435df5af55a2879e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20';

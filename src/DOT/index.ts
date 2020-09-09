@@ -11,6 +11,7 @@ import GenericExtrinsic from '@polkadot/types/extrinsic/Extrinsic';
 import GenericExtrinsicPayload from '@polkadot/types/extrinsic/ExtrinsicPayload';
 import BN from 'bn.js';
 import blake2AsU8a from '@polkadot/util-crypto/blake2/asU8a';
+import {westend, polkadot, kusama} from './metas';
 
 export interface ChainProperties {
   ss58Format: number;
@@ -26,12 +27,12 @@ const defaultChainProperties: Record<string, ChainProperties> = {
   },
   Polkadot: {
     ss58Format: 0,
-    tokenDecimals: 12,
+    tokenDecimals: 10,
     tokenSymbol: 'DOT',
   },
   'Polkadot CC1': {
     ss58Format: 0,
-    tokenDecimals: 12,
+    tokenDecimals: 10,
     tokenSymbol: 'DOT',
   },
   Westend: {
@@ -54,7 +55,7 @@ export interface TxData {
   validityPeriod?: number;
   implVersion: number;
   authoringVersion: number;
-  metaData: string;
+  metaData?: string;
 }
 
 enum SS58Prefix {
@@ -89,6 +90,7 @@ type Chain = {
   chainName: 'Polkadot' | 'Kusama' | 'Westend' | 'Polkadot CC1';
   specName: 'kusama' | 'polkadot' | 'westend';
   implName: 'parity-kusama' | 'parity-polkadot' | 'parity-westend';
+  metaData: string;
 };
 
 const chains: {
@@ -100,6 +102,7 @@ const chains: {
     chainName: 'Polkadot',
     implName: 'parity-polkadot',
     specName: 'polkadot',
+    metaData: polkadot,
   },
   Kusama: {
     prefix: SS58Prefix.KUSAMA,
@@ -107,6 +110,7 @@ const chains: {
     chainName: 'Kusama',
     specName: 'kusama',
     implName: 'parity-kusama',
+    metaData: kusama,
   },
   Westend: {
     prefix: SS58Prefix.WESTEND,
@@ -114,6 +118,7 @@ const chains: {
     chainName: 'Westend',
     specName: 'westend',
     implName: 'parity-westend',
+    metaData: westend,
   },
 };
 
@@ -154,17 +159,23 @@ export class DOT implements Coin {
       ),
     );
     // @ts-ignore
-    const decorated = new Decorated(registry, data.metaData);
+    const decorated = new Decorated(
+      registry,
+      data.metaData || this.chain.metaData,
+    );
     const tx = new GenericExtrinsic(
       registry,
       // @ts-ignore
       decorated.tx.balances.transfer(data.dest, data.value),
       {version: 4},
     );
+    const publicKeyHex = signer.publicKey.startsWith('0x')
+      ? signer.publicKey
+      : '0x' + signer.publicKey;
     const signed = tx.sign(
       {
-        address: this.generateAddress(signer.publicKey),
-        publicKey: hexToU8a(signer.publicKey),
+        address: this.generateAddress(publicKeyHex),
+        publicKey: hexToU8a(publicKeyHex),
         sign: (data, options?) => {
           const {r, s} = signer.sign(u8aToHex(data));
           const sigtype =
@@ -233,7 +244,10 @@ export class DOT implements Coin {
       ),
     );
     // @ts-ignore
-    const decorated = new Decorated(registry, data.metaData);
+    const decorated = new Decorated(
+      registry,
+      data.metaData || this.chain.metaData,
+    );
     const extrinsic = new GenericExtrinsic(
       registry,
       // @ts-ignore
