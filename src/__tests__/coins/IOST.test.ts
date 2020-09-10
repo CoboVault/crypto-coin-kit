@@ -11,6 +11,7 @@ const txData = {
   memo: '',
   amount: '1',
   timestamp: 1579152770678,
+  expiration: 300,
 };
 
 describe('Coin.IOST', () => {
