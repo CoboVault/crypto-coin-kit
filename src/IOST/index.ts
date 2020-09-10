@@ -100,7 +100,7 @@ export class IOST implements Coin {
     tx.amount_limit = [{token: '*', value: 'unlimited'}];
     tx.publisher = from;
     tx.time = txData.timestamp * 1e6;
-    tx.expiration = tx.time + (txData.expiration || 300) * 1e9;
+    tx.expiration = tx.time + (txData.expiration || 1800) * 1e9;
     tx.delay = 0;
     const hash = tx._publish_hash();
     return {tx, hash};

@@ -219,7 +219,7 @@ export class EOS implements Coin {
   };
 
   private getExpiration = (txHeader: Header) => {
-    const expireInSeconds = txHeader.expireInSeconds || 300;
+    const expireInSeconds = txHeader.expireInSeconds || 1800;
     return new Date(txHeader.time + expireInSeconds * 1000)
       .toISOString()
       .split('.')[0];
