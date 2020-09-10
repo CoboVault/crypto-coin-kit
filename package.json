@@ -1,6 +1,6 @@
 {
   "name": "crypto-coin-kit",
-  "version": "0.2.29",
+  "version": "0.2.30",
   "description": "crypto coin kit for common coins",
   "main": "./dist/index.js",
   "scripts": {
@@ -70,7 +70,6 @@
     "ethers": "^4.0.13",
     "hash.js": "^1.1.7",
     "hdkey": "^1.1.1",
-    "hsd": "^2.1.5",
     "human-standard-token-abi": "1.0.2",
     "iost": "https://github.com/cobowallet/iost.js#29449134337358bbd6765be268c0ea6592d4857e",
     "js-sha3": "^0.7.0",
