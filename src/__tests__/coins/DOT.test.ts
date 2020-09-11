@@ -76,12 +76,7 @@ describe('coins.DOT', () => {
     const txData = {
       value: 100000000000,
       dest: '5DUmuykcaNu6bVE9R7Ya25oPMw3GkYjYLM2P9b5L1FdoB7kf',
-      // polkadot: 0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3
-      // kusama: 0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe
-      // westend: 0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e
       blockHash:
-        '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-      genesisHash:
         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
       tip: 0,
       nonce: 3,
@@ -106,8 +101,6 @@ describe('coins.DOT', () => {
       value: 10000000000,
       dest: '16iM7BVPSvuJnjMW5T7rGWv4PTvgybD5sUS1zZyQkEf7DMHY',
       blockHash:
-        '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-      genesisHash:
         '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
       tip: 0,
       nonce: 2,
@@ -134,8 +127,6 @@ describe('coins.DOT', () => {
       dest: '16iM7BVPSvuJnjMW5T7rGWv4PTvgybD5sUS1zZyQkEf7DMHY',
       blockHash:
         '0x241c7db46d169fa643d38351b52bd183b6b250b2c5f1a20324406fee79f3b180',
-      genesisHash:
-        '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
       tip: 0,
       nonce: 3,
       implVersion: 0,
@@ -162,8 +153,6 @@ describe('coins.DOT', () => {
       dest: 'HzLd5m7Sj3Hac88Stgyz8wWYbRc2B7r74fMsJENgdyLfNTo',
       blockHash:
         '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-      genesisHash:
-        '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
       tip: 0,
       nonce: 0,
       implVersion: 0,
@@ -189,8 +178,6 @@ describe('coins.DOT', () => {
       dest: 'HzLd5m7Sj3Hac88Stgyz8wWYbRc2B7r74fMsJENgdyLfNTo',
       blockHash:
         '0xe177365bd86c2033883c8967e0e7f07961679dddd8195ee534071adfee8bee3e',
-      genesisHash:
-        '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
       tip: 0,
       nonce: 4,
       implVersion: 0,
@@ -218,12 +205,7 @@ describe('coins.DOT', () => {
     const txData = {
       value: 100000000000,
       dest: '5DUmuykcaNu6bVE9R7Ya25oPMw3GkYjYLM2P9b5L1FdoB7kf',
-      // polkadot: 0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3
-      // kusama: 0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe
-      // westend: 0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e
       blockHash:
-        '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-      genesisHash:
         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
       tip: 0,
       nonce: 3,
@@ -252,14 +234,9 @@ describe('coins.DOT', () => {
     const txData = {
       value: 100000000000,
       dest: '5DUmuykcaNu6bVE9R7Ya25oPMw3GkYjYLM2P9b5L1FdoB7kf',
-      // polkadot: 0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3
-      // kusama: 0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe
-      // westend: 0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e
       blockHash:
         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
       blockNumber: 0,
-      genesisHash:
-        '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
       tip: 0,
       nonce: 3,
       implVersion: 0,
@@ -277,108 +254,4 @@ describe('coins.DOT', () => {
       '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
     );
   });
-  // it('test api kusama', async () => {
-  //   const wsProvider = new WsProvider('wss://rpc.polkadot.io/');
-  //   const api = await ApiPromise.create({provider: wsProvider});
-  //   const transfer = api.tx.balances.transfer(
-  //     'EEWyMLHgwtemr48spFNnS3U2XjaYswqAYAbadx2jr9ppp4X',
-  //     100000000000,
-  //   );
-  //   const keyring = new Keyring({type: 'ed25519'});
-  //   const sr = createPair(
-  //     {toSS58: keyring.encodeAddress, type: 'ed25519'},
-  //     {publicKey: hexToU8a(edpub), secretKey: hexToU8a(edpri)},
-  //     {},
-  //   );
-  //   const signed = transfer.sign(sr, {nonce: 1});
-  //   console.log(signed.toHuman(true));
-  //   console.log(signed.toHex());
-  // });
-  // it('test offline kusama', () => {
-  //   const registry = getRegistry('Kusama', 'kusama', 2022);
-  //   const decorated = new Decorated(registry, metadata);
-  //   const tx = new GenericExtrinsic(
-  //     registry,
-  //     decorated.tx.balances.transfer(
-  //       'EEWyMLHgwtemr48spFNnS3U2XjaYswqAYAbadx2jr9ppp4X',
-  //       100000000000,
-  //     ),
-  //     {version: 4},
-  //   );
-  //   const keyring = new Keyring({type: 'ed25519'});
-  //   const sr = createPair(
-  //     {toSS58: keyring.encodeAddress, type: 'ed25519'},
-  //     {publicKey: hexToU8a(edpub), secretKey: hexToU8a(edpri)},
-  //     {},
-  //   );
-  //   const signed = tx.sign(sr, {
-  //     blockHash:
-  //       '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-  //     genesisHash:
-  //       '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-  //     nonce: 1,
-  //     runtimeVersion: {
-  //       apis: [],
-  //       authoringVersion: new BN(2),
-  //       implName: 'parity-kusama',
-  //       implVersion: new BN(0),
-  //       specName: 'kusama',
-  //       specVersion: new BN(2022),
-  //       transactionVersion: new BN(2),
-  //     },
-  //   });
-  //   console.log(signed.toHuman(true));
-  //   console.log(signed.toHex());
-  // });
-  // it('test api westend', async () => {
-  //   const api = await ApiPromise.create();
-  //   const transfer = api.tx.balances.transfer(
-  //       'EEWyMLHgwtemr48spFNnS3U2XjaYswqAYAbadx2jr9ppp4X',
-  //       100000000000,
-  //   );
-  //   const keyring = new Keyring({type: 'ed25519'});
-  //   const sr = createPair(
-  //       {toSS58: keyring.encodeAddress, type: 'ed25519'},
-  //       {publicKey: hexToU8a(edpub), secretKey: hexToU8a(edpri)},
-  //       {},
-  //   );
-  //   const signed = transfer.sign(sr, {nonce: 1});
-  //   console.log(signed.toHex());
-  // })
-  // it('test offline westend', () => {
-  //   const registry = getRegistry('Westend', 'westend', 41);
-  //   const decorated = new Decorated(registry, metadata);
-  //   const tx = new GenericExtrinsic(
-  //       registry,
-  //       decorated.tx.balances.transfer(
-  //           'EEWyMLHgwtemr48spFNnS3U2XjaYswqAYAbadx2jr9ppp4X',
-  //           100000000000,
-  //       ),
-  //       {version: 4},
-  //   );
-  //   const keyring = new Keyring({type: 'ed25519'});
-  //   const sr = createPair(
-  //       {toSS58: keyring.encodeAddress, type: 'ed25519'},
-  //       {publicKey: hexToU8a(edpub), secretKey: hexToU8a(edpri)},
-  //       {},
-  //   );
-  //   const signed = tx.sign(sr, {
-  //     blockHash:
-  //         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-  //     genesisHash:
-  //         '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-  //     nonce: 1,
-  //     runtimeVersion: {
-  //       apis: [],
-  //       authoringVersion: new BN(2),
-  //       implName: 'parity-westend',
-  //       implVersion: new BN(0),
-  //       specName: 'westend',
-  //       specVersion: new BN(41),
-  //       transactionVersion: new BN(2),
-  //     },
-  //   });
-  //   console.log(signed);
-  //   console.log(signed.toHex());
-  // });
 });
