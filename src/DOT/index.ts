@@ -48,7 +48,6 @@ export interface TxData {
   blockHash: string;
   blockNumber: number;
   eraPeriod?: number;
-  genesisHash: string;
   nonce: number;
   tip?: number;
   transactionVersion: number;
@@ -92,6 +91,7 @@ type Chain = {
   specName: 'kusama' | 'polkadot' | 'westend';
   implName: 'parity-kusama' | 'parity-polkadot' | 'parity-westend';
   metaData: string;
+  genesisHash: string;
 };
 
 const chains: {
@@ -104,6 +104,8 @@ const chains: {
     implName: 'parity-polkadot',
     specName: 'polkadot',
     metaData: polkadot,
+    genesisHash:
+      '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
   },
   Kusama: {
     prefix: SS58Prefix.KUSAMA,
@@ -112,6 +114,8 @@ const chains: {
     specName: 'kusama',
     implName: 'parity-kusama',
     metaData: kusama,
+    genesisHash:
+      '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
   },
   Westend: {
     prefix: SS58Prefix.WESTEND,
@@ -120,6 +124,8 @@ const chains: {
     specName: 'westend',
     implName: 'parity-westend',
     metaData: westend,
+    genesisHash:
+      '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
   },
 };
 
@@ -192,7 +198,7 @@ export class DOT implements Coin {
       },
       {
         blockHash: data.blockHash,
-        genesisHash: data.genesisHash,
+        genesisHash: this.chain.genesisHash,
         nonce: data.nonce,
         era,
         runtimeVersion: {
@@ -267,7 +273,7 @@ export class DOT implements Coin {
       {
         blockHash: data.blockHash,
         era: new Uint8Array([0]),
-        genesisHash: data.genesisHash,
+        genesisHash: this.chain.genesisHash,
         method: extrinsic.method.toHex(),
         nonce: data.nonce,
         specVersion: data.specVersion,
