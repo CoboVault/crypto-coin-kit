@@ -210,6 +210,7 @@ export class DOT implements Coin {
           specVersion: new BN(data.specVersion),
           transactionVersion: new BN(data.transactionVersion),
         },
+        tip: data.tip || 0,
       },
     );
     const signedTx = signed.toHex();
