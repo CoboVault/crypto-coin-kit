@@ -72,6 +72,7 @@
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "1.0.2",
     "iost": "https://github.com/cobowallet/iost.js#29449134337358bbd6765be268c0ea6592d4857e",
+    "js-conflux-sdk": "^1.0.0-alpha.4",
     "js-sha3": "^0.7.0",
     "lodash.padstart": "4.6.1",
     "ripple-address-codec": "^2.0.1",
