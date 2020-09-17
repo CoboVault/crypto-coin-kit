@@ -1,9 +1,12 @@
 import {Coin, GenerateTransactionResult} from '../Common/coin';
-// @ts-ignore
-import {sha3, publicKeyToAddress} from 'js-conflux-sdk/src/util/sign';
+import {
+  sha3,
+  publicKeyToAddress,
+  checksumAddress,
+  // @ts-ignore
+} from 'js-conflux-sdk/src/util/sign';
 const format = require('js-conflux-sdk/src/util/format');
 const Transaction = require('js-conflux-sdk/src/Transaction');
-const Message = require('js-conflux-sdk/src/Message');
 
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 
@@ -31,7 +34,14 @@ export class CFX implements Coin {
   };
 
   public isAddressValid = (address: string) => {
-    return true;
+    const hex = format.buffer(address);
+    const expect_addr = format.address(hex);
+    const expect_chsum_addr = checksumAddress(expect_addr);
+    const right_format =
+      address === expect_addr || address === expect_chsum_addr;
+
+    const right_header = 0x10 === (hex[0] & 0xf0);
+    return right_format && right_header;
   };
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {

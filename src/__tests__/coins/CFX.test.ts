@@ -51,6 +51,24 @@ describe('coin.CFX', () => {
     expect(cfx.generateAddress(pubkey)).toBe(addr);
   });
 
+  it('should valid an address ', () => {
+    [
+      '0x1Cad0B19bB29d4674531d6f115237E16afce377C',
+      '0x1cad0b19bb29d4674531d6f115237e16afce377c',
+      '0x18416599fDdf76126eFfa8DB4880C3A24Fe2152b',
+      '0x19c742cec42b9e4eff3b84cdedcde2f58a36f44f',
+      '0x176c45928d7c26b0175dec8bf6051108563c62c5',
+    ].forEach(s => expect(cfx.isAddressValid(s)).toBeTruthy());
+
+    [
+      '0x1cad0b19bb29d4674531d6f115237e16afce377C',
+      '0x1cad0B19bB29d4674531d6f115237E16afce377C',
+      '0x2cad0b19bb29d4674531d6f115237e16afce377c',
+      '0xfcad0b19bb29d4674531d6f115237e16afce377c',
+      '0xecad0b19bb29d4674531d6f115237e16afce377c',
+    ].forEach(s => expect(cfx.isAddressValid(s)).toBeFalsy());
+  });
+
   it('should sign a tx sync', () => {
     const {txId, txHex} = cfx.generateTransactionSync(
       data1,
