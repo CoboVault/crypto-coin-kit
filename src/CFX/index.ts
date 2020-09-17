@@ -5,8 +5,10 @@ import {
   checksumAddress,
   // @ts-ignore
 } from 'js-conflux-sdk/src/util/sign';
-const format = require('js-conflux-sdk/src/util/format');
-const Transaction = require('js-conflux-sdk/src/Transaction');
+// @ts-ignore
+import format from 'js-conflux-sdk/src/util/format';
+// @ts-ignore
+import Transaction from 'js-conflux-sdk/src/Transaction';
 
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 

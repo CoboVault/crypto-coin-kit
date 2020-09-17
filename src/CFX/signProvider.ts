@@ -1,5 +1,6 @@
 import {Result} from '../Common/sign';
-const format = require('js-conflux-sdk/src/util/format');
+// @ts-ignore
+import format from 'js-conflux-sdk/src/util/format';
 // @ts-ignore
 import {ecdsaSign} from 'js-conflux-sdk/src/util/sign';
 
