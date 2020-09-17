@@ -94,6 +94,29 @@ describe('coins.DOT', () => {
     expect(reg.test(result.txHex)).toBe(true);
   });
 
+  it('should generate transaction with tip', () => {
+    const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
+    const txData = {
+      value: 100000000000,
+      dest: '5DUmuykcaNu6bVE9R7Ya25oPMw3GkYjYLM2P9b5L1FdoB7kf',
+      blockHash:
+        '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
+      tip: 9000000000,
+      nonce: 3,
+      implVersion: 0,
+      authoringVersion: 2,
+      specVersion: 41,
+      transactionVersion: 2,
+      metaData: westend,
+      blockNumber: 0,
+    };
+    const result = wnd.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+      '0x4902848cba3d59242abc565c99a47c3afaf23668f2e1b1a76a38ab71868ae2dafca96301([a-f0-9]+)000c07001a71180204003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+    );
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
   it('should generate dot transaction', () => {
     //https://polkascan.io/polkadot/event/1515777-2
     const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
