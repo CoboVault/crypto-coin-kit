@@ -1,4 +1,3 @@
-import {Coin, GenerateTransactionResult} from '../Common/coin';
 import {
   sha3,
   publicKeyToAddress,
@@ -11,6 +10,7 @@ import format from 'js-conflux-sdk/src/util/format';
 import Transaction from 'js-conflux-sdk/src/Transaction';
 
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
+import {Coin} from '../Common/coin';
 
 export interface TxData {
   nonce: string | number;
@@ -50,9 +50,7 @@ export class CFX implements Coin {
     const tx = new Transaction(data);
     const hash = sha3(tx.encode(false));
     const sig = signer.sign(format.hex(hash));
-    tx.r = sig.r;
-    tx.s = sig.s;
-    tx.v = sig.recId;
+    Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
     return {
       txId: tx.hash,
       txHex: tx.serialize(),
@@ -63,9 +61,7 @@ export class CFX implements Coin {
     const tx = new Transaction(data);
     const hash = sha3(tx.encode(false));
     const sig = await signer.sign(format.hex(hash));
-    tx.r = sig.r;
-    tx.s = sig.s;
-    tx.v = sig.recId;
+    Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
     return {
       txId: tx.hash,
       txHex: tx.serialize(),
