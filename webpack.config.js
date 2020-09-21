@@ -18,6 +18,7 @@ module.exports = {
     LTC: './src/LTC/index.ts',
     IOST: './src/IOST/index.ts',
     TRON: './src/TRON/index.ts',
+    CFX: './src/CFX/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
