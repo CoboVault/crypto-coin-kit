@@ -8,19 +8,24 @@ import {
 import format from 'js-conflux-sdk/src/util/format';
 // @ts-ignore
 import Transaction from 'js-conflux-sdk/src/Transaction';
+// @ts-ignore
+import Contract from 'js-conflux-sdk/src/Contract';
 
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 import {Coin} from '../Common/coin';
+// @ts-ignore
+import abi from 'human-standard-token-abi';
 
 export interface TxData {
   nonce: string | number;
-  gasPrice: string | number;
-  gas: string | number;
-  to?: string;
-  value?: string | number;
+  gasPrice: string;
+  gas: string;
+  to: string;
+  value: string;
   storageLimit: string | number;
   epochHeight: string | number;
   chainId?: string | number;
+  contractAddress?: string; // optional for conflux token
 }
 
 export class CFX implements Coin {
@@ -47,7 +52,7 @@ export class CFX implements Coin {
   };
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
-    const tx = new Transaction(data);
+    const tx = this.constructTransaction(data);
     const hash = sha3(tx.encode(false));
     const sig = signer.sign(format.hex(hash));
     Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
@@ -58,7 +63,7 @@ export class CFX implements Coin {
   };
 
   public generateTransaction = async (data: TxData, signer: SignProvider) => {
-    const tx = new Transaction(data);
+    const tx = this.constructTransaction(data);
     const hash = sha3(tx.encode(false));
     const sig = await signer.sign(format.hex(hash));
     Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
@@ -87,5 +92,45 @@ export class CFX implements Coin {
       format.buffer(sigResult.recId),
     ]);
     return format.signature(buffer);
+  };
+
+  protected constructTransaction = (data: TxData) => {
+    return new Transaction(this.formatTxData(data));
+  };
+
+  protected formatTxData = (tx: TxData) => {
+    let inputData = '0x';
+    let toAddress = tx.to;
+    let transferValue = tx.value;
+    if (tx.contractAddress) {
+      inputData = this.generateTokenTransferData(
+        tx.to,
+        tx.value,
+        tx.contractAddress,
+      );
+      toAddress = tx.contractAddress;
+      transferValue = '0';
+    }
+
+    return {
+      nonce: tx.nonce,
+      gasPrice: tx.gasPrice,
+      gas: tx.gas,
+      to: toAddress,
+      value: transferValue,
+      storageLimit: tx.storageLimit,
+      epochHeight: tx.epochHeight,
+      chainId: tx.chainId,
+      data: inputData,
+    };
+  };
+
+  public generateTokenTransferData = (
+    to: string,
+    value: string,
+    contractAddress: string,
+  ) => {
+    const contract = new Contract({abi, address: contractAddress});
+    return contract.transfer(to, value).data;
   };
 }
