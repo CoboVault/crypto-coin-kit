@@ -11,7 +11,6 @@ export const SignProviderWithPrivateKey = (privateKey: string) => {
         const sigObj = secp256k1.sign(input, privKey);
         const r = sigObj.signature.slice(0, 32).toString('hex');
         const s = sigObj.signature.slice(32, 64).toString('hex');
-        console.log(sigObj);
         return {
           r,
           s,
