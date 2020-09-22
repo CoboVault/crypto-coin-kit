@@ -1,20 +1,17 @@
-import {
-  sha3,
-  publicKeyToAddress,
-  checksumAddress,
-  // @ts-ignore
-} from 'js-conflux-sdk/src/util/sign';
 // @ts-ignore
-import format from 'js-conflux-sdk/src/util/format';
+import {util} from 'js-conflux-sdk';
 // @ts-ignore
-import Transaction from 'js-conflux-sdk/src/Transaction';
+import {Transaction} from 'js-conflux-sdk';
 // @ts-ignore
-import Contract from 'js-conflux-sdk/src/Contract';
-
+import {Conflux} from 'js-conflux-sdk';
+import sha3 from 'js-sha3';
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 import {Coin} from '../Common/coin';
 // @ts-ignore
 import abi from 'human-standard-token-abi';
+
+const {publicKeyToAddress, checksumAddress} = util.sign;
+const {format} = util;
 
 export interface TxData {
   nonce: string | number;
@@ -53,9 +50,13 @@ export class CFX implements Coin {
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
     const tx = this.constructTransaction(data);
-    const hash = sha3(tx.encode(false));
-    const sig = signer.sign(format.hex(hash));
-    Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
+    const hash = sha3.keccak_256(tx.encode(false));
+    const sig = signer.sign(hash);
+    Object.assign(tx, {
+      r: format.hex(`0x${sig.r}`),
+      s: format.hex(`0x${sig.s}`),
+      v: sig.recId,
+    });
     return {
       txId: tx.hash,
       txHex: tx.serialize(),
@@ -64,9 +65,13 @@ export class CFX implements Coin {
 
   public generateTransaction = async (data: TxData, signer: SignProvider) => {
     const tx = this.constructTransaction(data);
-    const hash = sha3(tx.encode(false));
-    const sig = await signer.sign(format.hex(hash));
-    Object.assign(tx, {r: sig.r, s: sig.s, v: sig.recId});
+    const hash = sha3.keccak_256(tx.encode(false));
+    const sig = await signer.sign(hash);
+    Object.assign(tx, {
+      r: format.hex(`0x${sig.r}`),
+      s: format.hex(`0x${sig.s}`),
+      v: sig.recId,
+    });
     return {
       txId: tx.hash,
       txHex: tx.serialize(),
@@ -74,22 +79,24 @@ export class CFX implements Coin {
   };
 
   public signMessageSync = (message: string, signer: SignProviderSync) => {
-    const hash = sha3(Buffer.from(message));
-    const sig = signer.sign(format.hex(hash));
+    const hash = sha3.keccak_256(Buffer.from(message));
+    const sig = signer.sign(hash);
     return this.buildSignedMessage(sig);
   };
 
   public signMessage = async (message: string, signer: SignProvider) => {
-    const hash = sha3(Buffer.from(message));
-    const sig = await signer.sign(format.hex(hash));
+    const hash = sha3.keccak_256(Buffer.from(message));
+    const sig = await signer.sign(hash);
     return this.buildSignedMessage(sig);
   };
 
   private buildSignedMessage = (sigResult: Result): string => {
+    const rev_buffer = Buffer.alloc(1);
+    rev_buffer.writeUInt8(sigResult.recId, 0);
     const buffer = Buffer.concat([
-      format.buffer(sigResult.r),
-      format.buffer(sigResult.s),
-      format.buffer(sigResult.recId),
+      Buffer.from(sigResult.r, 'hex'),
+      Buffer.from(sigResult.s, 'hex'),
+      rev_buffer,
     ]);
     return format.signature(buffer);
   };
@@ -130,7 +137,7 @@ export class CFX implements Coin {
     value: string,
     contractAddress: string,
   ) => {
-    const contract = new Contract({abi, address: contractAddress});
+    const contract = new Conflux().Contract({abi, address: contractAddress});
     return contract.transfer(to, value).data;
   };
 }
