@@ -1,6 +1,6 @@
 {
   "name": "crypto-coin-kit",
-  "version": "0.2.33",
+  "version": "0.2.34",
   "description": "crypto coin kit for common coins",
   "main": "./dist/index.js",
   "scripts": {
@@ -85,6 +85,7 @@
     "safe-buffer": "5.1.2",
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
+    "superagent": "^6.1.0",
     "tweetnacl": "^1.0.1",
     "typeforce": "^1.11.3",
     "web3": "0.20.6",
