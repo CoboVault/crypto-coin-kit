@@ -93,7 +93,7 @@ class Parser {
     } else if (lodash.isPlainObject(arg)) {
       const keyToParser = lodash.mapValues(arg, v => new this.constructor(v));
       arg = objectParser(keyToParser);
-    } else if (!lodash.isFunction(arg)) {
+    } else if (typeof arg !== 'function') {
       arg = valueParser(arg);
     }
     return callable(this, arg);
