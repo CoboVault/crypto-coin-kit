@@ -1,7 +1,7 @@
 const lodash = require('lodash');
 
 function callable(object, func) {
-  if (!lodash.isFunction(func)) {
+  if (typeof func !== 'function') {
     throw new Error('except to be function');
   }
 
