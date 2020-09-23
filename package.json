@@ -12,7 +12,8 @@
     "build:all": "tsc -p ./tsconfig.json; webpack --config webpack.config.js; webpack --config webpack.config.eos.js",
     "build:dot": "tsc -p ./tsconfig.dot.json; webpack --config webpack.config.dot.js",
     "pub": "node publish.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "beforecommit": "pretty-quick --staged && yarn lint --fix && yarn tsc:lint && yarn test"
   },
   "author": "",
   "license": "ISC",
@@ -54,6 +55,7 @@
     "@tronscan/client": "cobowallet/tronscan-node-client",
     "bchaddrjs": "^0.4.4",
     "bcrypto": "^5.2.0",
+    "big.js": "^5.2.2",
     "bignumber.js": "^9.0.0",
     "bip66": "^1.1.0",
     "bitcoinjs-lib": "^5.2.0",
@@ -72,8 +74,8 @@
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "1.0.2",
     "iost": "https://github.com/cobowallet/iost.js#29449134337358bbd6765be268c0ea6592d4857e",
-    "js-conflux-sdk": "^1.0.0-alpha.4",
     "js-sha3": "^0.7.0",
+    "jsbi": "^3.1.4",
     "lodash.padstart": "4.6.1",
     "ripple-address-codec": "^2.0.1",
     "ripple-binary-codec": "^0.2.1",
@@ -88,12 +90,6 @@
     "web3": "0.20.6",
     "wif": "2.0.6",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn lint --fix && yarn tsc:lint && yarn test",
-      "pre-rebase": "pretty-quick --staged && yarn lint && yarn tsc:lint && yarn test"
-    }
   },
   "files": [
     "lib/**/*"

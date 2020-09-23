@@ -1,11 +1,11 @@
-import {CFX, TxData} from '../../CFX';
+import {TCFX, TxData} from '../../TCFX';
 import {
   SignProviderWithPrivateKey,
   SignProviderWithPrivateKeySync,
-} from '../../CFX/signProvider';
+} from '../../TCFX/signProvider';
 
 describe('coin.CFX', () => {
-  const cfx = new CFX();
+  const cfx = new TCFX();
 
   const privkey =
     '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
