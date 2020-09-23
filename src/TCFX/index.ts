@@ -1,9 +1,6 @@
 // @ts-ignore
-import {util} from 'js-conflux-sdk';
+import {Transaction, Conflux, util} from './lib';
 // @ts-ignore
-import {Transaction} from 'js-conflux-sdk';
-// @ts-ignore
-import {Conflux} from 'js-conflux-sdk';
 import sha3 from 'js-sha3';
 import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 import {Coin} from '../Common/coin';
@@ -25,7 +22,7 @@ export interface TxData {
   contractAddress?: string; // optional for conflux token
 }
 
-export class CFX implements Coin {
+export class TCFX implements Coin {
   public chainId: number;
 
   constructor(chainId?: number) {
@@ -38,14 +35,18 @@ export class CFX implements Coin {
   };
 
   public isAddressValid = (address: string) => {
-    const hex = format.buffer(address);
-    const expect_addr = format.address(hex);
-    const expect_chsum_addr = checksumAddress(expect_addr);
-    const right_format =
-      address === expect_addr || address === expect_chsum_addr;
+    try {
+      const hex = format.buffer(address);
+      const expect_addr = format.address(hex);
+      const expect_chsum_addr = checksumAddress(expect_addr);
+      const right_format =
+        address === expect_addr || address === expect_chsum_addr;
 
-    const right_header = 0x10 === (hex[0] & 0xf0);
-    return right_format && right_header;
+      const right_header = 0x10 === (hex[0] & 0xf0);
+      return right_format && right_header;
+    } catch (e) {
+      return false;
+    }
   };
 
   public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
@@ -102,6 +103,7 @@ export class CFX implements Coin {
   };
 
   protected constructTransaction = (data: TxData) => {
+    // @ts-ignore
     return new Transaction(this.formatTxData(data));
   };
 
@@ -138,6 +140,7 @@ export class CFX implements Coin {
     contractAddress: string,
   ) => {
     const contract = new Conflux().Contract({abi, address: contractAddress});
+    //@ts-ignore
     return contract.transfer(to, value).data;
   };
 }

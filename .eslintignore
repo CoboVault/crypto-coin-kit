@@ -21,6 +21,5 @@ webpack.config.dot.js
 
 .eslintrc.js
 
-src/app/services/CryptoModules/Vault/protocols/static-proto/proto.d.ts
-
+src/TCFX/lib
 packed
