@@ -34,9 +34,6 @@ export interface RawTxData {
   to: string;
   nonce: string;
   data: string;
-  v?: string;
-  r?: string;
-  s?: string;
   value: string;
 }
 
@@ -122,7 +119,6 @@ export class ETH implements Coin {
     if ('data' in data) {
       return new Transaction(data, {chain: this.chainId});
     } else {
-      console.log(this.formatTxData(data))
       return new Transaction(this.formatTxData(data), {chain: this.chainId});
     }
   };
