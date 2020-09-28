@@ -1,4 +1,4 @@
-import {ETH, TxData} from '../../ETH';
+import {ETH, RawTxData, TxData} from '../../ETH';
 import {
   SignProviderWithPrivateKey,
   SignProviderWithPrivateKeySync,
@@ -115,6 +115,32 @@ describe('coin.ETH', () => {
     );
     expect(txHex).toBe(
       '0xf8aa81ca84b2d05e008302166094ea26c4ac16d4a5a106820bc8aee85fd0b7b2b66480b844a9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a764000025a0068b92d2cafd9941d7f5d4e128b59b33197014057033b40a83c47b373c089b63a06cf04a6e27d0dc2362d146b0f9a36bd3f4f1aea651017934f9f3537987b15fae',
+    );
+  });
+
+  //https://etherscan.io/tx/0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f
+  it('should generate right erc20 tx by raw data', () => {
+    const erc20Tx: RawTxData = {
+      data: '0xa9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a7640000',
+      to: '0xEA26c4aC16D4a5A106820BC8AEE85fd0b7b2b664',
+      value: '0x',
+      gasPrice: '0xb2d05e00',
+      gasLimit: '0x21660',
+      nonce: '0xca',
+    };
+
+    const {txId, txHex} = eth.generateTransactionSync(
+        erc20Tx,
+        SignProviderWithPrivateKeySync(
+            '1e799db5ff3e2df04775afd82bdb3b02302f4d2cdab904cda426032d35768aed',
+        ),
+    );
+
+    expect(txId).toBe(
+        '0xde664318df3576d68aded7f70f30ab712d058b71916cc105fc33d5e53fcbed5f',
+    );
+    expect(txHex).toBe(
+        '0xf8aa81ca84b2d05e008302166094ea26c4ac16d4a5a106820bc8aee85fd0b7b2b66480b844a9059cbb000000000000000000000000eeacb7a5e53600c144c0b9839a834bb4b39e540c0000000000000000000000000000000000000000000000000de0b6b3a764000025a0068b92d2cafd9941d7f5d4e128b59b33197014057033b40a83c47b373c089b63a06cf04a6e27d0dc2362d146b0f9a36bd3f4f1aea651017934f9f3537987b15fae',
     );
   });
 

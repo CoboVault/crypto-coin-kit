@@ -27,6 +27,16 @@ export interface TxData {
   memo?: string;
   contractAddress?: string; // optional,required for erc20 token
 }
+
+export interface RawTxData {
+  gasLimit: string;
+  gasPrice: string;
+  to: string;
+  nonce: string;
+  data: string;
+  value: string;
+}
+
 const MAINNET_CHAIN_ID = 1;
 export class ETH implements Coin {
   public chainId: number;
@@ -35,7 +45,10 @@ export class ETH implements Coin {
     this.chainId = chainId || MAINNET_CHAIN_ID;
   }
 
-  public generateTransactionSync = (data: TxData, signer: SignProviderSync) => {
+  public generateTransactionSync = (
+    data: TxData | RawTxData,
+    signer: SignProviderSync,
+  ) => {
     const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
     const sig = signer.sign(hash.toString('hex'));
@@ -43,7 +56,10 @@ export class ETH implements Coin {
     return this.extractSignedResult(signedTx);
   };
 
-  public generateTransaction = async (data: TxData, signer: SignProvider) => {
+  public generateTransaction = async (
+    data: TxData | RawTxData,
+    signer: SignProvider,
+  ) => {
     const tx = this.constructTransaction(data);
     const hash = tx.hash(false);
     const sig = await signer.sign(hash.toString('hex'));
@@ -99,8 +115,12 @@ export class ETH implements Coin {
     }
   };
 
-  protected constructTransaction = (data: TxData) => {
-    return new Transaction(this.formatTxData(data), {chain: this.chainId});
+  protected constructTransaction = (data: TxData | RawTxData) => {
+    if ('data' in data) {
+      return new Transaction(data, {chain: this.chainId});
+    } else {
+      return new Transaction(this.formatTxData(data), {chain: this.chainId});
+    }
   };
 
   protected formatTxData = (tx: TxData) => {
