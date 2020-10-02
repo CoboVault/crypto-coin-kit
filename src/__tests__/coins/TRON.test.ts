@@ -11,7 +11,7 @@ const txData: TxData = {
   token: 'TRX',
   from: 'TTiYGxb7YNfUQJAnLFMd1pvmoywM7PxiG2',
   to: 'TXhtYr8nmgiSp3dY3cSfiKBjed3zN8teHS',
-  value: 2000000,
+  value: '2000000',
   fee: 100000,
   latestBlock: {
     hash: '36f6939bb2fa89e8ec27b63954f5913d143d2fa18f9bd93ebcb57055ecb2057c',
@@ -22,7 +22,7 @@ const txData: TxData = {
 const txDataTRC10: TxData = {
   to: 'TKCsXtfKfH2d6aEaQCctybDC9uaA3MSj2h',
   from: 'TXhtYr8nmgiSp3dY3cSfiKBjed3zN8teHS',
-  value: 1,
+  value: '1',
   memo: '',
   fee: 100000,
   latestBlock: {
@@ -42,7 +42,20 @@ const txDataTRC20: TxData = {
   contractAddress: 'TBAo7PNyKo94YWUq1Cs2LBFxkhTphnAE4T',
   to: 'TQAg2T2vJcHAX9sbKTEoaoWzt512yUjiFD',
   from: 'TUAhxw3MgMyR9rhyrMDnVJbo3bky1GSUrH',
-  value: 1000000,
+  value: '1000000',
+  fee: 1,
+  latestBlock: {
+    hash: '315f1ee0e082a1dae1b9de559665c6714f3b8667f69cd5e44466ba6e34d37aef',
+    number: 1936,
+    timestamp: 1527682440000,
+  },
+};
+
+const txDataTRC20_1: TxData = {
+  contractAddress: 'TBAo7PNyKo94YWUq1Cs2LBFxkhTphnAE4T',
+  to: 'TQAg2T2vJcHAX9sbKTEoaoWzt512yUjiFD',
+  from: 'TUAhxw3MgMyR9rhyrMDnVJbo3bky1GSUrH',
+  value: '3000000000000000000000',
   fee: 1,
   latestBlock: {
     hash: '315f1ee0e082a1dae1b9de559665c6714f3b8667f69cd5e44466ba6e34d37aef',
@@ -112,6 +125,18 @@ describe('coin.TRON', () => {
     );
     expect(tx.txHex).toBe(
       '0ad4010a0207902208e1b9de559665c6714080c49789bb2c5aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541c79f045e4d48ad8dae00e6a6714dae1e000adfcd1215410d292c98a5eca06c2085fff993996423cf66c93b2244a9059cbb0000000000000000000000009bbce520d984c3b95ad10cb4e32a9294e6338da300000000000000000000000000000000000000000000000000000000000f424070c0b6e087bb2c90018094ebdc031241549501a7967a6d023b9dca4da164fa73b4da29b8583e8963ee4fff1f7703ac4156abf2836f562ea9b6e1257bce7364076a3cd69cd459da8c8abe96180f9c566f01',
+    );
+  });
+
+  it('should generate signed large amount TRC20 token', async () => {
+    const tx = await tron.generateTransaction(
+        txDataTRC20_1,
+        signWithPrivateKey(
+            '986e593a779463e5d15fba95939f22d48736ccac90d4d451942cdc1047757f06',
+        ),
+    );
+    expect(tx.txHex).toBe(
+        '0ad4010a0207902208e1b9de559665c6714080c49789bb2c5aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541c79f045e4d48ad8dae00e6a6714dae1e000adfcd1215410d292c98a5eca06c2085fff993996423cf66c93b2244a9059cbb0000000000000000000000009bbce520d984c3b95ad10cb4e32a9294e6338da30000000000000000000000000000000000000000000000a2a15d09519be0000070c0b6e087bb2c90018094ebdc03124186888c5ab8d0f8d96090703f85069caea61ac13cf71c5ff7d04727a1ab0fb2ba73924a5902b58b82c9195cc1e1ce7697dbc15df74d7e947d49f98ff831c52e9d00',
     );
   });
 

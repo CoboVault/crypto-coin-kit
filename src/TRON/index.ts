@@ -49,7 +49,7 @@ export interface TxData {
   from: string;
   to: string;
   memo?: string;
-  value: number;
+  value: string;
   latestBlock: LatestBlock;
   override?: Override;
   fee: number;
@@ -268,7 +268,7 @@ export class TRON implements Coin {
     return this.refWithLatestBlock(tx, txData.latestBlock, true);
   };
 
-  private composeTRC20Data = (to: string, value = 0) => {
+  private composeTRC20Data = (to: string, value = '0') => {
     const functionSelector = 'transfer(address,uint256)';
     const types = ['address', 'uint256'];
     const toAddress = bs58check
