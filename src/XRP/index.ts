@@ -123,4 +123,50 @@ export class XRP implements Coin {
 
     return hash256(buffer).toString('hex');
   };
+
+  public generateTransactionFromJson = async (
+      txJson: any,
+      keyProvider: KeyProvider,
+  ): Promise<GenerateTransactionResult> => {
+    const {unsignedTx, unsignedTxJson} = this.generateUnsignedTxFromJson(
+        txJson,
+        keyProvider.publicKey,
+    );
+    const signature = await keyProvider.sign(unsignedTx);
+    return this.getSignedTx(unsignedTxJson, signature);
+  };
+
+  public generateTransactionFromJsonSync =  (
+      txJson: any,
+      keyProvider: KeyProviderSync,
+  ): GenerateTransactionResult => {
+    const {unsignedTx, unsignedTxJson} = this.generateUnsignedTxFromJson(
+        txJson,
+        keyProvider.publicKey,
+    );
+    const signature = keyProvider.sign(unsignedTx);
+    return this.getSignedTx(unsignedTxJson, signature);
+  };
+
+  private generateUnsignedTxFromJson = (txJson: object, signingPubKey: string) => {
+    const txJsonForSigning = {
+      ...txJson,
+      SigningPubKey: signingPubKey.toUpperCase(),
+    };
+    const txHex = Buffer.from(
+        binary.encodeForSigning(txJsonForSigning),
+        'hex',
+    );
+    const unsignedTx = Buffer.from(
+        hashjs
+            .sha512()
+            .update(txHex)
+            .digest()
+            .slice(0, 32),
+    ).toString('hex');
+    return {
+      unsignedTx,
+      unsignedTxJson: txJsonForSigning,
+    };
+  };
 }
