@@ -3,6 +3,8 @@
  */
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const WebpackGitHash = require('webpack-git-hash');
+
 
 module.exports = {
   entry: {
@@ -40,11 +42,14 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: '[name].bundle_[hash].js',
+    filename: '[name].bundle_[githash].js',
     libraryTarget: 'umd',
     // library: ['cryptoCoinKit', '[name]'],
     path: path.resolve(__dirname, 'packed/subBundle'),
   },
+  plugins: [
+    new WebpackGitHash()
+  ],
   optimization: {
     minimize: true,
     minimizer: [
