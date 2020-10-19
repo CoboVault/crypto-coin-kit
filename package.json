@@ -41,7 +41,8 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.9.7",
     "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-git-hash": "^1.0.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
