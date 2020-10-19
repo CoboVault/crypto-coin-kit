@@ -100,7 +100,7 @@ describe('coin.XRP', () => {
       });
     });
 
-    it('generate “TrustSet” Transaction From Json', async () => {
+    it('generate "TrustSet" Transaction From Json', async () => {
       const text = '{"Account":"rL5BYSLd89uzj4i4J47iLQg9HwmeXE7eCt","Fee":"12","Flags":2147614720,"LimitAmount":{"currency":"USD","issuer":"rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq","value":"999999999"},"Sequence":14,"TransactionType":"TrustSet"}';
       var obj = JSON.parse(text);
       const tx = await xrp.generateTransactionFromJson(
@@ -118,7 +118,7 @@ describe('coin.XRP', () => {
         });
     });
 
-    it('generate “OfferCreate” Transaction From Json', async () => {
+    it('generate "OfferCreate" Transaction From Json', async () => {
       const text = '{"Account":"rL5BYSLd89uzj4i4J47iLQg9HwmeXE7eCt","Fee":"12","Flags":2148139008,"Sequence":17,"TakerGets":"4065000","TakerPays":{"currency":"USD","issuer":"rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq","value":"0.970864"},"TransactionType":"OfferCreate"}'
       var obj = JSON.parse(text);
       const tx = await xrp.generateTransactionFromJson(
