@@ -267,10 +267,10 @@ export class BTC implements UtxoCoin {
     }
   }
 
-  public async generateTransaction(txData: TxData, signers: KeyProvider[]) {
+  public async generateTransaction(txData: TxData, signers: KeyProvider[], disableLargeFee = true) {
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
-      .addInputsForPsbt(txData)
+      .addInputsForPsbt(txData, disableLargeFee)
       .addOutputForPsbt(txData)
       .getPsbt();
 
@@ -298,10 +298,10 @@ export class BTC implements UtxoCoin {
     return this.extractTx(psbt);
   };
 
-  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[]) {
+  public generateTransactionSync(txData: TxData, signers: KeyProviderSync[], disableLargeFee= true) {
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
-      .addInputsForPsbt(txData)
+      .addInputsForPsbt(txData, disableLargeFee)
       .addOutputForPsbt(txData)
       .getPsbt();
     if (txData.locktime) {
@@ -407,10 +407,10 @@ export class BTC implements UtxoCoin {
     return `${r}${s}`;
   };
 
-  public generatePsbt = (txData: TxData): string => {
+  public generatePsbt = (txData: TxData, disableLargeFee= true): string => {
     const psbtBuilder = new PsbtBuilder(this.network);
     const psbt = psbtBuilder
-      .addInputsForPsbt(txData)
+      .addInputsForPsbt(txData, disableLargeFee)
       .addOutputForPsbt(txData)
       .getPsbt();
     return psbt.toBase64();

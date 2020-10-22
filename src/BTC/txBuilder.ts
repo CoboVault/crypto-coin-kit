@@ -29,8 +29,8 @@ export default class PsbtBuilder {
     this.psbt = new bitcoin.Psbt({network});
   }
 
-  public addInputsForPsbt = (txData: TxData) => {
-    if (this.verifyInput(txData)) {
+  public addInputsForPsbt = (txData: TxData, disableLargeFee = true) => {
+    if (this.verifyInput(txData, disableLargeFee)) {
       txData.inputs.forEach(eachInput => {
         return this.addInputForPsbt(eachInput);
       });
