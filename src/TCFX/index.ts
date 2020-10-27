@@ -26,7 +26,7 @@ export class TCFX implements Coin {
   public chainId: number;
 
   constructor(chainId?: number) {
-    this.chainId = chainId || 0x01;
+    this.chainId = chainId || 1;
   }
 
   public generateAddress = (publicKey: string) => {
