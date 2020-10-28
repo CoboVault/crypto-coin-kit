@@ -29,7 +29,7 @@ export default class PsbtBuilder {
     this.psbt = new bitcoin.Psbt({network});
   }
 
-  public addInputsForPsbt = (txData: TxData, disableLargeFee = true) => {
+  public addInputsForPsbt = (txData: TxData, disableLargeFee = false) => {
     if (this.verifyInput(txData, disableLargeFee)) {
       txData.inputs.forEach(eachInput => {
         return this.addInputForPsbt(eachInput);
@@ -166,7 +166,7 @@ export default class PsbtBuilder {
 
   private verifyInput = (
     txData: TxData | MultiSignTxData,
-    disableLargeFee = true,
+    disableLargeFee = false,
   ) => {
     const totalInputs = this.calculateTotalInputs(txData);
     if (this.isDestinationOutputs(txData.outputs)) {
