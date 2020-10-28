@@ -173,7 +173,7 @@ export class DOT implements Coin {
     const tx = new GenericExtrinsic(
       registry,
       // @ts-ignore
-      decorated.tx.balances.transfer(data.dest, data.value),
+      decorated.tx.balances.transferKeepAlive(data.dest, data.value),
       {version: 4},
     );
     const era = data.eraPeriod
@@ -266,7 +266,7 @@ export class DOT implements Coin {
     const extrinsic = new GenericExtrinsic(
       registry,
       // @ts-ignore
-      decorated.tx.balances.transfer(data.dest, data.value),
+      decorated.tx.balances.transferKeepAlive(data.dest, data.value),
       {version: 4},
     );
     const payload = new GenericExtrinsicPayload(
