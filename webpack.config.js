@@ -21,6 +21,7 @@ module.exports = {
     IOST: './src/IOST/index.ts',
     TRON: './src/TRON/index.ts',
     TCFX: './src/TCFX/index.ts',
+    CFX: './src/CFX/index.ts',
     utils: './src/utils/index.ts',
   },
   mode: 'production',
