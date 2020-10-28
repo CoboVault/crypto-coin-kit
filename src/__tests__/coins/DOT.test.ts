@@ -89,7 +89,7 @@ describe('coins.DOT', () => {
     };
     const result = wnd.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
-      '0x3502848cba3d59242abc565c99a47c3afaf23668f2e1b1a76a38ab71868ae2dafca96301([a-f0-9]+)000c0004003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+      '0x3502848cba3d59242abc565c99a47c3afaf23668f2e1b1a76a38ab71868ae2dafca96301([a-f0-9]+)000c0004033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -112,7 +112,7 @@ describe('coins.DOT', () => {
     };
     const result = wnd.generateTransactionSync(txData, keyProviderSync);
     const reg = new RegExp(
-      '0x4902848cba3d59242abc565c99a47c3afaf23668f2e1b1a76a38ab71868ae2dafca96301([a-f0-9]+)000c07001a71180204003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+      '0x4902848cba3d59242abc565c99a47c3afaf23668f2e1b1a76a38ab71868ae2dafca96301([a-f0-9]+)000c07001a71180204033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817'
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -137,7 +137,7 @@ describe('coins.DOT', () => {
     const reg = new RegExp(
       '0x350284' +
         publicKey.slice(2) +
-        '01([a-f0-9]+)0008000500fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc216550700e40b5402',
+        '01([a-f0-9]+)0008000503fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc216550700e40b5402',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -163,7 +163,7 @@ describe('coins.DOT', () => {
     const reg = new RegExp(
       '0x390284' +
         publicKey.slice(2) +
-        '01([a-f0-9]+)4b620c000500fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc21655070034e23004',
+        '01([a-f0-9]+)4b620c000503fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc21655070034e23004',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -188,7 +188,7 @@ describe('coins.DOT', () => {
     const reg = new RegExp(
       '0x350284' +
         publicKey.slice(2) +
-        '01([a-f0-9]+)0000000400ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a10700d0ed902e',
+        '01([a-f0-9]+)0000000403ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a10700d0ed902e',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -214,7 +214,7 @@ describe('coins.DOT', () => {
     const reg = new RegExp(
       '0x310284' +
         publicKey.slice(2) +
-        '01([a-f0-9]+)0000400ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a102286bee',
+        '01([a-f0-9]+)0000403ef7ec6f5de1e6a66195bf6ac754f132c0f6ea6b45957964e11b0bf07c9e737a102286bee',
     );
     expect(reg.test(result.txHex)).toBe(true);
   });
@@ -245,7 +245,7 @@ describe('coins.DOT', () => {
       'ed25519',
     );
     expect(result.txHex).toBe(
-      '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+      '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
     );
   });
   it('should generate tx with ed25519 key', async () => {
@@ -274,7 +274,7 @@ describe('coins.DOT', () => {
       'ed25519',
     );
     expect(result.txHex).toBe(
-      '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004003e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+      '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
     );
   });
 });
