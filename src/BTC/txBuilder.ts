@@ -203,11 +203,12 @@ export default class PsbtBuilder {
   };
 
   private addInputForPsbt(eachInput: TxInputItem) {
+    const sequence = eachInput.sequence ? 0xfffffffe : 0xffffffff
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
       return this.psbt.addInput({
         hash: eachInput.hash,
         index: eachInput.index,
-        sequence: eachInput.sequence,
+        sequence: sequence,
         nonWitnessUtxo: Buffer.from(eachInput.utxo.nonWitnessUtxo, 'hex'),
         bip32Derivation: eachInput.bip32Derivation,
       });
@@ -215,7 +216,7 @@ export default class PsbtBuilder {
       return this.psbt.addInput({
         hash: eachInput.hash,
         index: eachInput.index,
-        sequence: eachInput.sequence,
+        sequence: sequence,
         witnessUtxo: {
           script: Buffer.from(
             eachInput.utxo.script ||
