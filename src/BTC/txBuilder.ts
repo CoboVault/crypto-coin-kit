@@ -203,7 +203,7 @@ export default class PsbtBuilder {
   };
 
   private addInputForPsbt(eachInput: TxInputItem) {
-    const sequence = eachInput.sequence ? 0xfffffffe : 0xffffffff
+    const sequence = eachInput.sequence || 0xfffffffd
     if (this.isNonWitnessUtxo(eachInput.utxo)) {
       return this.psbt.addInput({
         hash: eachInput.hash,
