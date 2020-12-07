@@ -79,10 +79,10 @@
     "jsbi": "^3.1.4",
     "lodash.padstart": "4.6.1",
     "ripple-address-codec": "^2.0.1",
-    "ripple-binary-codec": "^0.2.1",
+    "ripple-binary-codec": "^1.1.0",
     "ripple-hashes": "^0.3.2",
     "ripple-keypairs": "^0.11.0",
-    "ripple-lib": "^1.2.4",
+    "ripple-lib": "^1.8.2",
     "safe-buffer": "5.1.2",
     "secp256k1": "^3.7.1",
     "secp256r1": "^0.0.3",
@@ -91,6 +91,7 @@
     "typeforce": "^1.11.3",
     "web3": "0.20.6",
     "wif": "2.0.6",
+    "yarn": "^1.22.10",
     "zcore-lib": "https://github.com/cobowallet/zcore-lib.git#8f835069ca9b22411fa0c7e9d9322c23096d187a"
   },
   "files": [
