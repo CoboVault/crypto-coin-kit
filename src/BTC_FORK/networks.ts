@@ -60,7 +60,7 @@ export const bitcoincash: Network = {
     private: 0x0488ade4,
   },
   pubKeyHash: 0,
-  scriptHash: 40,
+  scriptHash: 5,
   wif: 0x80,
   forkId: 0x00,
 };
