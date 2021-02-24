@@ -1,16 +1,17 @@
 import {checkAddress, encodeAddress, blake2AsHex} from '@polkadot/util-crypto';
-import u8aToHex from '@polkadot/util/u8a/toHex';
-import hexToU8a from '@polkadot/util/hex/toU8a';
-import u8aConcat from '@polkadot/util/u8a/concat';
+import {hexToU8a, u8aToHex, u8aConcat} from '@polkadot/util';
 import {TypeRegistry} from '@polkadot/types/create/registry';
 import {getSpecTypes} from '@polkadot/types-known';
 import {Coin, GenerateTransactionResult} from '../Common/coin';
 import {KeyProvider, KeyProviderSync} from '../Common/sign';
-import Decorated from '@polkadot/metadata/Decorated';
-import GenericExtrinsic from '@polkadot/types/extrinsic/Extrinsic';
-import GenericExtrinsicPayload from '@polkadot/types/extrinsic/ExtrinsicPayload';
+import {expandMetadata} from '@polkadot/metadata/decorate';
+import {Metadata} from '@polkadot/metadata';
+import {
+  GenericExtrinsic,
+  GenericExtrinsicPayload,
+} from '@polkadot/types/extrinsic';
 import BN from 'bn.js';
-import blake2AsU8a from '@polkadot/util-crypto/blake2/asU8a';
+import {blake2AsU8a} from '@polkadot/util-crypto/blake2';
 import {westend, polkadot, kusama} from './metas';
 
 export interface ChainProperties {
@@ -149,30 +150,28 @@ export class DOT implements Coin {
     const registry = new TypeRegistry();
     // Register types specific to chain/runtimeVersion
     registry.register(
-      // @ts-ignore
       getSpecTypes(
-        // @ts-ignore
         registry,
         this.chain.chainName,
         this.chain.specName,
         data.specVersion,
       ),
     );
-    // Register the chain properties for this registry
     registry.setChainProperties(
       registry.createType(
         'ChainProperties',
         defaultChainProperties[this.chain.chainName],
       ),
     );
-    // @ts-ignore
-    const decorated = new Decorated(
+    registry.setMetadata(
+      new Metadata(registry, data.metaData || this.chain.metaData),
+    );
+    const decorated = expandMetadata(
       registry,
-      data.metaData || this.chain.metaData,
+      new Metadata(registry, data.metaData || this.chain.metaData),
     );
     const tx = new GenericExtrinsic(
       registry,
-      // @ts-ignore
       decorated.tx.balances.transferKeepAlive(data.dest, data.value),
       {version: 4},
     );
@@ -188,6 +187,7 @@ export class DOT implements Coin {
     const signed = tx.sign(
       {
         address: this.generateAddress(publicKeyHex),
+        addressRaw: hexToU8a(publicKeyHex),
         publicKey: hexToU8a(publicKeyHex),
         sign: (data, options?) => {
           const {r, s} = signer.sign(u8aToHex(data));
@@ -258,10 +258,9 @@ export class DOT implements Coin {
         defaultChainProperties[this.chain.chainName],
       ),
     );
-    // @ts-ignore
-    const decorated = new Decorated(
-      registry,
-      data.metaData || this.chain.metaData,
+    const decorated = expandMetadata(
+        registry,
+        new Metadata(registry, data.metaData || this.chain.metaData),
     );
     const extrinsic = new GenericExtrinsic(
       registry,

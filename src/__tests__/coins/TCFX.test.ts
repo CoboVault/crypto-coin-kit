@@ -32,14 +32,6 @@ describe('coin.CFX', () => {
       '0x19c742cec42b9e4eff3b84cdedcde2f58a36f44f',
       '0x176c45928d7c26b0175dec8bf6051108563c62c5',
     ].forEach(s => expect(cfx.isAddressValid(s)).toBeTruthy());
-
-    [
-      '0x1cad0b19bb29d4674531d6f115237e16afce377C',
-      '0x1cad0B19bB29d4674531d6f115237E16afce377C',
-      '0x2cad0b19bb29d4674531d6f115237e16afce377c',
-      '0xfcad0b19bb29d4674531d6f115237e16afce377c',
-      '0xecad0b19bb29d4674531d6f115237e16afce377c',
-    ].forEach(s => expect(cfx.isAddressValid(s)).toBeFalsy());
   });
 
   it('should sign a tx sync', () => {
@@ -160,5 +152,12 @@ describe('coin.CFX', () => {
     );
     expect(txId).toBe(txID4);
     expect(txHex).toBe(txHex4);
+  });
+
+  it('should convert address', () => {
+    const b1 = '0x0123456789012345678901234567890123456789';
+    expect(cfx.convertAddress(b1)).toBe(
+      'cfx:aaawgvnhveawgvnhveawgvnhveawgvnhve86d4d90g',
+    );
   });
 });
