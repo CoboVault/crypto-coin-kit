@@ -1,6 +1,6 @@
 # crypto-coin-kit [![Build Status](https://travis-ci.org/cobowallet/crypto-coin-kit.svg?branch=master)](https://travis-ci.org/cobowallet/crypto-coin-kit)
 
-crypto-coin-kit is the common library for crypto coins like BTC, ETH, NEO, XZC, etc.
+crypto-coin-kit is the common library for crypto coins like BTC, ETH, XZC, etc.
 
 ## Getting Started
 

@@ -8,7 +8,6 @@ import {ETH} from './ETH';
 import {IOST} from './IOST';
 import KeyProvider from './keyProvider';
 import {LTC} from './LTC';
-import {NEO} from './NEO';
 import {TRON} from './TRON';
 import * as utils from './utils';
 import {XRP} from './XRP';
@@ -20,7 +19,6 @@ import {CFX} from './CFX'
 export default {
   coins: {
     XRP,
-    NEO,
     XZC,
     DCR,
     ETH,
