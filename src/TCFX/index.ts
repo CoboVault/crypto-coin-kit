@@ -31,19 +31,17 @@ export class TCFX implements Coin {
 
   public generateAddress = (publicKey: string) => {
     const address = publicKeyToAddress(format.buffer(publicKey));
-    return format.address(address);
+    return '0x'+Buffer.from(address).toString('hex');
   };
+
+  public convertAddress = (address: string, networkId = 1029) => {
+    return format.address(address, networkId);
+  }
 
   public isAddressValid = (address: string) => {
     try {
-      const hex = format.buffer(address);
-      const expect_addr = format.address(hex);
-      const expect_chsum_addr = checksumAddress(expect_addr);
-      const right_format =
-        address === expect_addr || address === expect_chsum_addr;
-
-      const right_header = 0x10 === (hex[0] & 0xf0);
-      return right_format && right_header;
+      this.convertAddress(address);
+      return true;
     } catch (e) {
       return false;
     }

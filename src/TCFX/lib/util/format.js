@@ -2,6 +2,7 @@ const JSBI = require('jsbi');
 const Big = require('big.js');
 const lodash = require('lodash');
 const Parser = require('../lib/parser');
+const addressUtil = require('./address');
 
 const MAX_UINT_256 = JSBI.BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
@@ -211,16 +212,45 @@ format.epochNumber = format.hexUInt
   .or('latest_mined');
 
 /**
- * @param arg {string|Buffer}
+ * Checks if a given string is a valid address.
+ *
+ * @param address {string|Buffer}
+ * @param networkId {integer}
+ * @param [verbose=false] {boolean} if you want a address with type info, pass true
  * @return {string} Hex string
  *
  * @example
- * > format.address('0x0123456789012345678901234567890123456789')
- "0x0123456789012345678901234567890123456789"
+ * > format.address('0x0123456789012345678901234567890123456789', 1)
+ "cfxtest:aaawgvnhveawgvnhveawgvnhveawgvnhvey1umfzwp"
  * > format.address('0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef')
  Error("not match address")
  */
-format.address = format.hex.validate(v => v.length === 2 + 40, 'address'); // alias
+format.address = Parser(toAddress);
+
+function toAddress(address, networkId, verbose = false) {
+  // convert Account instance to string
+  if (
+    lodash.isObject(address) &&
+    addressUtil.hasNetworkPrefix(address.toString())
+  ) {
+    address = address.toString();
+  }
+  if (lodash.isString(address) && addressUtil.isValidCfxAddress(address)) {
+    return address;
+  }
+  if (!networkId) {
+    return address;
+  }
+  const buffer = format.buffer(address);
+  if (
+    (lodash.isString(address) && address.length !== 2 + 40) ||
+    buffer.length !== 20
+  ) {
+    throw new Error('not match "hex40"');
+  }
+
+  return addressUtil.encodeCfxAddress(buffer, networkId, verbose);
+}
 
 /**
  * @param arg {string|Buffer}

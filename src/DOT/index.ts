@@ -166,7 +166,6 @@ export class DOT implements Coin {
     registry.setMetadata(
       new Metadata(registry, data.metaData || this.chain.metaData),
     );
-    // @ts-ignore
     const decorated = expandMetadata(
       registry,
       new Metadata(registry, data.metaData || this.chain.metaData),
@@ -259,10 +258,9 @@ export class DOT implements Coin {
         defaultChainProperties[this.chain.chainName],
       ),
     );
-    // @ts-ignore
-    const decorated = new Decorated(
-      registry,
-      data.metaData || this.chain.metaData,
+    const decorated = expandMetadata(
+        registry,
+        new Metadata(registry, data.metaData || this.chain.metaData),
     );
     const extrinsic = new GenericExtrinsic(
       registry,
