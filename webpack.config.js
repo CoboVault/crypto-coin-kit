@@ -12,7 +12,6 @@ module.exports = {
     DCR: './src/DCR/index.ts',
     ETC: './src/ETC/index.ts',
     ETH: './src/ETH/index.ts',
-    NEO: './src/NEO/index.ts',
     XRP: './src/XRP/index.ts',
     XZC: './src/XZC/index.ts',
     BCH: './src/BCH/index.ts',
