@@ -1,15 +1,24 @@
 import {DOT} from '../../DOT';
 import {cryptoWaitReady} from '@polkadot/util-crypto';
 import {sr25519KeyProviderSync} from '../keyProviders/Sr25519KeyProvider';
-import {schnorrkelDeriveHard} from '@polkadot/util-crypto/index';
-import schnorrkelKeypairFromU8a from '@polkadot/util-crypto/schnorrkel/keypair/fromU8a';
-import {bufferToU8a, u8aToHex} from '@polkadot/util/index';
+import {schnorrkelDeriveHard} from '@polkadot/util-crypto';
+import {bufferToU8a, u8aToHex} from '@polkadot/util';
 import {westend} from '../../DOT/metas';
 import {
   ed25519KeyProvider,
   ed25519KeyProviderSync,
 } from '../keyProviders/Ed25519KeyProvider';
 jest.setTimeout(20000);
+
+const SEC_LEN = 64;
+const PUB_LEN = 32;
+
+function schnorrkelKeypairFromU8a (full: Uint8Array) {
+  return {
+    publicKey: full.slice(SEC_LEN, SEC_LEN + PUB_LEN),
+    secretKey: full.slice(0, SEC_LEN)
+  };
+}
 
 describe('coins.DOT', () => {
   const dot = new DOT();
@@ -168,6 +177,41 @@ describe('coins.DOT', () => {
     expect(reg.test(result.txHex)).toBe(true);
   });
 
+  it('should generate dot transaction 3 ', function () {
+    const prikey = privateKey.slice(2);
+    const pubkey = publicKey.slice(2);
+    const keypair = schnorrkelKeypairFromU8a(
+        bufferToU8a(Buffer.from(prikey + pubkey, 'hex')),
+    );
+    const polkadot = schnorrkelDeriveHard(
+        keypair,
+        bufferToU8a(DOT.CHAINS.Polkadot.chainCode),
+    );
+
+    const keyProviderSync = sr25519KeyProviderSync(u8aToHex(polkadot.secretKey), u8aToHex(polkadot.publicKey));
+    const txData = {
+      value: 100000000,
+      dest: '16iM7BVPSvuJnjMW5T7rGWv4PTvgybD5sUS1zZyQkEf7DMHY',
+      blockHash:
+          '0x5da6bb586c4d1158db50c097903175be7125ba7de5f73e90ee643ad727c47b31',
+      tip: 0,
+      nonce: 59,
+      implVersion: 0,
+      authoringVersion: 0,
+      specVersion: 2028,
+      transactionVersion: 6,
+      blockNumber: 3910963,
+      eraPeriod: 4096,
+    };
+    const result = dot.generateTransactionSync(txData, keyProviderSync);
+    const reg = new RegExp(
+        '0x39028400' +
+        u8aToHex(polkadot.publicKey).slice(2) +
+        '01([a-f0-9]+)3bd3ec00050300fcb5e9e05d33b84ed835726327da187a7f4878c32476d17677df56f6dcc216550284d717',
+    )
+    expect(reg.test(result.txHex)).toBe(true);
+  });
+
   it('should generate ksm transaction', () => {
     //https://polkascan.io/kusama/event/3970546-4
     const keyProviderSync = sr25519KeyProviderSync(privateKey, publicKey);
@@ -274,7 +318,12 @@ describe('coins.DOT', () => {
       'ed25519',
     );
     expect(result.txHex).toBe(
-      '0x350284e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20002432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906000c0004033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
+      '0x350284' +
+        'e9a74f8d59086d4c6b6408020729bcfcb70e7d793c4deb00d7774c0890b9ea20' +
+        '00' +
+        '2432b974f1b5ad4996782741bfd1c281d6d7eb6af037d779b5a70f8acd1fc79724b2588fc104bf5f1592a2ed5e8e129d749562408b142dc8665c3a748fa09906' +
+        '000c' +
+        '0004033e97c7cee955a5f2ab3f9346ed85bf2c1b16fcc1afae3e40942bbab648a036040700e8764817',
     );
   });
 });
