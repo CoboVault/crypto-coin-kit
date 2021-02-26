@@ -6,6 +6,7 @@ import {Result, SignProviderSync, SignProvider} from '../Common/sign';
 import {Coin} from '../Common/coin';
 // @ts-ignore
 import abi from 'human-standard-token-abi';
+import {decodeCfxAddress} from './lib/util/address';
 
 const {publicKeyToAddress, checksumAddress} = util.sign;
 const {format} = util;
@@ -31,12 +32,21 @@ export class TCFX implements Coin {
 
   public generateAddress = (publicKey: string) => {
     const address = publicKeyToAddress(format.buffer(publicKey));
-    return '0x'+Buffer.from(address).toString('hex');
+    return '0x' + Buffer.from(address).toString('hex');
   };
 
   public convertAddress = (address: string, networkId = 1029) => {
     return format.address(address, networkId);
-  }
+  };
+
+  public convertAddressToHex = (address: string) => {
+    if (address.startsWith('cfx')) {
+      // @ts-ignore
+      const {hexAddress} = decodeCfxAddress(address);
+      return '0x' + Buffer.from(hexAddress).toString('hex');
+    }
+    return address;
+  };
 
   public isAddressValid = (address: string) => {
     try {
@@ -101,6 +111,7 @@ export class TCFX implements Coin {
   };
 
   protected constructTransaction = (data: TxData) => {
+    data.to = this.convertAddressToHex(data.to);
     // @ts-ignore
     return new Transaction(this.formatTxData(data));
   };

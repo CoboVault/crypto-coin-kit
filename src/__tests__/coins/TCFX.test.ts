@@ -160,4 +160,11 @@ describe('coin.CFX', () => {
       'cfx:aaawgvnhveawgvnhveawgvnhveawgvnhve86d4d90g',
     );
   });
+
+  it('should decode address', function() {
+    const b1 = 'cfx:aaawgvnhveawgvnhveawgvnhveawgvnhve86d4d90g';
+    expect(cfx.convertAddressToHex(b1)).toBe(
+      '0x0123456789012345678901234567890123456789',
+    );
+  });
 });
