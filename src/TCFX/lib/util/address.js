@@ -73,6 +73,7 @@ function hasNetworkPrefix(address) {
 
 module.exports = {
   encodeCfxAddress,
+  decodeCfxAddress,
   isValidCfxAddress,
   hasNetworkPrefix,
 };
